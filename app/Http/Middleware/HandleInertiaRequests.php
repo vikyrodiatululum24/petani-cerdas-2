@@ -10,6 +10,20 @@ use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
 {
+    private const DEFAULT_SETTINGS = [
+        'app_name' => 'Petani Cerdas',
+        'brand_name' => 'PetaniCerdas',
+        'app_description' => 'Platform agritech digital Indonesia.',
+        'logo_path' => null,
+        'contact_email' => null,
+        'contact_phone' => null,
+        'contact_address' => null,
+        'instagram_url' => null,
+        'youtube_url' => null,
+        'facebook_url' => null,
+        'tiktok_url' => null,
+    ];
+
     /**
      * The root template that's loaded on the first page visit.
      *
@@ -39,7 +53,7 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         [$message, $author] = str(Inspiring::quotes()->random())->explode('-');
-        $appSetting = AppSetting::query()->first();
+        $appSetting = AppSetting::getSettings(self::DEFAULT_SETTINGS);
 
         $chatQuota = null;
         if ($request->user()?->hasRole('petani')) {
@@ -67,16 +81,17 @@ class HandleInertiaRequests extends Middleware
             ],
             'chatQuota' => $chatQuota,
             'appSetting' => [
-                'app_name' => $appSetting?->app_name ?? 'Petani Cerdas',
-                'brand_name' => $appSetting?->brand_name ?? 'PetaniCerdas',
-                'app_description' => $appSetting?->app_description ?? 'Platform agritech digital Indonesia.',
-                'logo_url' => $appSetting?->logo_path ? asset('storage/'.$appSetting->logo_path) : null,
-                'contact_email' => $appSetting?->contact_email,
-                'contact_phone' => $appSetting?->contact_phone,
-                'contact_address' => $appSetting?->contact_address,
-                'instagram_url' => $appSetting?->instagram_url,
-                'youtube_url' => $appSetting?->youtube_url,
-                'facebook_url' => $appSetting?->facebook_url,
+                'app_name' => $appSetting['app_name'],
+                'brand_name' => $appSetting['brand_name'],
+                'app_description' => $appSetting['app_description'],
+                'logo_url' => $appSetting['logo_path'] ? asset('storage/'.$appSetting['logo_path']) : null,
+                'contact_email' => $appSetting['contact_email'],
+                'contact_phone' => $appSetting['contact_phone'],
+                'contact_address' => $appSetting['contact_address'],
+                'instagram_url' => $appSetting['instagram_url'],
+                'youtube_url' => $appSetting['youtube_url'],
+                'facebook_url' => $appSetting['facebook_url'],
+                'tiktok_url' => $appSetting['tiktok_url'],
             ],
         ]);
     }

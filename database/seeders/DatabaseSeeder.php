@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             SubscriptionPlanSeeder::class,
             SubscriptionSeeder::class,
             ChatTopicSeeder::class,
+            TestimonialSeeder::class,
         ]);
     }
 }

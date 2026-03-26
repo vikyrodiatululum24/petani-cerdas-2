@@ -44,7 +44,7 @@ html {
         --sidebar-ring: 120 70% 50%;
     }
 
-    .dark {
+    /* .dark {
         --background: 0 0% 3.9%;
         --foreground: 0 0% 98%;
         --card: 0 0% 3.9%;
@@ -77,7 +77,7 @@ html {
         --sidebar-accent-foreground: 240 4.8% 95.9%;
         --sidebar-border: 120 30% 25%;
         --sidebar-ring: 120 70% 55%;
-    }
+    } */
 }
 
 @layer base {

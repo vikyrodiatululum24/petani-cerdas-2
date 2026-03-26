@@ -13,18 +13,15 @@ import {
     Star,
     Users,
     Leaf,
-    TrendingUp,
     ShieldCheck,
+    Layers,
+    ChevronLeft,
+    ChevronRight,
     Zap,
 } from 'lucide-vue-next';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 
-type StatIconKey = 'users' | 'newspaper' | 'shield-check' | 'trending-up';
-
-interface WelcomeStat {
-    value: string;
-    label: string;
-    icon: StatIconKey;
-}
+type StatIconKey = 'users' | 'newspaper' | 'shield-check' | 'layers';
 
 interface WelcomeArticle {
     category: string;
@@ -33,6 +30,12 @@ interface WelcomeArticle {
     date: string;
     readTime: string;
     href: string;
+}
+
+interface WelocomeStats {
+    label: string;
+    value: string;
+    icon: StatIconKey;
 }
 
 interface WelcomeProduct {
@@ -63,31 +66,40 @@ interface WelcomeAppSetting {
     logo_url: string | null;
 }
 
+interface WelcomeTestimonial {
+    id: number;
+    name: string;
+    role: string | null;
+    avatar: string;
+    avatarColor: string;
+    content: string;
+    rating: number;
+}
+
 const props = withDefaults(defineProps<{
     canRegister: boolean;
     appSetting?: WelcomeAppSetting;
-    stats?: WelcomeStat[];
+    stats? : WelocomeStats[];
     latestArticles?: WelcomeArticle[];
     products?: WelcomeProduct[];
     membershipPlans?: WelcomePlan[];
+    testimonials?: WelcomeTestimonial[];
 }>(), { canRegister: true });
-
-console.log('Welcome props:', props.membershipPlans);
 
 const features = [
     {
         icon: MessageSquare,
         color: 'bg-emerald-50 text-[#2E7D32]',
         title: 'Konsultasi Realtime',
-        desc: 'Chat langsung dengan petani ahli & mentor berpengalaman. Kirim teks, foto, dan video kapan saja.',
+        desc: 'Punya masalah pertanian ? Konsultasikan dengan petani ahli dan mentor berpengalaman sekarang !',
         badgeClass: 'bg-amber-50 text-amber-700 border border-amber-200',
         href: '/layanan#konsultasi',
     },
     {
         icon: CalendarCheck,
         color: 'bg-blue-50 text-blue-600',
-        title: 'Coaching 1-on-1',
-        desc: 'Booking sesi coaching pribadi dengan jadwal fleksibel. Sesi via Google Meet atau Zoom.',
+        title: 'Live Konsultasi',
+        desc: 'Ikuti live sesi konsultasi dan dapatkan bimbingan khusus bersama Petani Ahli dan Mentor Berpengalaman !',
         badgeClass: 'bg-amber-50 text-amber-700 border border-amber-200',
         href: '/layanan#coaching',
     },
@@ -95,7 +107,7 @@ const features = [
         icon: Newspaper,
         color: 'bg-purple-50 text-purple-600',
         title: 'Artikel & Panduan',
-        desc: 'Ribuan artikel pertanian modern, tips budidaya, teknologi tani, dan berita agrikultur terkini.',
+        desc: 'Dapatkan artikel pertanian modern, tips budidaya, teknologi tani, dan berita agrikultur terkini.',
         badgeClass: 'bg-[#E8F5E9] text-[#2E7D32] border border-[#A5D6A7]',
         href: '/articles',
     },
@@ -103,7 +115,7 @@ const features = [
         icon: ShoppingBag,
         color: 'bg-orange-50 text-orange-600',
         title: 'Toko Produk',
-        desc: 'Temukan produk pertanian berkualitas. Langsung tersambung ke Shopee, Tokopedia & TikTok Shop.',
+        desc: 'Butuh produk pertanian yang tepat. Temukan disini dan langsung dapatkan produknya !',
         badgeClass: 'bg-[#E8F5E9] text-[#2E7D32] border border-[#A5D6A7]',
         href: '/products',
     },
@@ -118,44 +130,129 @@ const latestArticles = (props.latestArticles ?? []).map((article, index) => ({
 
 const products = props.products ?? [];
 
-const testimonials = [
-    {
-        name: 'Budi Santoso',
-        role: 'Petani Padi, Jawa Tengah',
-        avatar: 'BS',
-        avatarColor: 'bg-[#2E7D32]',
-        content: 'Setelah bergabung sebagai member premium, produksi padi saya meningkat 40% dalam 2 musim. Mentor di sini benar-benar ahli dan sabar menjelaskan.',
-        stars: 5,
-    },
-    {
-        name: 'Siti Rahayu',
-        role: 'Petani Sayur, Jawa Barat',
-        avatar: 'SR',
-        avatarColor: 'bg-purple-600',
-        content: 'Artikel-artikelnya sangat informatif dan mudah dipahami. Saya berhasil menerapkan teknik hidroponik berkat panduan yang ada di sini.',
-        stars: 5,
-    },
-    {
-        name: 'Ahmad Fauzi',
-        role: 'Petani Organik, Bali',
-        avatar: 'AF',
-        avatarColor: 'bg-orange-600',
-        content: 'Fitur konsultasi realtime luar biasa. Bisa langsung kirim foto tanaman yang bermasalah dan mentor langsung kasih solusi yang tepat.',
-        stars: 5,
-    },
-];
+const currentSlide = ref(0);
+const visibleCards = ref(3);
+const isCarouselHovered = ref(false);
+const expandedTestimonials = ref<Record<number, boolean>>({});
+let carouselInterval: ReturnType<typeof setInterval> | null = null;
+
+const allTestimonials = computed(() => props.testimonials ?? []);
+
+const filteredTestimonials = computed(() => allTestimonials.value);
+
+const maxSlide = computed(() => Math.max(0, filteredTestimonials.value.length - visibleCards.value));
+
+const visibleTestimonials = computed(() => {
+    const start = currentSlide.value;
+    const end = start + visibleCards.value;
+
+    return filteredTestimonials.value.slice(start, end);
+});
+
+const updateVisibleCards = () => {
+    if (window.innerWidth < 768) {
+        visibleCards.value = 1;
+
+        return;
+    }
+
+    if (window.innerWidth < 1024) {
+        visibleCards.value = 2;
+
+        return;
+    }
+
+    visibleCards.value = 3;
+};
+
+const goToNextSlide = () => {
+    if (maxSlide.value <= 0) {
+        return;
+    }
+
+    currentSlide.value = currentSlide.value >= maxSlide.value ? 0 : currentSlide.value + 1;
+};
+
+const goToPrevSlide = () => {
+    if (maxSlide.value <= 0) {
+        return;
+    }
+
+    currentSlide.value = currentSlide.value <= 0 ? maxSlide.value : currentSlide.value - 1;
+};
+
+const setSlide = (slideIndex: number) => {
+    currentSlide.value = slideIndex;
+};
+
+const isExpanded = (testimonialId: number): boolean => {
+    return expandedTestimonials.value[testimonialId] ?? false;
+};
+
+const toggleExpanded = (testimonialId: number) => {
+    expandedTestimonials.value = {
+        ...expandedTestimonials.value,
+        [testimonialId]: !isExpanded(testimonialId),
+    };
+};
+
+const shouldTruncate = (content: string): boolean => {
+    return content.length > 180;
+};
+
+const displayedContent = (testimonial: WelcomeTestimonial): string => {
+    if (!shouldTruncate(testimonial.content) || isExpanded(testimonial.id)) {
+        return testimonial.content;
+    }
+
+    return `${testimonial.content.slice(0, 180)}...`;
+};
+
+const startCarousel = () => {
+    if (carouselInterval) {
+        clearInterval(carouselInterval);
+    }
+
+    carouselInterval = setInterval(() => {
+        if (isCarouselHovered.value) {
+            return;
+        }
+
+        goToNextSlide();
+    }, 4500);
+};
 
 const statIconMap: Record<StatIconKey, unknown> = {
     users: Users,
     newspaper: Newspaper,
     'shield-check': ShieldCheck,
-    'trending-up': TrendingUp,
+    'layers': Layers,
 };
 
-const stats = (props.stats ?? []).map((item) => ({
-    ...item,
-    icon: statIconMap[item.icon],
+const stats = (props.stats ?? []).map(stat => ({
+    ...stat,
+    icon: statIconMap[stat.icon],
 }));
+
+watch([filteredTestimonials, visibleCards], () => {
+    if (currentSlide.value > maxSlide.value) {
+        currentSlide.value = 0;
+    }
+});
+
+onMounted(() => {
+    updateVisibleCards();
+    window.addEventListener('resize', updateVisibleCards);
+    startCarousel();
+});
+
+onBeforeUnmount(() => {
+    window.removeEventListener('resize', updateVisibleCards);
+
+    if (carouselInterval) {
+        clearInterval(carouselInterval);
+    }
+});
 
 </script>
 
@@ -172,14 +269,14 @@ const stats = (props.stats ?? []).map((item) => ({
                     <div class="text-white">
                         <div class="mb-5 inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-1.5 text-sm font-medium backdrop-blur-sm">
                             <Zap class="h-3.5 w-3.5 text-yellow-300" />
-                            Platform #1 Agritech Indonesia
+                            Platform Agritech No 1 Indonesia
                         </div>
                         <h1 class="text-4xl font-extrabold leading-tight tracking-tight lg:text-5xl xl:text-6xl">
-                            Tani Lebih Cerdas,<br>
-                            <span class="text-[#A5D6A7]">Panen Lebih Optimal</span>
+                            Petani Hebat,<br>
+                            <span class="text-[#A5D6A7]">Lahir dari Bimbingan yang Tepat</span>
                         </h1>
                         <p class="mt-5 text-lg leading-relaxed text-green-100 lg:text-xl max-w-lg">
-                            {{ props.appSetting?.app_description || 'Bergabung dengan ribuan petani Indonesia yang sudah memanfaatkan teknologi modern, konsultasi ahli, dan komunitas pertanian terbaik di satu platform.' }}
+                            {{ props.appSetting?.app_description || 'Tinggalkan cara lama, Saatnya  bergabung didampingi Petani Ahli dan Mentor Berpengalaman dalam satu platform.' }}
                         </p>
                         <div class="mt-8 flex flex-wrap gap-3">
                             <Button
@@ -189,7 +286,7 @@ const stats = (props.stats ?? []).map((item) => ({
                                 class="rounded-xl bg-white px-6 text-sm font-semibold text-[#2E7D32] shadow-md hover:bg-green-50"
                             >
                                 <Link href="/pendaftaran">
-                                    Mulai Gratis Sekarang
+                                    Mulai Gratis dan Dapatkan Bimbingan
                                     <ArrowRight class="h-4 w-4" />
                                 </Link>
                             </Button>
@@ -199,13 +296,13 @@ const stats = (props.stats ?? []).map((item) => ({
                                 variant="outline"
                                 class="rounded-xl border-white/30 bg-white/10 px-6 text-sm font-semibold text-white backdrop-blur-sm hover:bg-white/20 hover:text-white"
                             >
-                                <Link href="/articles">Lihat Artikel</Link>
+                                <Link href="/about">Tentang Kami</Link>
                             </Button>
                         </div>
                         <div class="mt-10 flex flex-wrap items-center gap-6 text-green-100 text-sm">
-                            <span class="flex items-center gap-1.5"><CheckCircle2 class="h-4 w-4 text-[#A5D6A7]" />Gratis bergabung</span>
-                            <span class="flex items-center gap-1.5"><CheckCircle2 class="h-4 w-4 text-[#A5D6A7]" />Tanpa syarat kartu kredit</span>
-                            <span class="flex items-center gap-1.5"><CheckCircle2 class="h-4 w-4 text-[#A5D6A7]" />Batalkan kapan saja</span>
+                            <span class="flex items-center gap-1.5"><CheckCircle2 class="h-4 w-4 text-[#A5D6A7]" />Gratis Gabung Tanpa Ribet</span>
+                            <span class="flex items-center gap-1.5"><CheckCircle2 class="h-4 w-4 text-[#A5D6A7]" />Didampingi Mentor Berpengalamant</span>
+                            <span class="flex items-center gap-1.5"><CheckCircle2 class="h-4 w-4 text-[#A5D6A7]" />Mulai Kapan Saja</span>
                         </div>
                     </div>
                     <!-- Decorative dashboard card (desktop only) -->
@@ -232,7 +329,7 @@ const stats = (props.stats ?? []).map((item) => ({
                                     </div>
                                 </div>
                                 <div class="rounded-xl bg-white/10 p-3">
-                                    <p class="text-xs text-green-200 mb-2">Pesan dari Coach Ahmad</p>
+                                    <p class="text-xs text-green-200 mb-2">Pesan dari Mentor</p>
                                     <p class="text-sm text-white">"Kondisi tanah sudah optimal untuk mulai tanam minggu ini..."</p>
                                 </div>
                             </div>
@@ -252,6 +349,9 @@ const stats = (props.stats ?? []).map((item) => ({
         <!-- STATS -->
         <section class="border-b border-gray-100 bg-white py-12">
             <div class="mx-auto max-w-7xl px-6 lg:px-8">
+                <div class="mx-auto max-w-2xl text-center mb-14">
+                    <h2 class="text-3xl font-extrabold text-gray-900 lg:text-4xl">Dipercaya oleh Ribuan Petani Indonesia</h2>
+                </div>
                 <div class="grid grid-cols-2 gap-6 lg:grid-cols-4">
                     <div v-for="stat in stats" :key="stat.label" class="flex flex-col items-center text-center">
                         <component :is="stat.icon" class="mb-2 h-6 w-6 text-[#4CAF50]" />
@@ -266,14 +366,14 @@ const stats = (props.stats ?? []).map((item) => ({
         <section class="bg-white py-20 lg:py-24">
             <div class="mx-auto max-w-7xl px-6 lg:px-8">
                 <div class="mx-auto max-w-2xl text-center mb-14">
-                    <h2 class="text-3xl font-extrabold text-gray-900 lg:text-4xl">Semua yang Dibutuhkan Petani Modern</h2>
+                    <h2 class="text-3xl font-extrabold text-gray-900 lg:text-4xl">Semua yang Dibutuhkan Petani</h2>
                     <p class="mt-4 text-lg text-gray-500">Dari konsultasi ahli hingga belanja produk tani, semua tersedia dalam satu platform.</p>
                 </div>
                 <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
                     <Card
                         v-for="feature in features"
                         :key="feature.title"
-                        class="group relative flex h-full flex-col rounded-2xl border-gray-100 bg-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
+                        class="group relative flex h-full flex-col hover:border-2 border-[#2E7D32] rounded-2xl bg-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-green-900/30 hover:shadow-lg"
                     >
                         <CardContent class="flex h-full flex-col p-6">
                             <div class="mb-4 flex items-start justify-between">
@@ -428,25 +528,84 @@ const stats = (props.stats ?? []).map((item) => ({
                     <p class="text-sm font-semibold uppercase tracking-widest text-[#2E7D32] mb-2">Testimoni</p>
                     <h2 class="text-3xl font-extrabold text-gray-900 lg:text-4xl">Kata Mereka yang Sudah Bergabung</h2>
                 </div>
-                <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
-                    <div
-                        v-for="testimonial in testimonials"
-                        :key="testimonial.name"
-                        class="flex flex-col rounded-2xl bg-gray-50 p-6 hover:bg-[#E8F5E9]/60 transition-colors"
-                    >
-                        <div class="mb-4 flex gap-0.5">
-                            <Star v-for="i in testimonial.stars" :key="i" class="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                        </div>
-                        <p class="flex-1 text-sm leading-relaxed text-gray-700 italic">"{{ testimonial.content }}"</p>
-                        <div class="mt-5 flex items-center gap-3">
-                            <div :class="['flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-white text-sm font-bold', testimonial.avatarColor]">{{ testimonial.avatar }}</div>
-                            <div>
-                                <p class="text-sm font-semibold text-gray-900">{{ testimonial.name }}</p>
-                                <p class="text-xs text-gray-500">{{ testimonial.role }}</p>
+
+                <div
+                    v-if="filteredTestimonials.length > 0"
+                    class="relative"
+                    @mouseenter="isCarouselHovered = true"
+                    @mouseleave="isCarouselHovered = false"
+                >
+                    <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                        <div
+                            v-for="testimonial in visibleTestimonials"
+                            :key="testimonial.id"
+                            class="flex min-h-[250px] flex-col rounded-2xl bg-gray-50 p-6 transition-colors hover:bg-[#E8F5E9]/60"
+                        >
+                            <div class="mb-4 flex gap-0.5">
+                                <Star
+                                    v-for="i in 5"
+                                    :key="i"
+                                    :class="[
+                                        'h-4 w-4',
+                                        i <= testimonial.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300',
+                                    ]"
+                                />
+                            </div>
+                            <p class="flex-1 text-sm italic leading-relaxed text-gray-700">"{{ displayedContent(testimonial) }}"</p>
+                            <button
+                                v-if="shouldTruncate(testimonial.content)"
+                                type="button"
+                                class="mt-2 w-fit text-xs font-semibold text-[#2E7D32] hover:underline"
+                                @click="toggleExpanded(testimonial.id)"
+                            >
+                                {{ isExpanded(testimonial.id) ? 'Tampilkan lebih sedikit' : 'Baca selengkapnya' }}
+                            </button>
+                            <div class="mt-5 flex items-center gap-3">
+                                <div :class="['flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-bold text-white', testimonial.avatarColor]">{{ testimonial.avatar }}</div>
+                                <div>
+                                    <p class="text-sm font-semibold text-gray-900">{{ testimonial.name }}</p>
+                                    <p class="text-xs text-gray-500">{{ testimonial.role || 'Petani Indonesia' }}</p>
+                                </div>
                             </div>
                         </div>
                     </div>
+
+                    <div v-if="maxSlide > 0" class="mt-6 flex items-center justify-center gap-3">
+                        <button
+                            type="button"
+                            class="rounded-full border border-gray-200 p-2 text-gray-600 transition-colors hover:bg-gray-100"
+                            @click="goToPrevSlide"
+                        >
+                            <ChevronLeft class="h-4 w-4" />
+                        </button>
+
+                        <div class="flex items-center gap-1.5">
+                            <button
+                                v-for="dot in maxSlide + 1"
+                                :key="dot"
+                                type="button"
+                                :class="[
+                                    'h-2.5 w-2.5 rounded-full transition-all',
+                                    currentSlide === dot - 1 ? 'w-5 bg-[#2E7D32]' : 'bg-gray-300 hover:bg-gray-400',
+                                ]"
+                                @click="setSlide(dot - 1)"
+                            />
+                        </div>
+
+                        <button
+                            type="button"
+                            class="rounded-full border border-gray-200 p-2 text-gray-600 transition-colors hover:bg-gray-100"
+                            @click="goToNextSlide"
+                        >
+                            <ChevronRight class="h-4 w-4" />
+                        </button>
+                    </div>
                 </div>
+
+                <div v-else class="rounded-2xl border border-dashed border-gray-300 bg-gray-50 py-10 text-center">
+                    <p class="text-sm text-gray-500">Belum ada testimoni yang sesuai filter.</p>
+                </div>
+
             </div>
         </section>
 

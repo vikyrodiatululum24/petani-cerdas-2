@@ -5,7 +5,7 @@ import NavUser from '@/components/NavUser.vue';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem, type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/vue3';
-import { BadgeDollarSign, BookOpen, Building2, Folder, LayoutGrid, MessagesSquare, Newspaper, Store, Users, CheckSquare, WalletCards, Video, Settings } from 'lucide-vue-next';
+import { BadgeDollarSign, BookOpen, Building2, Folder, LayoutGrid, MessagesSquare, Newspaper, Store, Users, CheckSquare, WalletCards, Video, Settings, Quote } from 'lucide-vue-next';
 import { computed } from 'vue';
 import AppLogo from './AppLogo.vue';
 
@@ -29,6 +29,11 @@ const adminMainNavItems: NavItem[] = [
         title: 'Sponsors',
         href: '/sponsors',
         icon: Building2,
+    },
+    {
+        title: 'Testimonials',
+        href: '/admin/testimonials',
+        icon: Quote,
     },
     {
         title: 'Subscription Plans',

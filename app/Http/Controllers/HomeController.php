@@ -6,16 +6,23 @@ use App\Models\AppSetting;
 use App\Models\Article;
 use App\Models\Product;
 use App\Models\SubscriptionPlan;
-use App\Models\User;
+use App\Models\Testimonial;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class HomeController extends Controller
 {
+    private const DEFAULT_SETTINGS = [
+        'app_name' => 'Petani Cerdas',
+        'brand_name' => 'PetaniCerdas',
+        'app_description' => 'Platform agritech digital yang menghubungkan petani dengan teknologi modern.',
+        'logo_path' => null,
+    ];
+
     public function index(): Response
     {
-        $setting = AppSetting::query()->first();
+        $setting = AppSetting::getSettings(self::DEFAULT_SETTINGS);
 
         $articles = Article::query()
             ->with('category:id,name')
@@ -34,36 +41,43 @@ class HomeController extends Controller
             ->take(3)
             ->get();
 
+        $testimonials = Testimonial::query()
+            ->where('is_published', true)
+            ->orderBy('sort_order')
+            ->orderByDesc('published_at')
+            ->take(12)
+            ->get();
+
         $stats = [
             [
-                'value' => number_format(User::query()->count(), 0, ',', '.').'+',
+                'value' => '456++',
                 'label' => 'Petani Aktif',
                 'icon' => 'users',
             ],
             [
-                'value' => number_format(Article::query()->where('is_published', true)->count(), 0, ',', '.').'+',
+                'value' => '100++',
                 'label' => 'Artikel Pertanian',
                 'icon' => 'newspaper',
             ],
             [
-                'value' => number_format(User::role('mentor')->count(), 0, ',', '.').'+',
+                'value' => '9+',
                 'label' => 'Mentor Ahli',
                 'icon' => 'shield-check',
             ],
             [
                 'value' => number_format(SubscriptionPlan::query()->count(), 0, ',', '.').'+',
                 'label' => 'Paket Membership',
-                'icon' => 'trending-up',
+                'icon' => 'layers',
             ],
         ];
 
         return Inertia::render('Welcome', [
             'canRegister' => true,
             'appSetting' => [
-                'app_name' => $setting?->app_name ?? 'Petani Cerdas',
-                'brand_name' => $setting?->brand_name ?? 'PetaniCerdas',
-                'app_description' => $setting?->app_description ?? 'Platform agritech digital yang menghubungkan petani dengan teknologi modern.',
-                'logo_url' => $setting?->logo_path ? asset('storage/'.$setting->logo_path) : null,
+                'app_name' => $setting['app_name'],
+                'brand_name' => $setting['brand_name'],
+                'app_description' => $setting['app_description'],
+                'logo_url' => $setting['logo_path'] ? asset('storage/'.$setting['logo_path']) : null,
             ],
             'stats' => $stats,
             'latestArticles' => $articles->map(function (Article $article): array {
@@ -102,6 +116,17 @@ class HomeController extends Controller
                     'features' => is_array($plan->features) ? $plan->features : [],
                     'cta' => 'Pilih Paket',
                     'ctaHref' => route('petani.subscriptions.packages.index'),
+                ];
+            })->values(),
+            'testimonials' => $testimonials->map(function (Testimonial $testimonial): array {
+                return [
+                    'id' => $testimonial->id,
+                    'name' => $testimonial->name,
+                    'role' => $testimonial->role,
+                    'avatar' => Str::upper(Str::of($testimonial->name)->trim()->explode(' ')->take(2)->map(fn (string $part) => Str::substr($part, 0, 1))->join('')),
+                    'avatarColor' => $testimonial->avatar_color,
+                    'content' => $testimonial->content,
+                    'rating' => (int) $testimonial->rating,
                 ];
             })->values(),
         ]);

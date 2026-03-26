@@ -10,15 +10,24 @@ class AppSetting extends Model
     use HasFactory;
 
     protected $fillable = [
-        'app_name',
-        'brand_name',
-        'app_description',
-        'logo_path',
-        'contact_email',
-        'contact_phone',
-        'contact_address',
-        'instagram_url',
-        'youtube_url',
-        'facebook_url',
+        'key',
+        'value',
     ];
+
+    public static function getSettings(array $defaults = []): array
+    {
+        $settings = static::query()->pluck('value', 'key')->toArray();
+
+        return array_replace($defaults, $settings);
+    }
+
+    public static function setSettings(array $settings): void
+    {
+        foreach ($settings as $key => $value) {
+            static::query()->updateOrCreate(
+                ['key' => (string) $key],
+                ['value' => $value],
+            );
+        }
+    }
 }

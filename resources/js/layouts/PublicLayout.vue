@@ -2,7 +2,7 @@
 import PublicBottomNav from '@/components/public/PublicBottomNav.vue';
 import PublicTopBar from '@/components/public/PublicTopBar.vue';
 import { Link, usePage } from '@inertiajs/vue3';
-import { Facebook, Instagram, Leaf, Mail, MapPin, Phone, Youtube } from 'lucide-vue-next';
+import { Facebook, Instagram, Leaf, Mail, MapPin, Phone } from 'lucide-vue-next';
 import { computed } from 'vue';
 
 type PublicLayoutProps = {
@@ -17,24 +17,25 @@ type PublicLayoutProps = {
         instagram_url: string | null;
         youtube_url: string | null;
         facebook_url: string | null;
+        tiktok_url: string | null;
     };
 };
 
 const page = usePage<PublicLayoutProps>();
 const appSetting = computed(() => page.props.appSetting ?? null);
+console.log('App Setting:', appSetting.value);
 
 const footerLinks = {
     fitur: [
         { label: 'Konsultasi', href: '/layanan#konsultasi' },
-        { label: 'Coaching 1-on-1', href: '/layanan#coaching' },
+        { label: 'Live Konsultasi', href: '/layanan#coaching' },
         { label: 'Artikel Pertanian', href: '/articles' },
         { label: 'Toko Produk', href: '/products' },
     ],
     perusahaan: [
         { label: 'Tentang Kami', href: '/about' },
-        { label: 'Blog', href: '/articles' },
-        { label: 'Karir', href: '/careers' },
-        { label: 'Kontak', href: '/contact' },
+        { label: 'Artikel', href: '/articles' },
+        { label: 'Layanan', href: '/layanan' },
     ],
     legal: [
         { label: 'Kebijakan Privasi', href: '/privacy' },
@@ -84,13 +85,22 @@ const footerLinks = {
                                 <Instagram class="h-4 w-4" />
                             </a>
                             <a
-                                :href="appSetting?.youtube_url || '#'"
+                                :href="appSetting?.tiktok_url || '#'"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                aria-label="YouTube"
+                                aria-label="TikTok"
                                 class="flex h-8 w-8 items-center justify-center rounded-lg bg-white/10 transition-colors hover:bg-[#4CAF50]"
                             >
-                                <Youtube class="h-4 w-4" />
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 24 24"
+                                    fill="currentColor"
+                                    class="h-6 w-6 text-gray-300"
+                                >
+                                    <path
+                                        d="M19.589 6.686a4.793 4.793 0 0 1-3.77-1.878v8.355a4.918 4.918 0 1 1-4.918-4.917c.344 0 .682.036 1.01.104v2.523a2.406 2.406 0 1 0 1.898 2.29V2h2.58a4.79 4.79 0 0 0 3.2 2.84v1.846z"
+                                    />
+                                </svg>
                             </a>
                             <a
                                 :href="appSetting?.facebook_url || '#'"
@@ -118,7 +128,7 @@ const footerLinks = {
 
                     <!-- Perusahaan -->
                     <div>
-                        <h3 class="mb-4 text-sm font-semibold uppercase tracking-wider text-white">Perusahaan</h3>
+                        <h3 class="mb-4 text-sm font-semibold uppercase tracking-wider text-white">Petani Cerdas Official</h3>
                         <ul class="space-y-2.5">
                             <li v-for="link in footerLinks.perusahaan" :key="link.href">
                                 <Link :href="link.href" class="text-sm text-gray-400 transition-colors hover:text-[#4CAF50]">
@@ -134,7 +144,10 @@ const footerLinks = {
                         <ul class="space-y-3">
                             <li class="flex items-start gap-2.5 text-sm text-gray-400">
                                 <MapPin class="mt-0.5 h-4 w-4 shrink-0 text-[#4CAF50]" />
-                                {{ appSetting?.contact_address || 'Jl. Raya Pertanian No. 1, Jakarta, Indonesia' }}
+                                {{
+                                    appSetting?.contact_address ||
+                                    'Desa Gunung Malang, Kecamatan Cikidang, Kabupaten Sukabumi, Provinsi Jawa barat, Kode Pos 43367'
+                                }}
                             </li>
                             <li class="flex items-center gap-2.5 text-sm text-gray-400">
                                 <Mail class="h-4 w-4 shrink-0 text-[#4CAF50]" />

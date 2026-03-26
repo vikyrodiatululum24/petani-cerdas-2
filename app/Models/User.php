@@ -93,4 +93,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(LiveSession::class);
     }
+
+    public function testimonials(): HasMany
+    {
+        return $this->hasMany(Testimonial::class, 'created_by');
+    }
 }

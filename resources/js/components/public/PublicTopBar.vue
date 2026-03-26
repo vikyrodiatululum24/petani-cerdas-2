@@ -57,9 +57,10 @@ const appSetting = computed(() => page.props.appSetting ?? null);
 
 const navLinks = [
     { label: 'Beranda', href: '/', icon: Home },
+    { label: 'About', href: '/about', icon: IdCard },
+    { label: 'Layanan', href: '/layanan', icon: HeartHandshake },
     { label: 'Artikel', href: '/articles', icon: Newspaper },
     { label: 'Produk', href: '/products', icon: ShoppingBag },
-    { label: 'Layanan', href: '/layanan', icon: HeartHandshake },
 ];
 
 const dropdownMenu = [
@@ -122,7 +123,7 @@ const initials = computed(() => {
                                 class="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50 hover:text-gray-900"
                             >
                                 <MessageCircleMore class="h-4 w-4" />
-                                Komunikasi
+                                Konsultasi
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="start" :side-offset="8" class="w-48 rounded-xl shadow-lg">

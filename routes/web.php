@@ -1,21 +1,24 @@
 <?php
 
+use App\Http\Controllers\AboutController;
+use App\Http\Controllers\AdminSubscriptionController;
+use App\Http\Controllers\AppSettingController;
 use App\Http\Controllers\ArticleCategoryController;
 use App\Http\Controllers\ArticleController;
-use App\Http\Controllers\AppSettingController;
+use App\Http\Controllers\ChatController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\PublicArticleController;
-use App\Http\Controllers\PublicProductController;
+use App\Http\Controllers\LiveSessionController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\PetaniProfileController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\ProductController;
-use App\Http\Controllers\ChatController;
-use App\Http\Controllers\LiveSessionController;
-use App\Http\Controllers\PetaniProfileController;
-use App\Http\Controllers\SubscriptionController;
-use App\Http\Controllers\AdminSubscriptionController;
-use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\PublicArticleController;
+use App\Http\Controllers\PublicProductController;
 use App\Http\Controllers\SponsorController;
+use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\SubscriptionPlanController;
+use App\Http\Controllers\TestimonialController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -28,6 +31,8 @@ Route::get('articles/{article:slug}', [PublicArticleController::class, 'show'])-
 Route::get('products', [PublicProductController::class, 'index'])->name('public.products.index');
 Route::get('products/{product:slug}', [PublicProductController::class, 'show'])->name('public.products.show');
 
+Route::get('about', [AboutController::class, 'index'])->name('about');
+
 Route::get('layanan', function () {
     return Inertia::render('public/services/Index');
 })->name('public.services.index');
@@ -39,9 +44,7 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::middleware(['auth', 'verified', 'role:admin|mentor'])->group(function () {
-    Route::get('dashboard', function () {
-        return Inertia::render('Dashboard');
-    })->name('dashboard');
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::resource('admin/articles', ArticleController::class)->names('articles');
     Route::resource('admin/products', ProductController::class)->names('products');
     Route::post('article-categories', [ArticleCategoryController::class, 'store'])->name('article-categories.store');
@@ -62,6 +65,11 @@ Route::middleware(['auth', 'verified', 'role:admin|mentor'])->group(function () 
 
 Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
     Route::resource('sponsors', SponsorController::class);
+    Route::resource('admin/testimonials', TestimonialController::class)
+        ->except(['show'])
+        ->names('testimonials');
+    Route::post('admin/testimonials/{testimonial}/publish', [TestimonialController::class, 'publish'])->name('testimonials.publish');
+    Route::post('admin/testimonials/{testimonial}/unpublish', [TestimonialController::class, 'unpublish'])->name('testimonials.unpublish');
     Route::resource('subscription-plans', SubscriptionPlanController::class);
     Route::resource('subscriptions', AdminSubscriptionController::class)->only(['index', 'show', 'update']);
     Route::resource('users', UserController::class);

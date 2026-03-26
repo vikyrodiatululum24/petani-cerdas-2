@@ -3,6 +3,7 @@ import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import Textarea from '@/components/ui/textarea/Textarea.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import type { BreadcrumbItem } from '@/types';
 import { Head, useForm } from '@inertiajs/vue3';
@@ -18,6 +19,7 @@ interface SettingPayload {
     instagram_url: string | null;
     youtube_url: string | null;
     facebook_url: string | null;
+    tiktok_url: string | null;
 }
 
 const props = defineProps<{
@@ -42,6 +44,7 @@ const form = useForm({
     instagram_url: props.setting.instagram_url ?? '',
     youtube_url: props.setting.youtube_url ?? '',
     facebook_url: props.setting.facebook_url ?? '',
+    tiktok_url: props.setting.tiktok_url ?? '',
 });
 
 const onLogoChange = (event: Event) => {
@@ -63,7 +66,7 @@ const submit = () => {
     <Head title="Setting App" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
-        <div class="mx-auto max-w-5xl space-y-6 p-4">
+        <div class="mx-auto max-w-4xl space-y-6 p-4 w-full">
             <div>
                 <h1 class="text-2xl font-semibold">Setting Aplikasi</h1>
                 <p class="text-sm text-muted-foreground">Kelola logo, brand, deskripsi, kontak, dan social media aplikasi.</p>
@@ -85,13 +88,7 @@ const submit = () => {
 
                 <div>
                     <Label for="app_description">Deskripsi</Label>
-                    <textarea
-                        id="app_description"
-                        v-model="form.app_description"
-                        rows="3"
-                        class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                        placeholder="Deskripsi singkat aplikasi"
-                    />
+                    <Textarea id="app_description" v-model="form.app_description" placeholder="Deskripsi singkat aplikasi" />
                     <InputError :message="form.errors.app_description" class="mt-1" />
                 </div>
 
@@ -105,7 +102,7 @@ const submit = () => {
                     </div>
                 </div>
 
-                <div class="grid gap-4 md:grid-cols-3">
+                <div class="space-y-4">
                     <div>
                         <Label for="contact_email">Email Kontak</Label>
                         <Input id="contact_email" v-model="form.contact_email" type="email" placeholder="hello@petanicerdas.id" />
@@ -118,26 +115,39 @@ const submit = () => {
                     </div>
                     <div>
                         <Label for="contact_address">Alamat</Label>
-                        <Input id="contact_address" v-model="form.contact_address" placeholder="Kota, Provinsi" />
+                        <Textarea id="contact_address" v-model="form.contact_address" placeholder="Kota, Provinsi" />
                         <InputError :message="form.errors.contact_address" class="mt-1" />
                     </div>
                 </div>
 
-                <div class="grid gap-4 md:grid-cols-3">
-                    <div>
-                        <Label for="instagram_url">Instagram URL</Label>
-                        <Input id="instagram_url" v-model="form.instagram_url" placeholder="https://instagram.com/..." />
-                        <InputError :message="form.errors.instagram_url" class="mt-1" />
+                <div class="space-y-4">
+                    <div class="flex w-full items-center gap-4">
+                        <Label for="instagram_url" class="w-36">Instagram URL</Label>
+                        <div class="flex-1">
+                            <Input id="instagram_url" v-model="form.instagram_url" placeholder="https://instagram.com/..." />
+                            <InputError :message="form.errors.instagram_url" class="mt-1" />
+                        </div>
                     </div>
-                    <div>
-                        <Label for="youtube_url">YouTube URL</Label>
-                        <Input id="youtube_url" v-model="form.youtube_url" placeholder="https://youtube.com/..." />
-                        <InputError :message="form.errors.youtube_url" class="mt-1" />
+                    <div class="flex w-full items-center gap-4">
+                        <Label for="tiktok_url" class="w-36">TikTok URL</Label>
+                        <div class="flex-1">
+                            <Input id="tiktok_url" v-model="form.tiktok_url" placeholder="https://tiktok.com/..." />
+                            <InputError :message="form.errors.tiktok_url" class="mt-1" />
+                        </div>
                     </div>
-                    <div>
-                        <Label for="facebook_url">Facebook URL</Label>
-                        <Input id="facebook_url" v-model="form.facebook_url" placeholder="https://facebook.com/..." />
-                        <InputError :message="form.errors.facebook_url" class="mt-1" />
+                    <div class="flex w-full items-center gap-4">
+                        <Label for="youtube_url" class="w-36">YouTube URL</Label>
+                        <div class="flex-1">
+                            <Input id="youtube_url" v-model="form.youtube_url" placeholder="https://youtube.com/..." />
+                            <InputError :message="form.errors.youtube_url" class="mt-1" />
+                        </div>
+                    </div>
+                    <div class="flex w-full items-center gap-4">
+                        <Label for="facebook_url" class="w-36">Facebook URL</Label>
+                        <div class="flex-1">
+                            <Input id="facebook_url" v-model="form.facebook_url" placeholder="https://facebook.com/..." />
+                            <InputError :message="form.errors.facebook_url" class="mt-1" />
+                        </div>
                     </div>
                 </div>
 
