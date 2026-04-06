@@ -124,7 +124,7 @@ const getExcerpt = (content: string) => {
         <!-- Filter Section -->
         <section class="mb-10 lg:mb-14">
             <div class="mx-auto max-w-7xl px-6 lg:px-8">
-                <div class="mt-8 flex flex-col gap-3 rounded-2xl border border-green-100 bg-white p-4 shadow-sm md:flex-row md:items-center">
+                <div class="mt-8 flex flex-col gap-3 rounded-2xl border border-green-100 bg-white shadow-sm md:flex-row md:items-center">
                     <form class="relative w-full flex-1" @submit.prevent="applyFilters()">
                         <Search class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
                         <Input v-model="search" placeholder="Cari judul atau isi artikel" class="pl-9" />
@@ -133,7 +133,7 @@ const getExcerpt = (content: string) => {
 
                 <div class="mt-4 flex flex-wrap gap-2">
                     <Button size="sm" class="rounded-full bg-[#2E7D32] text-white hover:bg-[#256427]" @click="applyFilters(null)">
-                        Semua ({{ pagination.total }})
+                        Semua
                     </Button>
                     <Button
                         v-for="category in categories"
@@ -142,7 +142,7 @@ const getExcerpt = (content: string) => {
                         class="rounded-full bg-[#2E7D32] text-white hover:bg-[#256427]"
                         @click="applyFilters(category.slug)"
                     >
-                        {{ category.name }} ({{ category_counts[category.slug] ?? 0 }})
+                        {{ category.name }}
                     </Button>
                 </div>
             </div>

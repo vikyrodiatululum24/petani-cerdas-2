@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Carbon\CarbonInterface;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -49,5 +51,24 @@ class Subscription extends Model
     public function liveSessions(): HasMany
     {
         return $this->hasMany(LiveSession::class);
+    }
+
+    public function scopeActive(Builder $query): Builder
+    {
+        return $query->where('status', 'active');
+    }
+
+    public function scopeCurrentlyActive(Builder $query, ?CarbonInterface $date = null): Builder
+    {
+        $targetDate = ($date ?? now())->toDateString();
+
+        return $query
+            ->active()
+            ->where(function (Builder $innerQuery) use ($targetDate): void {
+                $innerQuery->whereNull('start_date')->orWhereDate('start_date', '<=', $targetDate);
+            })
+            ->where(function (Builder $innerQuery) use ($targetDate): void {
+                $innerQuery->whereNull('end_date')->orWhereDate('end_date', '>=', $targetDate);
+            });
     }
 }

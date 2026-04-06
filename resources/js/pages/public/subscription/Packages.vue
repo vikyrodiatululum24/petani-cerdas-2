@@ -19,6 +19,7 @@ interface SubscriptionPlanItem {
     used_slots: number;
     remaining_slots: number;
     available: boolean;
+    can_checkout: boolean;
     cta: string;
 }
 
@@ -63,6 +64,13 @@ const choosePlan = (planId: number) => {
         <!-- MEMBERSHIP -->
         <section class="bg-gradient-to-b from-gray-50 to-white py-20 lg:py-24">
             <div class="mx-auto max-w-7xl px-6 lg:px-8">
+                <div
+                    v-if="activeSubscription"
+                    class="mx-auto mb-8 max-w-3xl rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm text-emerald-800"
+                >
+                    Membership Anda saat ini: <span class="font-bold">{{ activeSubscription.plan_name || '-' }}</span>.
+                    Upgrade membership untuk mendapatkan akses ke fitur-fitur lebih lanjut.
+                </div>
                 <div class="mx-auto max-w-2xl text-center mb-14">
                     <p class="text-sm font-semibold uppercase tracking-widest text-[#2E7D32] mb-2">Membership</p>
                     <h2 class="text-3xl font-extrabold text-gray-900 lg:text-4xl">Pilih Paket yang Sesuai</h2>
@@ -79,7 +87,7 @@ const choosePlan = (planId: number) => {
                         </div>
                         <div class="mb-6">
                             <h3 :class="['text-lg font-bold mb-1', plan.is_featured ? 'text-white' : 'text-gray-900']">{{ plan.name }}</h3>
-                            
+
                             <p
                                 v-if="plan.discount_price"
                                 :class="['text-sm line-through mb-1', plan.is_featured ? 'text-green-200/80' : 'text-gray-400']"
@@ -104,7 +112,7 @@ const choosePlan = (planId: number) => {
                             type="button"
                             class="w-full"
                             :class="plan.is_featured ? 'bg-white text-[#2E7D32] hover:bg-green-50' : 'bg-[#2E7D32] text-white hover:bg-[#256427]'"
-                            :disabled="selectedPlanId === plan.id || !plan.available"
+                            :disabled="selectedPlanId === plan.id || !plan.can_checkout"
                             @click="choosePlan(plan.id)"
                         >
                             <LoaderCircle v-if="selectedPlanId === plan.id" class="h-4 w-4 animate-spin" />

@@ -4,12 +4,15 @@ namespace App\Http\Middleware;
 
 use App\Models\AppSetting;
 use App\Models\ChatLimits;
+use App\Models\Subscription;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
 {
+    private const PETANI_BASIC_DAILY_CHAT_LIMIT = 10;
+
     private const DEFAULT_SETTINGS = [
         'app_name' => 'Petani Cerdas',
         'brand_name' => 'PetaniCerdas',
@@ -57,16 +60,28 @@ class HandleInertiaRequests extends Middleware
 
         $chatQuota = null;
         if ($request->user()?->hasRole('petani')) {
-            $used = (int) (ChatLimits::query()
+            $activeSubscription = Subscription::query()
                 ->where('user_id', $request->user()->id)
-                ->whereDate('date', now()->toDateString())
-                ->value('limit') ?? 0);
+                ->with('plan:id,name')
+                ->currentlyActive()
+                ->latest('end_date')
+                ->latest('id')
+                ->first();
 
-            $chatQuota = [
-                'max' => 5,
-                'used' => $used,
-                'remaining' => max(0, 5 - $used),
-            ];
+            $activePlanName = str((string) ($activeSubscription?->plan?->name ?? ''))->lower();
+
+            if ($activePlanName->contains('basic')) {
+                $used = (int) (ChatLimits::query()
+                    ->where('user_id', $request->user()->id)
+                    ->whereDate('date', now()->toDateString())
+                    ->value('limit') ?? 0);
+
+                $chatQuota = [
+                    'max' => self::PETANI_BASIC_DAILY_CHAT_LIMIT,
+                    'used' => $used,
+                    'remaining' => max(0, self::PETANI_BASIC_DAILY_CHAT_LIMIT - $used),
+                ];
+            }
         }
 
         return array_merge(parent::share($request), [
@@ -78,6 +93,12 @@ class HandleInertiaRequests extends Middleware
                 'roles' => $request->user()
                     ? $request->user()->getRoleNames()->values()->all()
                     : [],
+                'subscriptions' => $request->user()
+                    ? [
+                        'active' => $request->user()->subscriptions()->currentlyActive()->exists(),
+                        'plan_name' => $request->user()->subscriptions()->currentlyActive()->with('plan:id,name')->first()?->plan?->name,
+                    ]
+                    : null,
             ],
             'chatQuota' => $chatQuota,
             'appSetting' => [

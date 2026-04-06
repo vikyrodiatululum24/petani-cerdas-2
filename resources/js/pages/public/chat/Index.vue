@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import PublicLayout from '@/layouts/PublicLayout.vue';
 import { Head, router, useForm } from '@inertiajs/vue3';
-import { ArrowLeft, CheckCheck, MessageSquarePlus, Paperclip, Search, Send, X } from 'lucide-vue-next';
+import { ArrowLeft, Camera, CheckCheck, MessageSquarePlus, Paperclip, Search, Send, X } from 'lucide-vue-next';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 
 interface ThreadMessage {
@@ -61,6 +61,7 @@ const props = defineProps<{
 const search = ref('');
 const isMobileThreadOpen = ref(false);
 const showStartTopicForm = ref(false);
+const previewImageUrl = ref<string | null>(null);
 const activeThreadId = ref<number | null>(props.selectedThreadId ?? props.threads[0]?.id ?? null);
 
 const startTopicForm = useForm({
@@ -234,6 +235,18 @@ const removeSelectedImage = () => {
         imageInputRef.value.value = '';
     }
 };
+
+const openImagePreview = (imageUrl: string | null) => {
+    if (!imageUrl) {
+        return;
+    }
+
+    previewImageUrl.value = imageUrl;
+};
+
+const closeImagePreview = () => {
+    previewImageUrl.value = null;
+};
 </script>
 
 <template>
@@ -357,12 +370,18 @@ const removeSelectedImage = () => {
                                             :class="message.is_me ? 'rounded-br-md bg-[#DCF8C6] text-gray-800' : 'rounded-bl-md border border-green-100 bg-white text-gray-800'"
                                         >
                                             <p class="text-[11px] font-semibold text-[#2E7D32]">{{ message.sender_name }}</p>
-                                            <img
+                                            <button
                                                 v-if="message.attachment_url"
-                                                :src="message.attachment_url"
-                                                alt="Lampiran gambar"
-                                                class="mt-1 max-h-56 w-full rounded-lg object-cover"
+                                                type="button"
+                                                class="mt-1 block w-full overflow-hidden rounded-lg"
+                                                @click="openImagePreview(message.attachment_url)"
                                             >
+                                                <img
+                                                    :src="message.attachment_url"
+                                                    alt="Lampiran gambar"
+                                                    class="max-h-56 w-full rounded-lg object-cover transition hover:opacity-90"
+                                                >
+                                            </button>
                                             <p v-if="message.message" class="mt-1 leading-relaxed">{{ message.message }}</p>
                                             <div class="mt-1 flex items-center justify-end gap-1 text-[10px] text-gray-500">
                                                 <span>{{ message.time }}</span>
@@ -374,6 +393,12 @@ const removeSelectedImage = () => {
                             </div>
 
                             <footer class="shrink-0 border-t border-green-100 bg-[#f1f8f2] p-3 sm:p-4">
+                                <div v-if="messageForm.image" class="mb-2 flex items-center justify-between rounded-lg border border-green-200 bg-white px-3 py-2 text-xs text-gray-700">
+                                    <span class="truncate">{{ messageForm.image.name }}</span>
+                                    <button type="button" class="ml-2 text-gray-500 hover:text-red-600" @click="removeSelectedImage">
+                                        <X class="h-4 w-4" />
+                                    </button>
+                                </div>
                                 <form class="flex items-center gap-2" @submit.prevent="submitMessage">
                                     <input
                                         ref="imageInputRef"
@@ -389,7 +414,7 @@ const removeSelectedImage = () => {
                                         class="h-11 w-11 rounded-full border-green-300"
                                         @click="openImagePicker"
                                     >
-                                        <Paperclip class="h-4 w-4" />
+                                        <Camera class="h-4 w-4" />
                                     </Button>
                                     <Input
                                         v-model="messageForm.message"
@@ -405,12 +430,6 @@ const removeSelectedImage = () => {
                                         <Send class="h-4 w-4" />
                                     </Button>
                                 </form>
-                                <div v-if="messageForm.image" class="mt-2 flex items-center justify-between rounded-lg border border-green-200 bg-white px-3 py-2 text-xs text-gray-700">
-                                    <span class="truncate">{{ messageForm.image.name }}</span>
-                                    <button type="button" class="ml-2 text-gray-500 hover:text-red-600" @click="removeSelectedImage">
-                                        <X class="h-4 w-4" />
-                                    </button>
-                                </div>
                                 <p v-if="chatQuota && chatQuota.remaining <= 0" class="mt-2 text-xs font-medium text-red-600">
                                     Kuota chat harian Anda sudah habis. Coba lagi besok.
                                 </p>
@@ -487,6 +506,19 @@ const removeSelectedImage = () => {
                         </Button>
                     </div>
                 </form>
+            </div>
+        </div>
+
+        <div v-if="previewImageUrl" class="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 p-4" @click="closeImagePreview">
+            <div class="relative w-full max-w-5xl" @click.stop>
+                <button
+                    type="button"
+                    class="absolute -right-2 -top-2 rounded-full bg-white p-1.5 text-gray-700 shadow hover:bg-gray-100"
+                    @click="closeImagePreview"
+                >
+                    <X class="h-4 w-4" />
+                </button>
+                <img :src="previewImageUrl" alt="Preview gambar" class="max-h-[85vh] w-full rounded-xl object-contain" />
             </div>
         </div>
     </PublicLayout>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\LiveSession;
 use App\Models\Subscription;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -15,18 +16,27 @@ class LiveSessionController extends Controller
     {
         $user = $request->user();
 
-        $subscriptionIds = $user->subscriptions()
-            ->pluck('subscriptions.id')
+        $ownedGenerations = $user->subscriptions()
+            ->whereIn('status', ['active', 'inactive'])
+            ->whereNotNull('generation')
+            ->where('generation', '!=', '')
+            ->whereHas('plan', function (Builder $planQuery): void {
+                $planQuery->whereIn('name', ['premium', 'elite']);
+            })
+            ->pluck('generation')
+            ->unique()
             ->all();
 
         $sessions = LiveSession::query()
             ->with([
-                'subscription:id,subscription_plan_id,status',
+                'subscription:id,subscription_plan_id,generation,status',
                 'subscription.plan:id,name',
             ])
-            ->where(function ($query) use ($user, $subscriptionIds): void {
-                $query->where('user_id', $user->id)
-                    ->orWhereIn('subscription_id', $subscriptionIds);
+            ->where(function (Builder $query) use ($ownedGenerations): void {
+                $query->whereIn('generation', $ownedGenerations)
+                    ->orWhereHas('subscription', function (Builder $subscriptionQuery) use ($ownedGenerations): void {
+                        $subscriptionQuery->whereIn('generation', $ownedGenerations);
+                    });
             })
             ->orderByDesc('scheduled_at')
             ->get()
@@ -40,6 +50,7 @@ class LiveSessionController extends Controller
                     'status' => $session->status,
                     'stream_url' => $session->stream_url,
                     'plan_name' => $session->subscription?->plan?->name,
+                    'generation' => $session->generation ?? $session->subscription?->generation,
                 ];
             })
             ->values();
@@ -70,7 +81,8 @@ class LiveSessionController extends Controller
                         })
                         ->orWhereHas('subscription.plan', function ($planQuery) use ($search): void {
                             $planQuery->where('name', 'like', "%{$search}%");
-                        });
+                        })
+                        ->orWhere('generation', 'like', "%{$search}%");
                 });
             })
             ->when(in_array($status, ['scheduled', 'live', 'ended'], true), fn ($query) => $query->where('status', $status))
@@ -89,33 +101,28 @@ class LiveSessionController extends Controller
                     'user_name' => $session->subscription?->user?->name,
                     'user_email' => $session->subscription?->user?->email,
                     'plan_name' => $session->subscription?->plan?->name,
-                    'generation' => $session->subscription?->generation,
+                    'generation' => $session->generation ?? $session->subscription?->generation,
                 ];
             })
             ->values();
 
-        $subscriptionOptions = Subscription::query()
-            ->with(['user:id,name,email', 'plan:id,name'])
-            ->whereIn('status', ['active', 'pending'])
-            ->orderByDesc('id')
-            ->get()
-            ->map(function (Subscription $subscription): array {
-                return [
-                    'id' => $subscription->id,
-                    'label' => trim(sprintf(
-                        '%s - %s (%s)',
-                        $subscription->user?->name ?? '-',
-                        $subscription->plan?->name ?? '-',
-                        $subscription->generation ?? '-'
-                    )),
-                    'user_id' => $subscription->user_id,
-                ];
-            })
+        $generationOptions = Subscription::query()
+            ->currentlyActive()
+            ->whereNotNull('generation')
+            ->where('generation', '!=', '')
+            ->select('generation')
+            ->distinct()
+            ->orderByDesc('generation')
+            ->pluck('generation')
+            ->map(fn (string $generation): array => [
+                'value' => $generation,
+                'label' => sprintf('Generation %s', $generation),
+            ])
             ->values();
 
         return Inertia::render('admin/live-sessions/Index', [
             'sessions' => $sessions,
-            'subscriptionOptions' => $subscriptionOptions,
+            'generationOptions' => $generationOptions,
             'filters' => [
                 'search' => $search,
                 'status' => $status,
@@ -126,7 +133,7 @@ class LiveSessionController extends Controller
     public function adminStore(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'subscription_id' => 'required|exists:subscriptions,id',
+            'generation' => 'required|string|max:50',
             'title' => 'required|string|max:255',
             'description' => 'nullable|string|max:2000',
             'scheduled_at' => 'required|date',
@@ -134,11 +141,10 @@ class LiveSessionController extends Controller
             'stream_url' => 'nullable|url|max:2048',
         ]);
 
-        $subscription = Subscription::query()->findOrFail((int) $validated['subscription_id']);
-
         LiveSession::create([
-            'user_id' => $subscription->user_id,
-            'subscription_id' => $subscription->id,
+            'user_id' => null,
+            'subscription_id' => null,
+            'generation' => $validated['generation'],
             'title' => $validated['title'],
             'description' => $validated['description'] ?? null,
             'scheduled_at' => $validated['scheduled_at'],
@@ -152,7 +158,7 @@ class LiveSessionController extends Controller
     public function adminUpdate(Request $request, LiveSession $liveSession): RedirectResponse
     {
         $validated = $request->validate([
-            'subscription_id' => 'required|exists:subscriptions,id',
+            'generation' => 'required|string|max:50',
             'title' => 'required|string|max:255',
             'description' => 'nullable|string|max:2000',
             'scheduled_at' => 'required|date',
@@ -160,11 +166,10 @@ class LiveSessionController extends Controller
             'stream_url' => 'nullable|url|max:2048',
         ]);
 
-        $subscription = Subscription::query()->findOrFail((int) $validated['subscription_id']);
-
         $liveSession->update([
-            'user_id' => $subscription->user_id,
-            'subscription_id' => $subscription->id,
+            'user_id' => null,
+            'subscription_id' => null,
+            'generation' => $validated['generation'],
             'title' => $validated['title'],
             'description' => $validated['description'] ?? null,
             'scheduled_at' => $validated['scheduled_at'],

@@ -34,7 +34,11 @@ Route::get('products/{product:slug}', [PublicProductController::class, 'show'])-
 Route::get('about', [AboutController::class, 'index'])->name('about');
 
 Route::get('layanan', function () {
-    return Inertia::render('public/services/Index');
+    $sponsors = \App\Models\Sponsor::latest()->get();
+
+    return Inertia::render('public/services/Index', [
+        'sponsors' => \App\Http\Resources\Sponsor\SponsorResource::collection($sponsors)->resolve(),
+    ]);
 })->name('public.services.index');
 
 Route::middleware('guest')->group(function () {
@@ -107,6 +111,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::middleware('subscription.package:basic,premium,elite')->group(function () {
         Route::get('chat', [ChatController::class, 'index'])->name('public.chat.index');
         Route::post('chat/start-topic', [ChatController::class, 'startTopic'])->name('public.chat.start-topic');
+    });
+
+    Route::middleware('subscription.package:premium,elite')->group(function () {
         Route::get('live-sessions', [LiveSessionController::class, 'index'])->name('public.live-sessions.index');
     });
 

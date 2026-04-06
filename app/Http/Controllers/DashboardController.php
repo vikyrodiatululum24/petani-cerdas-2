@@ -22,7 +22,7 @@ class DashboardController extends Controller
             'users_total' => User::query()->count(),
             'articles_published' => Article::query()->where('is_published', true)->count(),
             'products_total' => Product::query()->count(),
-            'subscriptions_active' => Subscription::query()->where('status', 'active')->count(),
+            'subscriptions_active' => Subscription::query()->currentlyActive()->count(),
             'subscriptions_pending' => Subscription::query()->where('status', 'pending')->count(),
             'payments_pending' => Payment::query()->where('status', 'pending')->count(),
             'payments_completed_amount' => (float) Payment::query()->where('status', 'completed')->sum('amount'),

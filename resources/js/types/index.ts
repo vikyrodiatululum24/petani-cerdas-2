@@ -3,6 +3,10 @@ import type { LucideIcon } from 'lucide-vue-next';
 export interface Auth {
     user: User;
     roles?: string[];
+    subscriptions?: {
+        active: boolean;
+        plan_name: string | null;
+    } | null;
 }
 
 export interface BreadcrumbItem {

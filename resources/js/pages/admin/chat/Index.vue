@@ -60,6 +60,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 const search = ref('');
 const isMobileThreadOpen = ref(false);
+const previewImageUrl = ref<string | null>(null);
 const statusFilter = ref(props.filters.status || 'all');
 const mentorFilter = ref(props.filters.mentor_id || 'all');
 const activeThreadId = ref<number | null>(props.selectedThreadId ?? props.threads[0]?.id ?? null);
@@ -231,6 +232,18 @@ const removeSelectedImage = () => {
     }
 };
 
+const openImagePreview = (imageUrl: string | null) => {
+    if (!imageUrl) {
+        return;
+    }
+
+    previewImageUrl.value = imageUrl;
+};
+
+const closeImagePreview = () => {
+    previewImageUrl.value = null;
+};
+
 watch(
     () => activeThread.value,
     (thread) => {
@@ -399,12 +412,18 @@ onBeforeUnmount(() => {
                                     :class="message.is_me ? 'rounded-br-md bg-[#DCF8C6] text-gray-800' : 'rounded-bl-md bg-white text-gray-800 border border-gray-200'"
                                 >
                                     <p class="text-[11px] font-semibold text-[#2E7D32]">{{ message.sender_name }}</p>
-                                    <img
+                                    <button
                                         v-if="message.attachment_url"
-                                        :src="message.attachment_url"
-                                        alt="Lampiran gambar"
-                                        class="mt-1 max-h-56 w-full rounded-lg object-cover"
+                                        type="button"
+                                        class="mt-1 block w-full overflow-hidden rounded-lg"
+                                        @click="openImagePreview(message.attachment_url)"
                                     >
+                                        <img
+                                            :src="message.attachment_url"
+                                            alt="Lampiran gambar"
+                                            class="max-h-56 w-full rounded-lg object-cover transition hover:opacity-90"
+                                        >
+                                    </button>
                                     <p v-if="message.message" class="mt-1 leading-relaxed">{{ message.message }}</p>
                                     <div class="mt-1 flex items-center justify-end gap-1 text-[10px] text-gray-500">
                                         <span>{{ message.time }}</span>
@@ -457,6 +476,19 @@ onBeforeUnmount(() => {
                 <main v-else class="hidden h-full items-center justify-center md:flex">
                     <p class="text-sm text-gray-500">Pilih thread untuk menangani chat petani.</p>
                 </main>
+            </div>
+        </div>
+
+        <div v-if="previewImageUrl" class="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 p-4" @click="closeImagePreview">
+            <div class="relative w-full max-w-5xl" @click.stop>
+                <button
+                    type="button"
+                    class="absolute -right-2 -top-2 rounded-full bg-white p-1.5 text-gray-700 shadow hover:bg-gray-100"
+                    @click="closeImagePreview"
+                >
+                    <X class="h-4 w-4" />
+                </button>
+                <img :src="previewImageUrl" alt="Preview gambar" class="max-h-[85vh] w-full rounded-xl object-contain" />
             </div>
         </div>
     </AppLayout>

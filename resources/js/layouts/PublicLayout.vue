@@ -23,7 +23,6 @@ type PublicLayoutProps = {
 
 const page = usePage<PublicLayoutProps>();
 const appSetting = computed(() => page.props.appSetting ?? null);
-console.log('App Setting:', appSetting.value);
 
 const footerLinks = {
     fitur: [

@@ -14,6 +14,7 @@ use App\Models\ChatCategory;
 use App\Models\ChatLimits;
 use App\Models\ChatTopics;
 use App\Models\ConsutationTopics;
+use App\Models\Subscription;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -25,7 +26,7 @@ use Inertia\Response;
 
 class ChatController extends Controller
 {
-    private const PETANI_DAILY_CHAT_LIMIT = 5;
+    private const PETANI_DAILY_CHAT_LIMIT = 10;
 
     public function index(Request $request): Response
     {
@@ -176,7 +177,7 @@ class ChatController extends Controller
 
         if ($this->isPetaniQuotaExceeded($user->id)) {
             return back()->withErrors([
-                'initial_message' => 'Kuota chat harian Anda sudah habis. Maksimal 5 chat per hari.',
+                'initial_message' => 'Kuota chat harian paket Basic Anda sudah habis. Maksimal '.self::PETANI_DAILY_CHAT_LIMIT.' chat per hari.',
             ]);
         }
 
@@ -243,7 +244,7 @@ class ChatController extends Controller
 
         if ($user->hasRole('petani') && $this->isPetaniQuotaExceeded($user->id)) {
             return back()->withErrors([
-                'message' => 'Kuota chat harian Anda sudah habis. Maksimal 5 chat per hari.',
+                'message' => 'Kuota chat harian paket Basic Anda sudah habis. Maksimal '.self::PETANI_DAILY_CHAT_LIMIT.' chat per hari.',
             ]);
         }
 
@@ -428,6 +429,10 @@ class ChatController extends Controller
 
     private function isPetaniQuotaExceeded(int $userId): bool
     {
+        if (! $this->isBasicMembership($userId)) {
+            return false;
+        }
+
         $todayUsage = ChatLimits::query()
             ->where('user_id', $userId)
             ->whereDate('date', now()->toDateString())
@@ -438,6 +443,10 @@ class ChatController extends Controller
 
     private function incrementPetaniDailyQuota(int $userId): void
     {
+        if (! $this->isBasicMembership($userId)) {
+            return;
+        }
+
         $dailyLimit = ChatLimits::query()->firstOrCreate(
             [
                 'user_id' => $userId,
@@ -451,8 +460,12 @@ class ChatController extends Controller
         $dailyLimit->increment('limit');
     }
 
-    private function dailyQuotaStatus(int $userId): array
+    private function dailyQuotaStatus(int $userId): ?array
     {
+        if (! $this->isBasicMembership($userId)) {
+            return null;
+        }
+
         $used = (int) (ChatLimits::query()
             ->where('user_id', $userId)
             ->whereDate('date', now()->toDateString())
@@ -463,6 +476,24 @@ class ChatController extends Controller
             'used' => $used,
             'remaining' => max(0, self::PETANI_DAILY_CHAT_LIMIT - $used),
         ];
+    }
+
+    private function isBasicMembership(int $userId): bool
+    {
+        return $this->activePetaniPackagePlan($userId) === 'basic';
+    }
+
+    private function activePetaniPackagePlan(int $userId): ?string
+    {
+        $subscription = Subscription::query()
+            ->where('user_id', $userId)
+            ->with('plan:id,name')
+            ->currentlyActive()
+            ->latest('end_date')
+            ->latest('id')
+            ->first();
+
+        return $this->resolvePackagePlan($subscription?->plan?->name);
     }
 
     private function resolvePackagePlan(?string $packageName): ?string

@@ -13,17 +13,9 @@ use Inertia\Response;
 
 class HomeController extends Controller
 {
-    private const DEFAULT_SETTINGS = [
-        'app_name' => 'Petani Cerdas',
-        'brand_name' => 'PetaniCerdas',
-        'app_description' => 'Platform agritech digital yang menghubungkan petani dengan teknologi modern.',
-        'logo_path' => null,
-    ];
 
     public function index(): Response
     {
-        $setting = AppSetting::getSettings(self::DEFAULT_SETTINGS);
-
         $articles = Article::query()
             ->with('category:id,name')
             ->where('is_published', true)
@@ -73,12 +65,6 @@ class HomeController extends Controller
 
         return Inertia::render('Welcome', [
             'canRegister' => true,
-            'appSetting' => [
-                'app_name' => $setting['app_name'],
-                'brand_name' => $setting['brand_name'],
-                'app_description' => $setting['app_description'],
-                'logo_url' => $setting['logo_path'] ? asset('storage/'.$setting['logo_path']) : null,
-            ],
             'stats' => $stats,
             'latestArticles' => $articles->map(function (Article $article): array {
                 return [

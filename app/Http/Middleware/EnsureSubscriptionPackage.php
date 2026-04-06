@@ -31,13 +31,7 @@ class EnsureSubscriptionPackage
 
         $activeSubscription = $user->subscriptions()
             ->with('plan:id,name')
-            ->where('status', 'active')
-            ->where(function ($query): void {
-                $query->whereNull('start_date')->orWhereDate('start_date', '<=', now()->toDateString());
-            })
-            ->where(function ($query): void {
-                $query->whereNull('end_date')->orWhereDate('end_date', '>=', now()->toDateString());
-            })
+            ->currentlyActive()
             ->latest('end_date')
             ->latest('id')
             ->first();

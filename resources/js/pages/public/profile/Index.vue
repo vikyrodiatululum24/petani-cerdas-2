@@ -2,7 +2,8 @@
 import { Button } from '@/components/ui/button';
 import PublicLayout from '@/layouts/PublicLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
-import { CalendarClock, CreditCard, MessageSquareText, Sprout, UserRound, Video } from 'lucide-vue-next';
+import { CalendarClock, CreditCard, MessageSquareText, Sprout, UserRound } from 'lucide-vue-next';
+import { computed } from 'vue';
 
 interface PetaniProfile {
     phone: string | null;
@@ -83,6 +84,10 @@ const props = defineProps<{
     liveSessions: LiveSessionItem[];
 }>();
 
+const activeSubscription = computed(() => {
+    return props.subscriptions.find((subscription) => subscription.status === 'active') ?? null;
+});
+
 const formatCurrency = (amount: number | null) => {
     if (amount === null) {
         return '-';
@@ -126,9 +131,17 @@ const statusBadgeClass = (status: string | null) => {
                         </div>
                     </div>
                     <div>
-                        <p class="text-xs uppercase tracking-[0.18em] text-green-100">Profil Petani</p>
+                        <div class="flex items-center gap-2">
+                            <p class="text-xs uppercase tracking-[0.18em] text-green-100">Profil Petani</p>
+                        </div>
                         <h1 class="mt-1 text-3xl font-black tracking-tight">{{ petani.name }}</h1>
                         <p class="mt-1 text-sm text-green-50">{{ petani.email }}</p>
+                        <span
+                            v-if="activeSubscription?.plan_name"
+                            class="inline-flex rounded-full border border-emerald-200 bg-emerald-500/20 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-emerald-100"
+                        >
+                            {{ activeSubscription.plan_name }}
+                        </span>
                     </div>
                 </div>
                 <Button as-child variant="outline" class="border-white/40 bg-white/15 text-white hover:bg-white/25">
@@ -167,15 +180,42 @@ const statusBadgeClass = (status: string | null) => {
                 <div class="rounded-2xl border border-gray-200 bg-white p-6">
                     <h2 class="text-lg font-bold text-gray-900">Data Pribadi dan Lahan</h2>
                     <div class="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                        <div><p class="text-xs text-gray-500">No. Telepon</p><p class="text-sm font-semibold text-gray-800">{{ petani.profile.phone || '-' }}</p></div>
-                        <div><p class="text-xs text-gray-500">Komoditas Utama</p><p class="text-sm font-semibold text-gray-800">{{ petani.profile.main_crop || '-' }}</p></div>
-                        <div><p class="text-xs text-gray-500">Jenis Lahan</p><p class="text-sm font-semibold text-gray-800">{{ petani.profile.land_type || '-' }}</p></div>
-                        <div><p class="text-xs text-gray-500">Provinsi</p><p class="text-sm font-semibold text-gray-800">{{ petani.profile.province || '-' }}</p></div>
-                        <div><p class="text-xs text-gray-500">Kota</p><p class="text-sm font-semibold text-gray-800">{{ petani.profile.city || '-' }}</p></div>
-                        <div><p class="text-xs text-gray-500">Kecamatan</p><p class="text-sm font-semibold text-gray-800">{{ petani.profile.district || '-' }}</p></div>
-                        <div><p class="text-xs text-gray-500">Desa</p><p class="text-sm font-semibold text-gray-800">{{ petani.profile.village || '-' }}</p></div>
-                        <div><p class="text-xs text-gray-500">Kode Pos</p><p class="text-sm font-semibold text-gray-800">{{ petani.profile.postal_code || '-' }}</p></div>
-                        <div><p class="text-xs text-gray-500">Bergabung Sejak</p><p class="text-sm font-semibold text-gray-800">{{ petani.created_at || '-' }}</p></div>
+                        <div>
+                            <p class="text-xs text-gray-500">No. Telepon</p>
+                            <p class="text-sm font-semibold text-gray-800">{{ petani.profile.phone || '-' }}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500">Komoditas Utama</p>
+                            <p class="text-sm font-semibold text-gray-800">{{ petani.profile.main_crop || '-' }}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500">Jenis Lahan</p>
+                            <p class="text-sm font-semibold text-gray-800">{{ petani.profile.land_type || '-' }}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500">Provinsi</p>
+                            <p class="text-sm font-semibold text-gray-800">{{ petani.profile.province || '-' }}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500">Kota</p>
+                            <p class="text-sm font-semibold text-gray-800">{{ petani.profile.city || '-' }}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500">Kecamatan</p>
+                            <p class="text-sm font-semibold text-gray-800">{{ petani.profile.district || '-' }}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500">Desa</p>
+                            <p class="text-sm font-semibold text-gray-800">{{ petani.profile.village || '-' }}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500">Kode Pos</p>
+                            <p class="text-sm font-semibold text-gray-800">{{ petani.profile.postal_code || '-' }}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500">Bergabung Sejak</p>
+                            <p class="text-sm font-semibold text-gray-800">{{ petani.created_at || '-' }}</p>
+                        </div>
                     </div>
                     <div class="mt-4">
                         <p class="text-xs text-gray-500">Alamat</p>
@@ -185,13 +225,25 @@ const statusBadgeClass = (status: string | null) => {
 
                 <div class="grid gap-6 lg:grid-cols-2">
                     <div class="rounded-2xl border border-gray-200 bg-white p-6">
-                        <h3 class="inline-flex items-center gap-2 text-base font-bold text-gray-900"><Sprout class="h-4 w-4 text-emerald-600" /> Riwayat Subscription</h3>
+                        <h3 class="inline-flex items-center gap-2 text-base font-bold text-gray-900">
+                            <Sprout class="h-4 w-4 text-emerald-600" /> Riwayat Subscription
+                        </h3>
                         <div class="mt-4 space-y-3">
                             <div v-if="subscriptions.length === 0" class="text-sm text-gray-500">Belum ada data subscription.</div>
                             <div v-for="item in subscriptions" :key="item.id" class="rounded-xl border border-gray-200 p-3">
                                 <div class="flex items-center justify-between gap-2">
-                                    <p class="font-semibold text-gray-900">{{ item.plan_name || '-' }} • Gen {{ item.generation || '-' }}</p>
-                                    <span :class="['rounded-full border px-2.5 py-1 text-xs font-semibold', statusBadgeClass(item.status)]">{{ item.status }}</span>
+                                    <div class="flex items-center gap-2">
+                                        <p class="font-semibold text-gray-900">{{ item.plan_name || '-' }} • Gen {{ item.generation || '-' }}</p>
+                                        <span
+                                            v-if="item.status === 'active'"
+                                            class="rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold uppercase text-emerald-700"
+                                        >
+                                            Sedang Aktif
+                                        </span>
+                                    </div>
+                                    <span :class="['rounded-full border px-2.5 py-1 text-xs font-semibold', statusBadgeClass(item.status)]">{{
+                                        item.status
+                                    }}</span>
                                 </div>
                                 <p class="mt-1 text-xs text-gray-500">{{ item.start_date || '-' }} s/d {{ item.end_date || '-' }}</p>
                                 <p class="text-xs text-gray-500">Disetujui: {{ item.approved_by || '-' }}</p>
@@ -200,13 +252,17 @@ const statusBadgeClass = (status: string | null) => {
                     </div>
 
                     <div class="rounded-2xl border border-gray-200 bg-white p-6">
-                        <h3 class="inline-flex items-center gap-2 text-base font-bold text-gray-900"><CreditCard class="h-4 w-4 text-emerald-600" /> Pembayaran Terakhir</h3>
+                        <h3 class="inline-flex items-center gap-2 text-base font-bold text-gray-900">
+                            <CreditCard class="h-4 w-4 text-emerald-600" /> Pembayaran Terakhir
+                        </h3>
                         <div class="mt-4 space-y-3">
                             <div v-if="payments.length === 0" class="text-sm text-gray-500">Belum ada data pembayaran.</div>
                             <div v-for="payment in payments" :key="payment.id" class="rounded-xl border border-gray-200 p-3">
                                 <div class="flex items-center justify-between gap-2">
                                     <p class="font-semibold text-gray-900">{{ payment.transaction_id }}</p>
-                                    <span :class="['rounded-full border px-2.5 py-1 text-xs font-semibold', statusBadgeClass(payment.status)]">{{ payment.status }}</span>
+                                    <span :class="['rounded-full border px-2.5 py-1 text-xs font-semibold', statusBadgeClass(payment.status)]">{{
+                                        payment.status
+                                    }}</span>
                                 </div>
                                 <p class="mt-1 text-xs text-gray-600">{{ payment.plan_name || '-' }} • {{ formatCurrency(payment.amount) }}</p>
                                 <p class="text-xs text-gray-500">{{ payment.paid_at || '-' }}</p>
@@ -217,29 +273,44 @@ const statusBadgeClass = (status: string | null) => {
 
                 <div class="grid gap-6 lg:grid-cols-2">
                     <div class="rounded-2xl border border-gray-200 bg-white p-6">
-                        <h3 class="inline-flex items-center gap-2 text-base font-bold text-gray-900"><MessageSquareText class="h-4 w-4 text-emerald-600" /> Aktivitas Chat</h3>
+                        <h3 class="inline-flex items-center gap-2 text-base font-bold text-gray-900">
+                            <MessageSquareText class="h-4 w-4 text-emerald-600" /> Aktivitas Chat
+                        </h3>
                         <div class="mt-4 space-y-3">
                             <div v-if="chatThreads.length === 0" class="text-sm text-gray-500">Belum ada topik chat.</div>
                             <div v-for="thread in chatThreads" :key="thread.id" class="rounded-xl border border-gray-200 p-3">
                                 <p class="line-clamp-1 font-semibold text-gray-900">{{ thread.title || '-' }}</p>
-                                <p class="mt-1 text-xs text-gray-600">Lawan bicara: {{ thread.counterpart_name || '-' }} • Mentor: {{ thread.mentor_name || '-' }}</p>
+                                <p class="mt-1 text-xs text-gray-600">
+                                    Lawan bicara: {{ thread.counterpart_name || '-' }} • Mentor: {{ thread.mentor_name || '-' }}
+                                </p>
                                 <p class="text-xs text-gray-500">{{ thread.total_messages }} pesan • Update {{ thread.updated_at || '-' }}</p>
                             </div>
                         </div>
                     </div>
 
                     <div class="rounded-2xl border border-gray-200 bg-white p-6">
-                        <h3 class="inline-flex items-center gap-2 text-base font-bold text-gray-900"><CalendarClock class="h-4 w-4 text-emerald-600" /> Riwayat Live Session</h3>
+                        <h3 class="inline-flex items-center gap-2 text-base font-bold text-gray-900">
+                            <CalendarClock class="h-4 w-4 text-emerald-600" /> Riwayat Live Session
+                        </h3>
                         <div class="mt-4 space-y-3">
                             <div v-if="liveSessions.length === 0" class="text-sm text-gray-500">Belum ada jadwal live session.</div>
                             <div v-for="session in liveSessions" :key="session.id" class="rounded-xl border border-gray-200 p-3">
                                 <div class="flex items-center justify-between gap-2">
                                     <p class="line-clamp-1 font-semibold text-gray-900">{{ session.title }}</p>
-                                    <span :class="['rounded-full border px-2.5 py-1 text-xs font-semibold', statusBadgeClass(session.status)]">{{ session.status }}</span>
+                                    <span :class="['rounded-full border px-2.5 py-1 text-xs font-semibold', statusBadgeClass(session.status)]">{{
+                                        session.status
+                                    }}</span>
                                 </div>
                                 <p class="mt-1 text-xs text-gray-600">{{ session.plan_name || '-' }}</p>
                                 <p class="text-xs text-gray-500">{{ session.scheduled_at || '-' }}</p>
-                                <a v-if="session.stream_url" :href="session.stream_url" target="_blank" rel="noopener noreferrer" class="mt-1 inline-flex text-xs font-semibold text-emerald-700 hover:text-emerald-900">Buka Link Sesi</a>
+                                <a
+                                    v-if="session.stream_url"
+                                    :href="session.stream_url"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="mt-1 inline-flex text-xs font-semibold text-emerald-700 hover:text-emerald-900"
+                                    >Buka Link Sesi</a
+                                >
                             </div>
                         </div>
                     </div>

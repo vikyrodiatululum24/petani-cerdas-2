@@ -35,6 +35,10 @@ type TopBarPageProps = {
             email?: string;
         } | null;
         roles?: string[];
+        subscriptions?: {
+            active: boolean;
+            plan_name: string | null;
+        } | null;
     };
     chatQuota?: {
         max: number;
@@ -43,8 +47,6 @@ type TopBarPageProps = {
     } | null;
     appSetting?: {
         app_name: string;
-        brand_name: string;
-        app_description: string;
         logo_url: string | null;
     };
 };
@@ -54,13 +56,14 @@ const authUser = computed(() => page.props.auth?.user ?? null);
 const userRoles = computed(() => page.props.auth?.roles ?? []);
 const isPetani = computed(() => userRoles.value.includes('petani'));
 const appSetting = computed(() => page.props.appSetting ?? null);
+const userSubscriptions = computed(() => page.props.auth?.subscriptions ?? null);
 
 const navLinks = [
     { label: 'Beranda', href: '/', icon: Home },
-    { label: 'About', href: '/about', icon: IdCard },
     { label: 'Layanan', href: '/layanan', icon: HeartHandshake },
-    { label: 'Artikel', href: '/articles', icon: Newspaper },
     { label: 'Produk', href: '/products', icon: ShoppingBag },
+    { label: 'Artikel', href: '/articles', icon: Newspaper },
+    { label: 'Tentang Kami', href: '/about', icon: IdCard },
 ];
 
 const dropdownMenu = [
@@ -187,9 +190,17 @@ const initials = computed(() => {
                                          <User v-else class="h-4 w-4" />
                                      </div>
 
-                                    <p class="hidden lg:flex truncate text-sm font-semibold text-gray-900">
-                                        {{ authUser?.name || 'Akun' }}
-                                    </p>
+                                     <div class="hidden md:flex md:flex-col md:items-start gap-0.5">
+                                         <p class="hidden lg:flex truncate text-sm font-semibold text-gray-900">
+                                             {{ authUser?.name || 'Akun' }}
+                                         </p>
+                                         <span
+                                             v-if="userSubscriptions?.active && userSubscriptions?.plan_name"
+                                             class="inline-flex items-center rounded-full bg-[#E8F5E9] px-2.5 py-0.5 text-xs font-medium text-[#2E7D32]"
+                                         >
+                                             {{ userSubscriptions.plan_name }}
+                                         </span>
+                                     </div>
                                 </button>
                             </DropdownMenuTrigger>
 
@@ -197,7 +208,7 @@ const initials = computed(() => {
                                 <!-- Logged in state -->
                                 <template v-if="authUser">
                                     <DropdownMenuLabel class="p-0 font-normal">
-                                        <div class="flex items-center gap-3 px-3 py-2.5">
+                                        <div class="flex items-start gap-3 px-3 py-2.5">
                                             <div
                                                 class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#2E7D32] text-xs font-bold text-white"
                                             >
@@ -210,6 +221,9 @@ const initials = computed(() => {
                                                 <p class="truncate text-xs text-gray-500">
                                                     {{ authUser.email }}
                                                 </p>
+                                                <span v-if="userSubscriptions?.active && userSubscriptions?.plan_name" class="inline-flex md:hidden items-center rounded-full bg-[#E8F5E9] px-2.5 py-0.5 text-xs font-medium text-[#2E7D32] mt-1">
+                                                    {{ userSubscriptions?.active && userSubscriptions?.plan_name ? userSubscriptions.plan_name : 'Akun Gratis' }}
+                                                </span>
                                             </div>
                                         </div>
                                     </DropdownMenuLabel>

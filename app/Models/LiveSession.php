@@ -13,6 +13,7 @@ class LiveSession extends Model
     protected $fillable = [
         'user_id',
         'subscription_id',
+        'generation',
         'title',
         'description',
         'scheduled_at',

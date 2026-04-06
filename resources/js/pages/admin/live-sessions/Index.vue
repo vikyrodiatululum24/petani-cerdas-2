@@ -22,7 +22,7 @@ interface SessionItem {
     scheduled_label: string | null;
     status: 'scheduled' | 'live' | 'ended';
     stream_url: string | null;
-    subscription_id: number;
+    subscription_id: number | null;
     user_name: string | null;
     user_email: string | null;
     plan_name: string | null;
@@ -30,9 +30,8 @@ interface SessionItem {
 }
 
 interface SubscriptionOption {
-    id: number;
+    value: string;
     label: string;
-    user_id: number;
 }
 
 interface Filters {
@@ -42,7 +41,7 @@ interface Filters {
 
 const props = defineProps<{
     sessions: SessionItem[];
-    subscriptionOptions: SubscriptionOption[];
+    generationOptions: SubscriptionOption[];
     filters: Filters;
 }>();
 
@@ -61,7 +60,7 @@ const openEditDialog = ref(false);
 const editingId = ref<number | null>(null);
 
 const createForm = useForm({
-    subscription_id: '',
+    generation: '',
     title: '',
     description: '',
     scheduled_at: '',
@@ -70,7 +69,7 @@ const createForm = useForm({
 });
 
 const editForm = useForm({
-    subscription_id: '',
+    generation: '',
     title: '',
     description: '',
     scheduled_at: '',
@@ -141,7 +140,7 @@ const submitCreate = () => {
 
 const openEdit = (session: SessionItem) => {
     editingId.value = session.id;
-    editForm.subscription_id = String(session.subscription_id);
+    editForm.generation = session.generation ?? '';
     editForm.title = session.title;
     editForm.description = session.description ?? '';
     editForm.scheduled_at = session.scheduled_at ? session.scheduled_at.slice(0, 16) : '';
@@ -155,9 +154,6 @@ const submitEdit = () => {
         return;
     }
 
-    console.log('Submitting edit for session ID:', editingId.value);
-    console.log('Edit form data:', editForm);
-
     editForm.put(route('admin.live-sessions.update', { liveSession: editingId.value }), {
         preserveScroll: true,
         onSuccess: () => {
@@ -170,6 +166,18 @@ const submitEdit = () => {
         },
     });
 };
+
+const submitStatusUpdate = (session: SessionItem, status: SessionItem['status']) => {
+    editingId.value = session.id;
+    editForm.generation = session.generation ?? '';
+    editForm.title = session.title;
+    editForm.description = session.description ?? '';
+    editForm.scheduled_at = session.scheduled_at ? session.scheduled_at.slice(0, 16) : '';
+    editForm.status = status;
+    editForm.stream_url = session.stream_url ?? '';
+
+    submitEdit();
+};
 </script>
 
 <template>
@@ -178,7 +186,7 @@ const submitEdit = () => {
             <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                     <h1 class="text-2xl font-semibold">Jadwal Live Session</h1>
-                    <p class="text-sm text-muted-foreground">Kelola jadwal sesi live untuk petani. Halaman ini bisa diakses admin dan mentor.</p>
+                    <p class="text-sm text-muted-foreground">Kelola jadwal sesi live berbasis generation member. Halaman ini bisa diakses admin dan mentor.</p>
                 </div>
                 <Button class="inline-flex items-center gap-2" @click="openCreateDialog = true">
                     <Plus class="h-4 w-4" />
@@ -190,7 +198,7 @@ const submitEdit = () => {
                 <div class="grid gap-3 border-b bg-muted/30 p-4 md:grid-cols-3">
                     <div class="md:col-span-2">
                         <Label for="search">Search</Label>
-                        <Input id="search" v-model="filterSearch" placeholder="Cari judul, nama petani, email, atau paket" />
+                        <Input id="search" v-model="filterSearch" placeholder="Cari judul, generation, atau paket" />
                     </div>
 
                     <div>
@@ -212,7 +220,7 @@ const submitEdit = () => {
                     <thead class="bg-muted/60 text-left">
                         <tr>
                             <th class="px-4 py-3 font-medium">Sesi</th>
-                            <th class="px-4 py-3 font-medium">Petani</th>
+                            <th class="px-4 py-3 font-medium">Generation</th>
                             <th class="px-4 py-3 font-medium">Paket</th>
                             <th class="px-4 py-3 font-medium">Jadwal</th>
                             <th class="px-4 py-3 font-medium">Status</th>
@@ -232,12 +240,12 @@ const submitEdit = () => {
                                 <div class="text-xs text-muted-foreground">{{ session.description || '-' }}</div>
                             </td>
                             <td class="px-4 py-3">
-                                <div class="font-medium">{{ session.user_name || '-' }}</div>
-                                <div class="text-xs text-muted-foreground">{{ session.user_email || '-' }}</div>
+                                <div class="font-medium">{{ session.generation || '-' }}</div>
+                                <div class="text-xs text-muted-foreground">Untuk seluruh member di generation ini</div>
                             </td>
                             <td class="px-4 py-3">
-                                <div class="font-medium">{{ session.plan_name || '-' }}</div>
-                                <div class="text-xs text-muted-foreground">Generation: {{ session.generation || '-' }}</div>
+                                <div class="font-medium">{{ session.plan_name || 'Semua paket di generation' }}</div>
+                                <div class="text-xs text-muted-foreground">Target generation: {{ session.generation || '-' }}</div>
                             </td>
                             <td class="px-4 py-3">
                                 <div class="inline-flex items-center gap-2 text-xs text-muted-foreground">
@@ -262,13 +270,13 @@ const submitEdit = () => {
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent>
                                             <DropdownMenuItem>
-                                                <button @click="editForm.status = 'scheduled'; submitEdit()">Scheduled</button>
+                                                <button @click="submitStatusUpdate(session, 'scheduled')">Scheduled</button>
                                             </DropdownMenuItem>
                                             <DropdownMenuItem>
-                                                <button @click="editForm.status = 'live'; submitEdit()">Live</button>
+                                                <button @click="submitStatusUpdate(session, 'live')">Live</button>
                                             </DropdownMenuItem>
                                             <DropdownMenuItem>
-                                                <button @click="editForm.status = 'ended'; submitEdit()">Ended</button>
+                                                <button @click="submitStatusUpdate(session, 'ended')">Ended</button>
                                             </DropdownMenuItem>
                                         </DropdownMenuContent>
                                     </DropdownMenu>
@@ -290,15 +298,15 @@ const submitEdit = () => {
             <DialogContent class="max-w-2xl">
                 <DialogHeader>
                     <DialogTitle>Tambah Jadwal Live Session</DialogTitle>
-                    <DialogDescription>Tentukan petani, jadwal, dan link sesi.</DialogDescription>
+                    <DialogDescription>Tentukan generation target, jadwal, dan link sesi.</DialogDescription>
                 </DialogHeader>
 
                 <div class="grid gap-4">
                     <div>
-                        <Label for="create-subscription">Petani + Paket</Label>
-                        <select id="create-subscription" v-model="createForm.subscription_id" class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
-                            <option value="">Pilih subscription</option>
-                            <option v-for="opt in subscriptionOptions" :key="opt.id" :value="String(opt.id)">{{ opt.label }}</option>
+                        <Label for="create-generation">Generation Target</Label>
+                        <select id="create-generation" v-model="createForm.generation" class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+                            <option value="">Pilih generation</option>
+                            <option v-for="opt in generationOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
                         </select>
                     </div>
 
@@ -352,10 +360,10 @@ const submitEdit = () => {
 
                 <div class="grid gap-4">
                     <div>
-                        <Label for="edit-subscription">Petani + Paket</Label>
-                        <select id="edit-subscription" v-model="editForm.subscription_id" class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
-                            <option value="">Pilih subscription</option>
-                            <option v-for="opt in subscriptionOptions" :key="opt.id" :value="String(opt.id)">{{ opt.label }}</option>
+                        <Label for="edit-generation">Generation Target</Label>
+                        <select id="edit-generation" v-model="editForm.generation" class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+                            <option value="">Pilih generation</option>
+                            <option v-for="opt in generationOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
                         </select>
                     </div>
 

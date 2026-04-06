@@ -120,26 +120,20 @@ const plans: PlanComparison[] = [
     },
 ];
 
-const sponsorRowTop: SponsorLogo[] = [
-    { name: 'Agro Nusantara', initials: 'AN' },
-    { name: 'Pupuk Hijau', initials: 'PH' },
-    { name: 'Benih Prima', initials: 'BP' },
-    { name: 'Tani Digital', initials: 'TD' },
-    { name: 'Panen Mart', initials: 'PM' },
-    { name: 'HydroLab', initials: 'HL' },
-];
+const props = defineProps<{
+    sponsors: { id: number; name: string; logo_url: string | null }[];
+}>();
 
-const sponsorRowBottom: SponsorLogo[] = [
-    { name: 'Sawah Tech', initials: 'ST' },
-    { name: 'Grow Plus', initials: 'GP' },
-    { name: 'Mitra Agro', initials: 'MA' },
-    { name: 'Farm Link', initials: 'FL' },
-    { name: 'Green House ID', initials: 'GH' },
-    { name: 'Bumi Organik', initials: 'BO' },
-];
+const mappedSponsors = computed(() => {
+    return props.sponsors.map((sponsor) => ({
+        name: sponsor.name,
+        initials: sponsor.name.substring(0, 2).toUpperCase(),
+        logo: sponsor.logo_url,
+    }));
+});
 
-const duplicatedTop = [...sponsorRowTop, ...sponsorRowTop];
-const duplicatedBottom = [...sponsorRowBottom, ...sponsorRowBottom];
+const duplicatedTop = computed(() => [...mappedSponsors.value, ...mappedSponsors.value]);
+// const duplicatedBottom = [...sponsorRowBottom, ...sponsorRowBottom];
 const page = usePage<{ auth?: { user?: unknown | null } }>();
 
 const membershipCtaHref = computed(() => {
@@ -395,7 +389,7 @@ const scrollToSection = (id: string) => {
                 <h2 class="text-3xl font-extrabold text-gray-900">Perbandingan Paket Membership Terbaru</h2>
                 <p class="mt-3 text-gray-500">Bandingkan paket Basic, Pro, dan Elite untuk memilih yang paling sesuai dengan skala usaha Anda.</p>
 
-                <div class="mt-10 overflow-hidden rounded-2xl border shadow-sm">
+                <div class="mt-10 overflow-hidden overflow-x-auto rounded-2xl border shadow-sm">
                     <table class="w-full text-sm">
                         <thead>
                             <tr class="bg-gray-50">
@@ -449,29 +443,32 @@ const scrollToSection = (id: string) => {
                 <div class="mb-7 text-center">
                     <p class="inline-flex items-center gap-2 rounded-full bg-[#E8F5E9] px-3 py-1 text-xs font-semibold text-[#2E7D32]">
                         <Sparkles class="h-3.5 w-3.5" />
-                        Sponsor & Partner
+                        Mitra Strategis
                     </p>
-                    <h2 class="mt-3 text-2xl font-extrabold text-gray-900 lg:text-3xl">Didukung Partner dan Sponsor</h2>
+                    <h2 class="mt-3 text-2xl font-extrabold text-gray-900 lg:text-3xl">Didukung oleh Mitra Strategis</h2>
                 </div>
 
                 <div class="space-y-4 overflow-hidden rounded-2xl border border-green-100 bg-white p-4 md:p-6">
                     <div class="sponsor-track-wrapper">
                         <div class="sponsor-track sponsor-track-right">
                             <div v-for="sponsor in duplicatedTop" :key="`top-${sponsor.name}-${sponsor.initials}`" class="sponsor-item">
-                                <span class="sponsor-badge">{{ sponsor.initials }}</span>
+                                <div v-if="sponsor.logo" class="flex h-6 w-6 items-center justify-center rounded-full bg-gray-100">
+                                    <img :src="sponsor.logo" :alt="sponsor.name" class="h-6 w-6 object-contain" />
+                                </div>
+                                <span v-else class="sponsor-badge">{{ sponsor.initials }}</span>
                                 <span class="font-semibold text-gray-700">{{ sponsor.name }}</span>
                             </div>
                         </div>
                     </div>
 
-                    <div class="sponsor-track-wrapper">
+                    <!-- <div class="sponsor-track-wrapper">
                         <div class="sponsor-track sponsor-track-left">
                             <div v-for="sponsor in duplicatedBottom" :key="`bottom-${sponsor.name}-${sponsor.initials}`" class="sponsor-item">
                                 <span class="sponsor-badge">{{ sponsor.initials }}</span>
                                 <span class="font-semibold text-gray-700">{{ sponsor.name }}</span>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
 
                 <div class="mt-8 flex flex-wrap justify-center gap-3">

@@ -14,15 +14,25 @@ class SubscriptionController extends Controller
 {
     public function packageIndex(Request $request): Response
     {
+        $activeSubscription = $request->user()
+            ->subscriptions()
+            ->with('plan:id,name')
+            ->currentlyActive()
+            ->latest('end_date')
+            ->latest('id')
+            ->first();
+
+        $activePlanRank = $activeSubscription?->plan ? $this->resolvePlanRank($activeSubscription->plan->name) : null;
+
         $usedByPlan = Subscription::query()
             ->selectRaw('subscription_plan_id, COUNT(*) as used_count')
-            ->whereIn('status', ['active'])
+            ->currentlyActive()
             ->groupBy('subscription_plan_id')
             ->pluck('used_count', 'subscription_plan_id');
 
         $plans = SubscriptionPlan::query()
             ->get(['id', 'name', 'price', 'discount_price', 'quota', 'features', 'description', 'duration_months', 'is_featured'])
-            ->map(function (SubscriptionPlan $plan) use ($usedByPlan): array {
+            ->map(function (SubscriptionPlan $plan) use ($usedByPlan, $activePlanRank): array {
                 $price = (float) $plan->price;
                 $discountPrice = $plan->discount_price !== null ? (float) $plan->discount_price : null;
 
@@ -38,6 +48,13 @@ class SubscriptionController extends Controller
                 $usedSlots = (int) ($usedByPlan[$plan->id] ?? 0);
                 $remainingSlots = max(0, $maxByPackage - $usedSlots);
                 $isAvailable = $remainingSlots > 0;
+                $planRank = $this->resolvePlanRank($plan->name);
+                $canUpgradeFromActive = $activePlanRank === null
+                    || ($planRank > $activePlanRank);
+                $canCheckout = $isAvailable && $canUpgradeFromActive;
+                $cta = ! $isAvailable
+                    ? 'Sold Out'
+                    : (! $canUpgradeFromActive ? 'Tidak bisa dipilih' : 'pilih paket');
 
                 return [
                     'id' => $plan->id,
@@ -53,24 +70,11 @@ class SubscriptionController extends Controller
                     'used_slots' => $usedSlots,
                     'remaining_slots' => $remainingSlots,
                     'available' => $isAvailable,
-                    'cta' => $isAvailable ? 'Pilih Paket' : 'Sold Out',
+                    'can_checkout' => $canCheckout,
+                    'cta' => $cta,
                 ];
             })
             ->values();
-
-        $activeSubscription = $request->user()
-            ->subscriptions()
-            ->with('plan:id,name')
-            ->where('status', 'active')
-            ->where(function ($query): void {
-                $query->whereNull('start_date')->orWhereDate('start_date', '<=', now()->toDateString());
-            })
-            ->where(function ($query): void {
-                $query->whereNull('end_date')->orWhereDate('end_date', '>=', now()->toDateString());
-            })
-            ->latest('end_date')
-            ->latest('id')
-            ->first();
 
         return Inertia::render('public/subscription/Packages', [
             'plans' => $plans,
@@ -85,6 +89,25 @@ class SubscriptionController extends Controller
 
     public function checkout(Request $request, SubscriptionPlan $subscriptionPlan): RedirectResponse
     {
+        $activeSubscription = $request->user()
+            ->subscriptions()
+            ->with('plan:id,name')
+            ->currentlyActive()
+            ->latest('end_date')
+            ->latest('id')
+            ->first();
+
+        if ($activeSubscription && $activeSubscription->plan) {
+            $activeRank = $this->resolvePlanRank($activeSubscription->plan->name);
+            $targetRank = $this->resolvePlanRank($subscriptionPlan->name);
+
+            if ($targetRank <= $activeRank) {
+                return back()->withErrors([
+                    'subscription' => 'Anda masih memiliki paket aktif. Pembelian hanya diizinkan untuk upgrade ke paket yang lebih tinggi.',
+                ]);
+            }
+        }
+
         $planKey = Str::lower(trim($subscriptionPlan->name));
         $maxQuota = match ($planKey) {
             'basic' => 30,
@@ -95,7 +118,7 @@ class SubscriptionController extends Controller
 
         $usedQuota = Subscription::query()
             ->where('subscription_plan_id', $subscriptionPlan->id)
-            ->whereIn('status', ['active'])
+            ->currentlyActive()
             ->count();
 
         if ($usedQuota >= $maxQuota) {
@@ -118,4 +141,15 @@ class SubscriptionController extends Controller
             ->route('petani.subscriptions.payments.show', ['subscription' => $subscription->id])
             ->with('success', 'Paket berhasil dipilih. Silakan lanjutkan ke pembayaran.');
     }
+
+    private function resolvePlanRank(string $planName): int
+    {
+        return match (Str::lower(trim($planName))) {
+            'basic' => 1,
+            'premium' => 2,
+            'elite' => 3,
+            default => 0,
+        };
+    }
+
 }

@@ -14,6 +14,7 @@ interface LiveSessionItem {
     status: 'scheduled' | 'live' | 'ended';
     stream_url: string | null;
     plan_name: string | null;
+    generation: string | null;
 }
 
 const props = defineProps<{
@@ -102,6 +103,9 @@ const statusLabel = (status: LiveSessionItem['status']) => {
                                     <span :class="['inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-semibold', statusBadgeClass(session.status)]">
                                         {{ statusLabel(session.status) }}
                                     </span>
+                                    <span v-if="session.generation" class="inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-700">
+                                        Generation {{ session.generation }}
+                                    </span>
                                     <span v-if="session.plan_name" class="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">
                                         {{ session.plan_name }}
                                     </span>
@@ -125,7 +129,7 @@ const statusLabel = (status: LiveSessionItem['status']) => {
                             <div class="sm:w-[210px] sm:shrink-0">
                                 <Button
                                     v-if="session.status === 'live' && session.stream_url"
-                                    variant="solid"
+                                    variant="default"
                                     color="green"
                                     as-child
                                     class="w-full bg-[#2E7D32] hover:bg-[#256427]"
@@ -134,6 +138,9 @@ const statusLabel = (status: LiveSessionItem['status']) => {
                                         <CirclePlay class="h-4 w-4" />
                                         Gabung Sesi
                                     </a>
+                                </Button>
+                                <Button v-else-if="session.status === 'ended'" variant="outline" class="w-full" disabled>
+                                    Live Berakhir
                                 </Button>
                                 <Button v-else variant="outline" class="w-full" disabled>
                                     Live Belum dimulai
