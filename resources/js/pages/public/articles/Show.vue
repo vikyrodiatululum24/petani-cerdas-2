@@ -2,8 +2,9 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import PublicLayout from '@/layouts/PublicLayout.vue';
-import { Head, Link } from '@inertiajs/vue3';
-import { ArrowLeft, CalendarDays, User, ArrowRight, Leaf } from 'lucide-vue-next';
+import { Head, Link, usePage } from '@inertiajs/vue3';
+import { ArrowLeft, CalendarDays, User, ArrowRight, Leaf, Share2, MessageCircle, Facebook, Twitter, Linkedin } from 'lucide-vue-next';
+import { computed } from 'vue';
 
 interface Article {
     id: number;
@@ -20,6 +21,42 @@ const props = defineProps<{
     article: Article;
     related_articles: Article[];
 }>();
+
+const page = usePage();
+
+const currentUrl = computed(() => {
+    if (typeof window === 'undefined') {
+        return page.url;
+    }
+
+    return `${window.location.origin}${page.url}`;
+});
+
+const encodedUrl = computed(() => encodeURIComponent(currentUrl.value));
+const encodedTitle = computed(() => encodeURIComponent(props.article.title));
+
+const shareLinks = computed(() => [
+    {
+        label: 'WhatsApp',
+        href: `https://wa.me/?text=${encodedTitle.value}%20${encodedUrl.value}`,
+        icon: MessageCircle,
+    },
+    {
+        label: 'Facebook',
+        href: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl.value}`,
+        icon: Facebook,
+    },
+    {
+        label: 'X',
+        href: `https://twitter.com/intent/tweet?text=${encodedTitle.value}&url=${encodedUrl.value}`,
+        icon: Twitter,
+    },
+    {
+        label: 'LinkedIn',
+        href: `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl.value}`,
+        icon: Linkedin,
+    },
+]);
 
 const formatDate = (date: string) => {
     return new Intl.DateTimeFormat('id-ID', {
@@ -63,6 +100,21 @@ const getExcerpt = (content: string) => {
                 </div>
 
                 <h1 class="text-3xl font-extrabold leading-tight text-gray-900 lg:text-4xl">{{ article.title }}</h1>
+
+                <div class="mt-5 flex flex-wrap items-center gap-2.5">
+                    Bagikan:
+                    <a
+                        v-for="share in shareLinks"
+                        :key="share.label"
+                        :href="share.href"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="inline-flex items-center gap-1.5 rounded-full border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:border-[#2E7D32] hover:text-[#2E7D32]"
+                    >
+                        <component :is="share.icon" class="h-4 w-4" />
+                        {{ share.label }}
+                    </a>
+                </div>
 
                 <div class="mt-6 overflow-hidden rounded-2xl border border-green-100 bg-gradient-to-br from-[#E8F5E9] to-[#C8E6C9]">
                     <img

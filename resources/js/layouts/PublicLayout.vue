@@ -2,8 +2,9 @@
 import PublicBottomNav from '@/components/public/PublicBottomNav.vue';
 import PublicTopBar from '@/components/public/PublicTopBar.vue';
 import { Link, usePage } from '@inertiajs/vue3';
+import AOS from 'aos';
 import { Facebook, Instagram, Leaf, Mail, MapPin, Phone } from 'lucide-vue-next';
-import { computed } from 'vue';
+import { computed, nextTick, onMounted, watch } from 'vue';
 
 type PublicLayoutProps = {
     appSetting?: {
@@ -23,6 +24,90 @@ type PublicLayoutProps = {
 
 const page = usePage<PublicLayoutProps>();
 const appSetting = computed(() => page.props.appSetting ?? null);
+
+const sectionAnimations = ['fade-up', 'fade-right', 'fade-left'];
+const itemAnimations = ['fade-up', 'fade-left', 'fade-right'];
+
+const setAnimationIfMissing = (element: Element, animation: string, delay = 0, duration = 800) => {
+    if (!element.hasAttribute('data-aos')) {
+        element.setAttribute('data-aos', animation);
+    }
+
+    if (!element.hasAttribute('data-aos-duration')) {
+        element.setAttribute('data-aos-duration', String(duration));
+    }
+
+    if (!element.hasAttribute('data-aos-delay')) {
+        element.setAttribute('data-aos-delay', String(delay));
+    }
+
+    if (!element.hasAttribute('data-aos-once')) {
+        element.setAttribute('data-aos-once', 'true');
+    }
+};
+
+const annotateSectionChildren = (section: Element) => {
+    const itemTargets = Array.from(
+        section.querySelectorAll('.grid > article, .grid > a, .swiper-slide, [data-aos-item]'),
+    ).slice(0, 10);
+
+    itemTargets.forEach((element, index) => {
+        setAnimationIfMissing(element, itemAnimations[index % itemAnimations.length], 60 * (index % 6), 720);
+    });
+};
+
+const annotatePublicSections = () => {
+    const mainElement = document.querySelector('main');
+    if (!mainElement) return;
+
+    const sectionTargets = Array.from(mainElement.querySelectorAll(':scope > section, :scope > [data-aos-section]')).filter(
+        (element) => element.childElementCount > 0,
+    );
+
+    if (sectionTargets.length === 0) {
+        const pageRoot = mainElement.firstElementChild;
+        if (pageRoot && pageRoot.childElementCount > 0) {
+            setAnimationIfMissing(pageRoot, 'fade-up', 0, 780);
+            annotateSectionChildren(pageRoot);
+        }
+
+        return;
+    }
+
+    sectionTargets.forEach((section, index) => {
+        setAnimationIfMissing(section, sectionAnimations[index % sectionAnimations.length], 0, 780);
+
+        if (!section.hasAttribute('data-aos-offset')) {
+            section.setAttribute('data-aos-offset', '90');
+        }
+
+        annotateSectionChildren(section);
+    });
+};
+
+const refreshPublicAnimations = async () => {
+    await nextTick();
+    annotatePublicSections();
+    AOS.refreshHard();
+};
+
+onMounted(async () => {
+    AOS.init({
+        once: true,
+        duration: 800,
+        easing: 'ease-out-cubic',
+        offset: 90,
+    });
+
+    await refreshPublicAnimations();
+});
+
+watch(
+    () => page.url,
+    async () => {
+        await refreshPublicAnimations();
+    },
+);
 
 const footerLinks = {
     fitur: [

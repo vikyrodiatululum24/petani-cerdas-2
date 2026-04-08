@@ -1,4 +1,5 @@
 import '../css/app.css';
+import 'aos/dist/aos.css';
 import 'vue-sonner/style.css';
 
 import { createInertiaApp } from '@inertiajs/vue3';

@@ -122,7 +122,7 @@ const galleryImages = [
         alt: 'Lahan pertanian hijau dengan tanaman padi',
     },
     {
-        src: 'https://images.unsplash.com/photo-1592982537447-7440770cbfc9?auto=format&fit=crop&w=1200&q=80',
+        src: '/assets/aboutme1.jpg',
         alt: 'Petani bekerja di lahan hortikultura',
     },
     {
@@ -150,6 +150,33 @@ const galleryImages = [
                             Petani Cerdas adalah inisiatif agribisnis modern berbasis komunitas yang mengintegrasikan produksi pertanian, kemitraan petani, teknologi smart farming, dan sistem distribusi profesional. Kami hadir untuk meningkatkan kesejahteraan petani sekaligus memperkuat ketahanan pangan secara berkelanjutan.
                         </p>
                     </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-gray-50 py-14 lg:py-20">
+            <div class="mx-auto max-w-7xl px-6 lg:px-8">
+                <div class="mx-auto max-w-2xl text-center">
+                    <h2 class="text-2xl font-extrabold text-gray-900 lg:text-3xl">Inisiator Utama</h2>
+                    <p class="mt-2 text-sm text-gray-600">Tim penggerak yang menginisiasi pertumbuhan ekosistem Petani Cerdas.</p>
+                </div>
+
+                <div class="mt-8 grid gap-5 md:grid-cols-3">
+                    <article
+                        v-for="person in initiators"
+                        :key="person.name"
+                        class="group rounded-3xl border border-gray-200 bg-white p-6 text-center shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+                    >
+                        <div class="mx-auto h-28 w-28 rounded-full bg-gradient-to-br from-[#d9f0db] via-white to-[#dff6e1] p-1.5">
+                            <img
+                                :src="person.photo"
+                                :alt="`Foto ${person.name}`"
+                                class="h-full w-full rounded-full object-cover ring-2 ring-white"
+                            />
+                        </div>
+                        <h3 class="mt-4 text-base font-bold text-gray-900 uppercase">{{ person.name }}</h3>
+                        <p class="mt-1 text-sm font-medium text-[#2E7D32]">{{ person.role }}</p>
+                    </article>
                 </div>
             </div>
         </section>
@@ -298,31 +325,6 @@ const galleryImages = [
             </div>
         </section>
 
-        <section class="bg-gray-50 py-14 lg:py-20">
-            <div class="mx-auto max-w-7xl px-6 lg:px-8">
-                <div class="mx-auto max-w-2xl text-center">
-                    <h2 class="text-2xl font-extrabold text-gray-900 lg:text-3xl">Inisiator Utama</h2>
-                    <p class="mt-2 text-sm text-gray-600">Tim penggerak yang menginisiasi pertumbuhan ekosistem Petani Cerdas.</p>
-                </div>
 
-                <div class="mt-8 grid gap-5 md:grid-cols-3">
-                    <article
-                        v-for="person in initiators"
-                        :key="person.name"
-                        class="group rounded-3xl border border-gray-200 bg-white p-6 text-center shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
-                    >
-                        <div class="mx-auto h-28 w-28 rounded-full bg-gradient-to-br from-[#d9f0db] via-white to-[#dff6e1] p-1.5">
-                            <img
-                                :src="person.photo"
-                                :alt="`Foto ${person.name}`"
-                                class="h-full w-full rounded-full object-cover ring-2 ring-white"
-                            />
-                        </div>
-                        <h3 class="mt-4 text-base font-bold text-gray-900 uppercase">{{ person.name }}</h3>
-                        <p class="mt-1 text-sm font-medium text-[#2E7D32]">{{ person.role }}</p>
-                    </article>
-                </div>
-            </div>
-        </section>
     </PublicLayout>
 </template>
