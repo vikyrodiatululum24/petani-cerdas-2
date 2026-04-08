@@ -129,17 +129,17 @@ const footerLinks = {
 </script>
 
 <template>
-    <div class="flex min-h-screen flex-col bg-white">
+    <div class="flex min-h-screen flex-col overflow-x-hidden bg-white">
         <!-- Top navigation bar -->
         <PublicTopBar />
 
         <!-- Page content — padded top to clear fixed topbar, padded bottom on mobile to clear bottom nav -->
-        <main class="flex-1 pb-20 pt-16 md:pb-0">
+        <main class="flex-1 overflow-x-hidden pb-20 pt-16 md:pb-0">
             <slot />
         </main>
 
         <!-- Footer — hidden on mobile behind bottom nav, so we add extra spacing -->
-        <footer class="hidden bg-[#1a2e1b] text-gray-300 md:block">
+        <footer class="bg-[#1a2e1b] text-gray-300">
             <div class="mx-auto max-w-7xl px-6 py-14 lg:px-8">
                 <div class="grid grid-cols-1 gap-10 md:grid-cols-4">
                     <!-- Brand column -->

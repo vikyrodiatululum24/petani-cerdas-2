@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { Link, usePage } from '@inertiajs/vue3';
-import { Home, Newspaper, ShoppingBag, HeartHandshake, Info } from 'lucide-vue-next';
+import { Home, Newspaper, ShoppingBag, HeartHandshake, IdCard } from 'lucide-vue-next';
 
 const page = usePage();
 
 const navItems = [
     { label: 'Beranda', href: '/', icon: Home },
-    { label: 'Artikel', href: '/articles', icon: Newspaper },
-    { label: 'Produk', href: '/products', icon: ShoppingBag },
     { label: 'Layanan', href: '/layanan', icon: HeartHandshake },
-    { label: 'Tentang Kami', href: '/about', icon: Info },
+    { label: 'Produk', href: '/products', icon: ShoppingBag },
+    { label: 'Artikel', href: '/articles', icon: Newspaper },
+    { label: 'Tentang Kami', href: '/about', icon: IdCard },
 ];
 
 const isActive = (href: string) => {
