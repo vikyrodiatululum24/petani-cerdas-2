@@ -27,6 +27,7 @@ interface WelcomeArticle {
     category: string;
     title: string;
     excerpt: string;
+    featuredImageUrl: string | null;
     date: string;
     readTime: string;
     href: string;
@@ -42,6 +43,7 @@ interface WelcomeProduct {
     name: string;
     price: string;
     category: string;
+    imageUrl: string | null;
     rating: number;
     sold: string;
 }
@@ -410,8 +412,16 @@ onBeforeUnmount(() => {
                         :key="article.title"
                         class="group flex flex-col overflow-hidden rounded-2xl bg-white shadow-sm hover:shadow-md transition-all duration-200"
                     >
-                        <div class="aspect-video w-full bg-gradient-to-br from-[#E8F5E9] to-[#C8E6C9] flex items-center justify-center">
-                            <Leaf class="h-12 w-12 text-[#A5D6A7]" />
+                        <div class="aspect-video w-full overflow-hidden bg-gradient-to-br from-[#E8F5E9] to-[#C8E6C9]">
+                            <img
+                                v-if="article.featuredImageUrl"
+                                :src="article.featuredImageUrl"
+                                :alt="article.title"
+                                class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                            >
+                            <div v-else class="flex h-full w-full items-center justify-center">
+                                <Leaf class="h-12 w-12 text-[#A5D6A7]" />
+                            </div>
                         </div>
                         <div class="flex flex-1 flex-col p-5">
                             <div class="mb-3 flex items-center gap-2">
@@ -452,8 +462,16 @@ onBeforeUnmount(() => {
                         :key="product.name"
                         class="group rounded-2xl border border-gray-100 bg-white p-4 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
                     >
-                        <div class="mb-4 aspect-square w-full overflow-hidden rounded-xl bg-gradient-to-br from-[#E8F5E9] to-[#C8E6C9] flex items-center justify-center">
-                            <ShoppingBag class="h-10 w-10 text-[#A5D6A7]" />
+                        <div class="mb-4 aspect-square w-full overflow-hidden rounded-xl bg-gradient-to-br from-[#E8F5E9] to-[#C8E6C9]">
+                            <img
+                                v-if="product.imageUrl"
+                                :src="product.imageUrl"
+                                :alt="product.name"
+                                class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                            >
+                            <div v-else class="flex h-full w-full items-center justify-center">
+                                <ShoppingBag class="h-10 w-10 text-[#A5D6A7]" />
+                            </div>
                         </div>
                         <span class="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-500">{{ product.category }}</span>
                         <h3 class="mt-2 text-sm font-semibold text-gray-900 leading-snug group-hover:text-[#2E7D32] transition-colors line-clamp-2">{{ product.name }}</h3>

@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import PublicBottomNav from '@/components/public/PublicBottomNav.vue';
 import PublicTopBar from '@/components/public/PublicTopBar.vue';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Link, usePage } from '@inertiajs/vue3';
 import AOS from 'aos';
-import { Facebook, Instagram, Leaf, Mail, MapPin, Phone } from 'lucide-vue-next';
+import { Facebook, Instagram, Leaf, Mail, MapPin, Phone, ShoppingBag } from 'lucide-vue-next';
 import { computed, nextTick, onMounted, watch } from 'vue';
 
 type PublicLayoutProps = {
@@ -19,6 +20,7 @@ type PublicLayoutProps = {
         youtube_url: string | null;
         facebook_url: string | null;
         tiktok_url: string | null;
+        tiktok_shop_url: string | null;
     };
 };
 
@@ -47,9 +49,7 @@ const setAnimationIfMissing = (element: Element, animation: string, delay = 0, d
 };
 
 const annotateSectionChildren = (section: Element) => {
-    const itemTargets = Array.from(
-        section.querySelectorAll('.grid > article, .grid > a, .swiper-slide, [data-aos-item]'),
-    ).slice(0, 10);
+    const itemTargets = Array.from(section.querySelectorAll('.grid > article, .grid > a, .swiper-slide, [data-aos-item]')).slice(0, 10);
 
     itemTargets.forEach((element, index) => {
         setAnimationIfMissing(element, itemAnimations[index % itemAnimations.length], 60 * (index % 6), 720);
@@ -159,42 +159,112 @@ const footerLinks = {
                             }}
                         </p>
                         <div class="mt-5 flex gap-3">
-                            <a
-                                :href="appSetting?.instagram_url || '#'"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                aria-label="Instagram"
-                                class="flex h-8 w-8 items-center justify-center rounded-lg bg-white/10 transition-colors hover:bg-[#4CAF50]"
-                            >
-                                <Instagram class="h-4 w-4" />
-                            </a>
-                            <a
-                                :href="appSetting?.tiktok_url || '#'"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                aria-label="TikTok"
-                                class="flex h-8 w-8 items-center justify-center rounded-lg bg-white/10 transition-colors hover:bg-[#4CAF50]"
-                            >
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 24 24"
-                                    fill="currentColor"
-                                    class="h-6 w-6 text-gray-300"
-                                >
-                                    <path
-                                        d="M19.589 6.686a4.793 4.793 0 0 1-3.77-1.878v8.355a4.918 4.918 0 1 1-4.918-4.917c.344 0 .682.036 1.01.104v2.523a2.406 2.406 0 1 0 1.898 2.29V2h2.58a4.79 4.79 0 0 0 3.2 2.84v1.846z"
-                                    />
-                                </svg>
-                            </a>
-                            <a
-                                :href="appSetting?.facebook_url || '#'"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                aria-label="Facebook"
-                                class="flex h-8 w-8 items-center justify-center rounded-lg bg-white/10 transition-colors hover:bg-[#4CAF50]"
-                            >
-                                <Facebook class="h-4 w-4" />
-                            </a>
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger as-child>
+                                        <a
+                                            :href="appSetting?.instagram_url || '#'"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            aria-label="Instagram"
+                                            class="flex h-8 w-8 items-center justify-center rounded-lg bg-white/10 transition-colors hover:bg-[#4CAF50]"
+                                        >
+                                            <Instagram class="h-4 w-4" />
+                                        </a>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        <p>Instagram</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger as-child>
+                                        <a
+                                            :href="appSetting?.facebook_url || '#'"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            aria-label="Facebook"
+                                            class="flex h-8 w-8 items-center justify-center rounded-lg bg-white/10 transition-colors hover:bg-[#4CAF50]"
+                                        >
+                                            <Facebook class="h-4 w-4" />
+                                        </a>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        <p>Facebook</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
+
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger as-child>
+                                        <a
+                                            :href="appSetting?.tiktok_url || '#'"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            aria-label="TikTok"
+                                            class="flex h-8 w-8 items-center justify-center rounded-lg bg-white/10 transition-colors hover:bg-[#4CAF50]"
+                                        >
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                viewBox="0 0 256 256"
+                                                width="100"
+                                                height="100"
+                                                class="h-4 w-4"
+                                                fill="currentColor"
+                                            >
+                                                <path
+                                                    d="M208 80.6a72.3 72.3 0 0 1-42.4-13.7V144a64 64 0 1 1-64-64 62.6 62.6 0 0 1 16 .2v33.3a32 32 0 1 0 21.6 30.5V0h26.4a72.5 72.5 0 0 0 42.4 42.4Z"
+                                                />
+                                            </svg>
+                                        </a>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        <p>TikTok</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger as-child>
+                                        <a
+                                            :href="appSetting?.tiktok_shop_url || '#'"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            aria-label="TikTok Shop"
+                                            class="flex h-8 w-8 items-center justify-center rounded-lg bg-white/10 transition-colors hover:bg-[#4CAF50]"
+                                        >
+                                            <ShoppingBag class="h-4 w-4" />
+                                        </a>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        <p>TikTok Shop</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger as-child>
+                                        <a
+                                            :href="appSetting?.youtube_url || '#'"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            aria-label="YouTube"
+                                            class="flex h-8 w-8 items-center justify-center rounded-lg bg-white/10 transition-colors hover:bg-[#4CAF50]"
+                                        >
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-4 w-4">
+                                                <path
+                                                    d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"
+                                                />
+                                            </svg>
+                                        </a>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        <p>YouTube</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
                         </div>
                     </div>
 

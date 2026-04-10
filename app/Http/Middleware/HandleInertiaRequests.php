@@ -25,6 +25,8 @@ class HandleInertiaRequests extends Middleware
         'youtube_url' => null,
         'facebook_url' => null,
         'tiktok_url' => null,
+        'tiktok_shop_url' => null,
+        'payment_destination_accounts' => '[{"key":"bca_merchant","bank_name":"BCA","account_number":"1234567890","account_holder":"PT Petani Cerdas Indonesia"},{"key":"bri_merchant","bank_name":"BRI","account_number":"987601234567890","account_holder":"PT Petani Cerdas Indonesia"},{"key":"mandiri_merchant","bank_name":"Mandiri","account_number":"1320019988776","account_holder":"PT Petani Cerdas Indonesia"}]',
     ];
 
     /**
@@ -101,6 +103,10 @@ class HandleInertiaRequests extends Middleware
                     : null,
             ],
             'chatQuota' => $chatQuota,
+            'flash' => [
+                'success' => fn () => $request->session()->get('success'),
+                'error' => fn () => $request->session()->get('error'),
+            ],
             'appSetting' => [
                 'app_name' => $appSetting['app_name'],
                 'brand_name' => $appSetting['brand_name'],
@@ -113,6 +119,7 @@ class HandleInertiaRequests extends Middleware
                 'youtube_url' => $appSetting['youtube_url'],
                 'facebook_url' => $appSetting['facebook_url'],
                 'tiktok_url' => $appSetting['tiktok_url'],
+                'tiktok_shop_url' => $appSetting['tiktok_shop_url'],
             ],
         ]);
     }

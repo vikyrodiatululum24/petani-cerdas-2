@@ -15,6 +15,16 @@ class User extends Authenticatable
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, HasRoles;
 
+    protected static function booted(): void
+    {
+        static::deleting(function (self $user): void {
+            $user->profile?->delete();
+            $user->subscriptions()->get()->each->delete();
+            $user->sentChats()->get()->each->delete();
+            $user->receivedChats()->get()->each->delete();
+        });
+    }
+
     /**
      * The attributes that are mass assignable.
      *

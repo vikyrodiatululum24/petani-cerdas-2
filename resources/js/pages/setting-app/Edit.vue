@@ -7,6 +7,7 @@ import Textarea from '@/components/ui/textarea/Textarea.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import type { BreadcrumbItem } from '@/types';
 import { Head, useForm } from '@inertiajs/vue3';
+import { toast } from 'vue-sonner';
 
 interface SettingPayload {
     app_name: string;
@@ -20,6 +21,8 @@ interface SettingPayload {
     youtube_url: string | null;
     facebook_url: string | null;
     tiktok_url: string | null;
+    tiktok_shop_url: string | null;
+    payment_destination_accounts: string;
 }
 
 const props = defineProps<{
@@ -45,6 +48,8 @@ const form = useForm({
     youtube_url: props.setting.youtube_url ?? '',
     facebook_url: props.setting.facebook_url ?? '',
     tiktok_url: props.setting.tiktok_url ?? '',
+    tiktok_shop_url: props.setting.tiktok_shop_url ?? '',
+    payment_destination_accounts: props.setting.payment_destination_accounts ?? '',
 });
 
 const onLogoChange = (event: Event) => {
@@ -58,7 +63,11 @@ const submit = () => {
         _method: 'put',
     })).post(route('setting-app.update'), {
         forceFormData: true,
+        onSuccess () {
+            toast.success('Setting aplikasi berhasil diperbarui');
+        },
     });
+
 };
 </script>
 
@@ -69,7 +78,7 @@ const submit = () => {
         <div class="mx-auto max-w-4xl space-y-6 p-4 w-full">
             <div>
                 <h1 class="text-2xl font-semibold">Setting Aplikasi</h1>
-                <p class="text-sm text-muted-foreground">Kelola logo, brand, deskripsi, kontak, dan social media aplikasi.</p>
+                <p class="text-sm text-muted-foreground">Kelola logo, brand, deskripsi, kontak, social media, dan rekening pembayaran aplikasi.</p>
             </div>
 
             <form @submit.prevent="submit" class="space-y-6 rounded-xl border bg-white p-6">
@@ -136,6 +145,13 @@ const submit = () => {
                         </div>
                     </div>
                     <div class="flex w-full items-center gap-4">
+                        <Label for="tiktok_shop_url" class="w-36">TikTok Shop URL</Label>
+                        <div class="flex-1">
+                            <Input id="tiktok_shop_url" v-model="form.tiktok_shop_url" placeholder="https://shop-id.tokopedia.com/..." />
+                            <InputError :message="form.errors.tiktok_shop_url" class="mt-1" />
+                        </div>
+                    </div>
+                    <div class="flex w-full items-center gap-4">
                         <Label for="youtube_url" class="w-36">YouTube URL</Label>
                         <div class="flex-1">
                             <Input id="youtube_url" v-model="form.youtube_url" placeholder="https://youtube.com/..." />
@@ -149,6 +165,18 @@ const submit = () => {
                             <InputError :message="form.errors.facebook_url" class="mt-1" />
                         </div>
                     </div>
+                </div>
+
+                <div>
+                    <Label for="payment_destination_accounts">Rekening Tujuan Pembayaran</Label>
+                    <Textarea
+                        id="payment_destination_accounts"
+                        v-model="form.payment_destination_accounts"
+                        placeholder="BCA|1234567890|PT Petani Cerdas Indonesia"
+                        rows="6"
+                    />
+                    <p class="mt-1 text-xs text-muted-foreground">Satu rekening per baris dengan format: Nama Bank|Nomor Rekening|Nama Pemilik.</p>
+                    <InputError :message="form.errors.payment_destination_accounts" class="mt-1" />
                 </div>
 
                 <div class="flex justify-end">

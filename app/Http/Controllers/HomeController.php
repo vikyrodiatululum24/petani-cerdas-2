@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\AppSetting;
 use App\Models\Article;
 use App\Models\Product;
 use App\Models\SubscriptionPlan;
 use App\Models\Testimonial;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -71,6 +71,7 @@ class HomeController extends Controller
                     'category' => $article->category?->name ?? 'Artikel',
                     'title' => $article->title,
                     'excerpt' => Str::limit(strip_tags($article->content), 140),
+                    'featuredImageUrl' => $article->featured_image ? Storage::url($article->featured_image) : null,
                     'date' => optional($article->created_at)->translatedFormat('d M Y'),
                     'readTime' => max(1, (int) ceil(str_word_count(strip_tags($article->content)) / 180)).' menit',
                     'href' => route('public.articles.show', ['article' => $article->slug]),
@@ -83,6 +84,7 @@ class HomeController extends Controller
                     'name' => $product->name,
                     'price' => 'Rp '.number_format((float) $price, 0, ',', '.'),
                     'category' => $product->category?->name ?? 'Produk',
+                    'imageUrl' => $product->image_path ? Storage::url($product->image_path) : null,
                     'rating' => 4.8,
                     'sold' => 'Baru',
                 ];

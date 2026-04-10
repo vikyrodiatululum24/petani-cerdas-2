@@ -13,6 +13,13 @@ class Subscription extends Model
 {
     use HasFactory;
 
+    protected static function booted(): void
+    {
+        static::deleting(function (self $subscription): void {
+            $subscription->payments()->get()->each->delete();
+        });
+    }
+
     protected $fillable = [
         'user_id',
         'subscription_plan_id',

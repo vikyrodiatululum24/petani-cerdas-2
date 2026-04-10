@@ -161,8 +161,8 @@ const initials = computed(() => {
                     </template>
 
                     <!-- Profile icon dropdown (always visible) -->
-                    <div class="flex items-center gap-0.5">
-                        <div class="md:hidden flex items-center gap-0.5">
+                    <div class="flex items-center gap-2">
+                        <div class="md:hidden flex items-center gap-0.5" v-if="authUser">
                             <Link
                                 v-for="link in dropdownMenu"
                                 :key="link.href"
@@ -176,7 +176,6 @@ const initials = computed(() => {
                         <DropdownMenu>
                             <DropdownMenuTrigger as-child>
                                 <button class="flex items-center gap-2" :class="!authUser ? 'md:hidden' : ''"
-
                                     aria-label="Menu profil"
                                 >
                                     <!-- Initials if logged in, icon if guest -->

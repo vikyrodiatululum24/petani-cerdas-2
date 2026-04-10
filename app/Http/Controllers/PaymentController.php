@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Subscription\ApproveSubscriptionRequest;
 use App\Http\Requests\Subscription\RejectSubscriptionRequest;
+use App\Models\AppSetting;
 use App\Models\Payment;
 use App\Models\Subscription;
 use Illuminate\Http\RedirectResponse;
@@ -14,6 +15,27 @@ use Inertia\Response;
 
 class PaymentController extends Controller
 {
+    private const DEFAULT_DESTINATION_ACCOUNTS = [
+        [
+            'key' => 'bca_merchant',
+            'bank_name' => 'BCA',
+            'account_number' => '1234567890',
+            'account_holder' => 'PT Petani Cerdas Indonesia',
+        ],
+        [
+            'key' => 'bri_merchant',
+            'bank_name' => 'BRI',
+            'account_number' => '987601234567890',
+            'account_holder' => 'PT Petani Cerdas Indonesia',
+        ],
+        [
+            'key' => 'mandiri_merchant',
+            'bank_name' => 'Mandiri',
+            'account_number' => '1320019988776',
+            'account_holder' => 'PT Petani Cerdas Indonesia',
+        ],
+    ];
+
     public function show(Request $request, Subscription $subscription): Response
     {
         abort_unless($subscription->user_id === $request->user()->id, 403, 'Anda tidak memiliki akses ke pembayaran ini.');
@@ -252,26 +274,26 @@ class PaymentController extends Controller
 
     private function destinationAccounts(): array
     {
-        return [
-            [
-                'key' => 'bca_merchant',
-                'bank_name' => 'BCA',
-                'account_number' => '1234567890',
-                'account_holder' => 'PT Petani Cerdas Indonesia',
-            ],
-            [
-                'key' => 'bri_merchant',
-                'bank_name' => 'BRI',
-                'account_number' => '987601234567890',
-                'account_holder' => 'PT Petani Cerdas Indonesia',
-            ],
-            [
-                'key' => 'mandiri_merchant',
-                'bank_name' => 'Mandiri',
-                'account_number' => '1320019988776',
-                'account_holder' => 'PT Petani Cerdas Indonesia',
-            ],
-        ];
+        $rawValue = AppSetting::query()->where('key', 'payment_destination_accounts')->value('value');
+        $decoded = is_string($rawValue) ? json_decode($rawValue, true) : null;
+
+        if (! is_array($decoded) || $decoded === []) {
+            return self::DEFAULT_DESTINATION_ACCOUNTS;
+        }
+
+        $accounts = collect($decoded)
+            ->filter(fn ($account) => is_array($account))
+            ->map(fn ($account, $index) => [
+                'key' => (string) ($account['key'] ?? 'rekening_'.($index + 1)),
+                'bank_name' => (string) ($account['bank_name'] ?? ''),
+                'account_number' => (string) ($account['account_number'] ?? ''),
+                'account_holder' => (string) ($account['account_holder'] ?? ''),
+            ])
+            ->filter(fn (array $account) => $account['bank_name'] !== '' && $account['account_number'] !== '' && $account['account_holder'] !== '')
+            ->values()
+            ->all();
+
+        return $accounts !== [] ? $accounts : self::DEFAULT_DESTINATION_ACCOUNTS;
     }
 
     private function resolvePlanKey(?string $planName): ?string

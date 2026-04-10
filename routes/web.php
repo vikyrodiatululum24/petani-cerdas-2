@@ -25,9 +25,6 @@ use Inertia\Inertia;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
-Route::get('articles', [PublicArticleController::class, 'index'])->name('public.articles.index');
-Route::get('articles/{article:slug}', [PublicArticleController::class, 'show'])->name('public.articles.show');
-
 Route::get('products', [PublicProductController::class, 'index'])->name('public.products.index');
 Route::get('products/{product:slug}', [PublicProductController::class, 'show'])->name('public.products.show');
 
@@ -99,6 +96,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('petani/profile/edit', [PetaniProfileController::class, 'edit'])->name('petani.profile.edit');
         Route::put('petani/profile', [PetaniProfileController::class, 'update'])->name('petani.profile.update');
     });
+
+    Route::get('articles', [PublicArticleController::class, 'index'])->name('public.articles.index');
+    Route::get('articles/{article:slug}', [PublicArticleController::class, 'show'])->name('public.articles.show');
 
     Route::prefix('petani/subscription')->name('petani.subscriptions.')->group(function () {
         Route::get('packages', [SubscriptionController::class, 'packageIndex'])->name('packages.index');

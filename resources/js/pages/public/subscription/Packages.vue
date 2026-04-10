@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import PublicLayout from '@/layouts/PublicLayout.vue';
-import { Head, router } from '@inertiajs/vue3';
-import { CheckCircle2, Crown, LoaderCircle } from 'lucide-vue-next';
-import { ref } from 'vue';
+import { Head, router, usePage } from '@inertiajs/vue3';
+import { BadgeCheck, CheckCircle2, Crown, LoaderCircle } from 'lucide-vue-next';
+import { ref, watch } from 'vue';
+import { toast } from 'vue-sonner';
 
 interface SubscriptionPlanItem {
     id: number;
@@ -35,7 +37,29 @@ const props = defineProps<{
     activeSubscription: ActiveSubscription | null;
 }>();
 
+const page = usePage<{
+    flash?: {
+        success?: string | null;
+        error?: string | null;
+    };
+}>();
+
 const selectedPlanId = ref<number | null>(null);
+const paymentSuccessModalOpen = ref(false);
+
+watch(
+    () => page.props.flash,
+    (flash) => {
+        if (flash?.success) {
+            paymentSuccessModalOpen.value = true;
+        }
+
+        if (flash?.error) {
+            toast.error(flash.error);
+        }
+    },
+    { immediate: true },
+);
 
 const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('id-ID', {
@@ -61,6 +85,25 @@ const choosePlan = (planId: number) => {
     <Head title="Pilih Paket Subscription" />
 
     <PublicLayout>
+        <Dialog v-model:open="paymentSuccessModalOpen">
+            <DialogContent class="max-w-lg">
+                <DialogHeader>
+                    <div class="flex items-center gap-2 mb-2">
+                        <BadgeCheck class="h-8 w-8 text-green-500" />
+                        <DialogTitle>Pembayaran Berhasil Dikirim</DialogTitle>
+                    </div>
+                    <DialogDescription class="text-sm leading-relaxed text-gray-600">
+                        Terimakasih, selamat bergabung dalam ekosistem petani cerdas. Pengajuan paket anda sedang dalam peninjauan dan akan segera aktif setelah terkonfirmasi. Salam cerdas
+                    </DialogDescription>
+                </DialogHeader>
+                <DialogFooter>
+                    <Button type="button" class="bg-[#2E7D32] text-white hover:bg-[#256427]" @click="paymentSuccessModalOpen = false">
+                        Tutup
+                    </Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+
         <!-- MEMBERSHIP -->
         <section class="bg-gradient-to-b from-gray-50 to-white py-20 lg:py-24">
             <div class="mx-auto max-w-7xl px-6 lg:px-8">

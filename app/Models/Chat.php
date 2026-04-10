@@ -12,6 +12,14 @@ class Chat extends Model
 {
     use HasFactory;
 
+    protected static function booted(): void
+    {
+        static::deleting(function (self $chat): void {
+            $chat->attachments()->get()->each->delete();
+            $chat->replies()->get()->each->delete();
+        });
+    }
+
     protected $fillable = [
         'sender_id',
         'receiver_id',
