@@ -5,9 +5,11 @@ use App\Http\Middleware\EnsureSubscriptionPackage;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Request;
 use Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets;
 use Inertia\Inertia;
 use Spatie\Permission\Middleware\RoleMiddleware;
+use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -30,21 +32,26 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        // $exceptions->respond(function (SymfonyResponse $response, Throwable $exception, Request $request): SymfonyResponse {
-        //     $status = $response->getStatusCode();
+        $exceptions->respond(function (SymfonyResponse $response, \Throwable $exception, Request $request): SymfonyResponse {
+            // In debug mode, keep Laravel's default exception rendering.
+            if (config('app.debug')) {
+                return $response;
+            }
 
-        //     if (in_array($status, [403, 404, 500, 503], true) && ! $request->expectsJson()) {
-        //         return Inertia::render('Error', [
-        //             'status' => $status,
-        //         ])->toResponse($request)->setStatusCode($status);
-        //     }
+            $status = $response->getStatusCode();
 
-        //     if ($status === 419) {
-        //         return back()->with([
-        //             'error' => 'Halaman kedaluwarsa, silakan coba lagi.',
-        //         ]);
-        //     }
+            if (in_array($status, [403, 404, 500, 503], true) && ! $request->expectsJson()) {
+                return Inertia::render('Error', [
+                    'status' => $status,
+                ])->toResponse($request)->setStatusCode($status);
+            }
 
-        //     return $response;
-        // });
+            if ($status === 419) {
+                return back()->with([
+                    'error' => 'Halaman kedaluwarsa, silakan coba lagi.',
+                ]);
+            }
+
+            return $response;
+        });
     })->create();

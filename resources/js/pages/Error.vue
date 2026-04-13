@@ -14,6 +14,13 @@ const titleMap: Record<number, string> = {
     503: 'Layanan Sementara Tidak Tersedia',
 };
 
+const imageMap: Record<number, string> = {
+    403: '/assets/403.png',
+    404: '/assets/404.png',
+    500: '/assets/500.png',
+    503: '/assets/503.png',
+};
+
 const descriptionMap: Record<number, string> = {
     403: 'Anda tidak memiliki izin untuk membuka halaman ini.',
     404: 'Halaman yang Anda cari mungkin telah dipindahkan atau tidak tersedia.',
@@ -41,6 +48,7 @@ const description = descriptionMap[props.status] ?? 'Permintaan Anda belum bisa 
             <p class="text-sm font-semibold uppercase tracking-wide text-[#2E7D32]">Error {{ props.status }}</p>
             <h1 class="mt-2 text-3xl font-extrabold text-gray-900 md:text-4xl">{{ title }}</h1>
             <p class="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-gray-600 md:text-base">{{ description }}</p>
+            <img :src="imageMap[props.status]" :alt="title" class="mx-auto mt-6 w-64">
 
             <div class="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
                 <Button as-child class="bg-[#2E7D32] text-white hover:bg-[#256427]">

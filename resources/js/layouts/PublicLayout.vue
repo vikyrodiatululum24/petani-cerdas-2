@@ -134,7 +134,7 @@ const footerLinks = {
         <PublicTopBar />
 
         <!-- Page content — padded top to clear fixed topbar, padded bottom on mobile to clear bottom nav -->
-        <main class="flex-1 overflow-x-hidden pb-20 pt-16 md:pb-0">
+        <main class="flex-1 overflow-x-hidden pt-16">
             <slot />
         </main>
 

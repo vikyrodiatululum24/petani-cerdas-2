@@ -14,6 +14,12 @@ class PublicArticleController extends Controller
 {
     public function index(Request $request): Response
     {
+        if (! $request->user()) {
+            $request->session()->put('url.intended', $request->fullUrl());
+
+            return Inertia::render('NotAuth');
+        }
+
         $filters = $request->validate([
             'search' => ['nullable', 'string', 'max:100'],
             'category' => ['nullable', 'string', 'exists:article_categories,slug'],
