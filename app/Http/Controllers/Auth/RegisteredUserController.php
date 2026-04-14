@@ -21,7 +21,7 @@ class RegisteredUserController extends Controller
      */
     public function create(): Response
     {
-        return Inertia::render('auth/Register');
+        return Inertia::render('public/register/Index');
     }
 
     /**
@@ -35,7 +35,7 @@ class RegisteredUserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'phone' => 'nullable|string|max:20',
+            'phone' => 'nullable|string|max:20|unique:user_profiles,phone',
             'main_crop' => 'nullable|string|max:255',
             'land_type' => 'nullable|string|max:255',
             'address' => 'nullable|string|max:255',
@@ -56,7 +56,7 @@ class RegisteredUserController extends Controller
 
         $defaultCustomerRole = Role::query()
             ->where('guard_name', 'web')
-            ->whereIn('name', ['customer', 'petani'])
+            ->where('name', 'petani')
             ->first();
 
         if ($defaultCustomerRole) {
@@ -67,6 +67,6 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect()->intended(route('home', absolute: false));
+        return redirect()->route('verification.notice');
     }
 }

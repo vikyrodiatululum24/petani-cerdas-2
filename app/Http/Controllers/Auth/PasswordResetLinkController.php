@@ -29,7 +29,9 @@ class PasswordResetLinkController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'email' => 'required|email',
+            'email' => 'required|email|exists:users,email',
+        ], [
+            'email.exists' => 'Akun dengan email tersebut tidak ditemukan.',
         ]);
 
         Password::sendResetLink(

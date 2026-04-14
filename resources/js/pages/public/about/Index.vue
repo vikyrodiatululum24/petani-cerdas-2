@@ -126,7 +126,7 @@ const galleryImages = [
         alt: 'Petani bekerja di lahan hortikultura',
     },
     {
-        src: 'https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=1200&q=80',
+        src: '/assets/about2.jpg',
         alt: 'Bibit tanaman dan proses pembibitan',
     },
 ];
@@ -263,7 +263,7 @@ const galleryImages = [
 
         <section class="bg-gray-50 py-14 lg:py-20">
             <div class="mx-auto max-w-7xl px-6 lg:px-8">
-                <div class="grid gap-8 lg:grid-cols-[1.3fr_1fr] lg:items-start">
+                <div class="grid gap-8 lg:grid-cols-[1.3fr_1fr] lg:items-end">
                     <div>
                         <h2 class="text-2xl font-extrabold text-gray-900 lg:text-3xl">Produk dan Layanan</h2>
                         <p class="mt-3 text-sm leading-relaxed text-gray-600">

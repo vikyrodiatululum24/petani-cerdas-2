@@ -80,7 +80,19 @@ class UserController extends Controller
     public function show(User $user): Response
     {
         return Inertia::render('users/Show', [
-            'user' => UserResource::make($user->load('roles:id,name'))->resolve(),
+            'user' => UserResource::make($user->load(['roles:id,name', 'profile']))->resolve(),
+            'profile' => [
+                'phone' => $user->profile?->phone,
+                'main_crop' => $user->profile?->main_crop,
+                'land_type' => $user->profile?->land_type,
+                'province' => $user->profile?->province,
+                'city' => $user->profile?->city,
+                'district' => $user->profile?->district,
+                'village' => $user->profile?->village,
+                'postal_code' => $user->profile?->postal_code,
+                'address' => $user->profile?->address,
+                'photo_url' => $user->profile?->photo ? asset('storage/'.$user->profile->photo) : null,
+            ],
         ]);
     }
 

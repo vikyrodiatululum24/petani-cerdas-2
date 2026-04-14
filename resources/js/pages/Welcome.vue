@@ -287,7 +287,7 @@ onBeforeUnmount(() => {
                                 size="lg"
                                 class="rounded-xl bg-white px-6 text-sm font-semibold text-[#2E7D32] shadow-md hover:bg-green-50"
                             >
-                                <Link href="/pendaftaran">
+                                <Link href="/register" class="inline-flex items-center gap-2">
                                     Mulai Gratis dan Dapatkan Bimbingan
                                     <ArrowRight class="h-4 w-4" />
                                 </Link>
@@ -303,7 +303,7 @@ onBeforeUnmount(() => {
                         </div>
                         <div class="mt-10 flex flex-wrap items-center gap-6 text-green-100 text-sm">
                             <span class="flex items-center gap-1.5"><CheckCircle2 class="h-4 w-4 text-[#A5D6A7]" />Gratis Gabung Tanpa Ribet</span>
-                            <span class="flex items-center gap-1.5"><CheckCircle2 class="h-4 w-4 text-[#A5D6A7]" />Didampingi Mentor Berpengalamant</span>
+                            <span class="flex items-center gap-1.5"><CheckCircle2 class="h-4 w-4 text-[#A5D6A7]" />Didampingi Mentor Berpengalaman</span>
                             <span class="flex items-center gap-1.5"><CheckCircle2 class="h-4 w-4 text-[#A5D6A7]" />Mulai Kapan Saja</span>
                         </div>
                     </div>
@@ -639,7 +639,7 @@ onBeforeUnmount(() => {
                         size="lg"
                         class="rounded-xl bg-white px-8 text-sm font-bold text-[#2E7D32] shadow-lg hover:bg-green-50"
                     >
-                        <Link href="/pendaftaran">
+                        <Link href="/register" class="inline-flex items-center gap-2">
                             Daftar Gratis Sekarang <ArrowRight class="h-4 w-4" />
                         </Link>
                     </Button>

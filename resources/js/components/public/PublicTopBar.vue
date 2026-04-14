@@ -152,7 +152,7 @@ const initials = computed(() => {
                             Masuk
                         </Link>
                         <Link
-                            href="/pendaftaran"
+                            href="/register"
                             class="hidden items-center gap-1.5 rounded-lg bg-[#2E7D32] px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-[#256427] md:inline-flex"
                         >
                             <UserPlus class="h-4 w-4" />
