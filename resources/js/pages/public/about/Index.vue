@@ -122,7 +122,7 @@ const galleryImages = [
         alt: 'Lahan pertanian hijau dengan tanaman padi',
     },
     {
-        src: '/assets/aboutme1.jpg',
+        src: '/assets/about1.jpg',
         alt: 'Petani bekerja di lahan hortikultura',
     },
     {
