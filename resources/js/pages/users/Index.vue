@@ -156,7 +156,7 @@ const resetFilters = () => {
 
             <div class="overflow-x-auto rounded-lg border">
                 <div class="grid gap-3 border-b bg-muted/30 p-4 md:grid-cols-4">
-                    <div class="md:col-span-2">
+                    <div class="md:col-span-3">
                         <Label for="search">Search</Label>
                         <Input id="search" v-model="filterForm.search" placeholder="Cari nama atau email" />
                     </div>
@@ -170,19 +170,18 @@ const resetFilters = () => {
                             </option>
                         </select>
                     </div>
+                </div>
 
-                    <div>
-                        <Label for="per-page">Per Page</Label>
+                <div class="flex gap-2 py-4 px-6 items-center justify-between">
+                    <Button size="sm" @click="resetFilters">Reset</Button>
+                    <div class="flex items-center gap-2">
+                        <Label for="per-page" class="text-sm whitespace-nowrap">Per Page</Label>
                         <select id="per-page" v-model="filterForm.per_page" class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
                             <option :value="10">10</option>
                             <option :value="15">15</option>
                             <option :value="25">25</option>
                             <option :value="50">50</option>
                         </select>
-                    </div>
-
-                    <div class="md:col-span-4 flex gap-2">
-                        <Button variant="ghost" @click="resetFilters">Reset</Button>
                     </div>
                 </div>
 

@@ -16,6 +16,7 @@ class AdminSubscriptionController extends Controller
         $search = trim((string) $request->query('search', ''));
         $status = $request->query('status');
         $planId = $request->query('plan_id');
+        $perPage = (int) ($request->per_page ?? 10);
 
         $subscriptions = Subscription::query()
             ->with([
@@ -49,8 +50,8 @@ class AdminSubscriptionController extends Controller
                 fn ($query) => $query->where('subscription_plan_id', (int) $planId)
             )
             ->latest('id')
-            ->paginate(12)
-            ->withQueryString();
+            ->paginate($perPage)
+            ->appends(request()->all());
 
         return Inertia::render('subscriptions/Index', [
             'subscriptions' => $subscriptions->getCollection()->map(function (Subscription $subscription): array {

@@ -12,6 +12,7 @@ class SubscriptionPlanResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'jenis' => $this->jenis,
             'price' => $this->price,
             'discount_price' => $this->discount_price,
             'effective_price' => $this->discount_price ?? $this->price,

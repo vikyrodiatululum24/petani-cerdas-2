@@ -147,26 +147,26 @@ const resetFilters = () => {
             </div>
 
             <div class="overflow-x-auto rounded-lg border">
-                <div class="grid gap-3 border-b bg-muted/30 p-4 md:grid-cols-4">
-                    <div class="md:col-span-3">
+                <div class="w-full gap-3 bg-muted/30 p-4 flex items-center">
+                    <div class="w-full">
                         <Label for="search">Search</Label>
                         <Input id="search" v-model="filterForm.search" placeholder="Cari nama, slug, atau deskripsi sponsor" />
                     </div>
-
-                    <div>
-                        <Label for="per-page">Per Page</Label>
-                        <select id="per-page" v-model="filterForm.per_page" class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
-                            <option :value="10">10</option>
-                            <option :value="15">15</option>
-                            <option :value="25">25</option>
-                            <option :value="50">50</option>
-                        </select>
-                    </div>
-
-                    <div class="md:col-span-4 flex gap-2">
-                        <Button variant="ghost" @click="resetFilters">Reset</Button>
-                    </div>
                 </div>
+
+                <div class="flex justify-between items-center px-4 gap-4 py-4">
+                        <Button size="sm" @click="resetFilters">Reset</Button>
+
+                        <div class="flex items-center gap-2">
+                            <Label for="per-page" class="whitespace-nowrap">Per Page</Label>
+                            <select id="per-page" v-model="filterForm.per_page" class="w-20 rounded-md border border-input bg-background px-3 py-2 text-sm">
+                                <option :value="10">10</option>
+                                <option :value="15">15</option>
+                                <option :value="25">25</option>
+                                <option :value="50">50</option>
+                            </select>
+                        </div>
+                    </div>
 
                 <table class="w-full min-w-[760px] text-sm">
                     <thead class="bg-muted/60 text-left">

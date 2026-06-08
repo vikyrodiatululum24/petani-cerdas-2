@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/AppLayout.vue';
 import type { BreadcrumbItem } from '@/types';
-import { Link, router, useForm } from '@inertiajs/vue3';
+import { Head, Link, router, useForm } from '@inertiajs/vue3';
 import { computed, onBeforeUnmount, ref, watch } from 'vue';
 import { toast } from 'vue-sonner';
 
@@ -76,6 +76,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 const filterForm = useForm({
+    per_page: props.pagination.per_page,
     search: props.filters.search ?? '',
     status: props.filters.status ?? '',
     plan_id: props.filters.plan_id ? String(props.filters.plan_id) : '',
@@ -194,6 +195,8 @@ const submitUpdate = () => {
 </script>
 
 <template>
+    <Head title="Manajemen Subscription" />
+
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="space-y-6 p-4">
             <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -207,7 +210,7 @@ const submitUpdate = () => {
             </div>
 
             <div class="overflow-x-auto rounded-lg border">
-                <div class="grid gap-3 border-b bg-muted/30 p-4 md:grid-cols-4">
+                <div class="grid gap-3 bg-muted/30 p-4 md:grid-cols-4">
                     <div class="md:col-span-2">
                         <Label for="search">Search</Label>
                         <Input id="search" v-model="filterForm.search" placeholder="Cari petani, email, paket, atau generation" />
@@ -233,9 +236,19 @@ const submitUpdate = () => {
                             <option value="canceled">canceled</option>
                         </select>
                     </div>
+                </div>
 
-                    <div class="md:col-span-3 flex gap-2">
-                        <Button variant="ghost" @click="resetFilters">Reset</Button>
+                <div class="flex justify-between items-center px-4 gap-4 py-4">
+                    <Button size="sm" @click="resetFilters">Reset</Button>
+
+                    <div class="flex items-center gap-2">
+                        <Label for="per-page" class="whitespace-nowrap">Per Page</Label>
+                        <select id="per-page" v-model="filterForm.per_page" class="w-20 rounded-md border border-input bg-background px-3 py-2 text-sm">
+                            <option :value="10">10</option>
+                            <option :value="15">15</option>
+                            <option :value="25">25</option>
+                            <option :value="50">50</option>
+                        </select>
                     </div>
                 </div>
 

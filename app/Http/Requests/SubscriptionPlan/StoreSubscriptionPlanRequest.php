@@ -27,6 +27,7 @@ class StoreSubscriptionPlanRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
+            'jenis' => ['required', 'in:basic,premium,elite'],
             'price' => ['required', 'numeric', 'min:0'],
             'discount_price' => ['nullable', 'numeric', 'min:0', 'lte:price'],
             'quota' => ['nullable', 'integer', 'min:0'],
@@ -43,6 +44,8 @@ class StoreSubscriptionPlanRequest extends FormRequest
         return [
             'name.required' => 'Nama paket wajib diisi.',
             'name.max' => 'Nama paket maksimal 255 karakter.',
+            'jenis.required' => 'Jenis paket wajib diisi.',
+            'jenis.in' => 'Jenis paket harus salah satu dari: basic, premium, elite.',
             'price.required' => 'Harga paket wajib diisi.',
             'price.numeric' => 'Harga paket harus berupa angka.',
             'price.min' => 'Harga paket tidak boleh kurang dari 0.',

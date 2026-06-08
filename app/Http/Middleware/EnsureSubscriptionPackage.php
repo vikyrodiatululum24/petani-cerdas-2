@@ -30,7 +30,7 @@ class EnsureSubscriptionPackage
             ->values();
 
         $activeSubscription = $user->subscriptions()
-            ->with('plan:id,name')
+            ->with('plan:id,jenis,name')
             ->currentlyActive()
             ->latest('end_date')
             ->latest('id')
@@ -40,7 +40,7 @@ class EnsureSubscriptionPackage
             abort(403, 'Anda belum memiliki paket subscription aktif.');
         }
 
-        $currentPackage = Str::slug(Str::lower((string) $activeSubscription->plan->name));
+        $currentPackage = Str::slug(Str::lower((string) $activeSubscription->plan->jenis));
 
         if (! $allowedPackages->contains($currentPackage)) {
             abort(403, 'Paket subscription Anda tidak memiliki akses ke fitur ini.');

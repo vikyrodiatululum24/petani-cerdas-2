@@ -40,6 +40,7 @@ class SubscriptionPlanController extends Controller
                 'search' => $filters['search'] ?? '',
                 'featured' => $filters['featured'] ?? null,
                 'per_page' => $perPage,
+                'jenis' => $filters['jenis'] ?? null,
             ],
         ]);
     }

@@ -10,6 +10,7 @@ import { Head, Link, useForm } from '@inertiajs/vue3';
 interface Plan {
     id: number;
     name: string;
+    jenis: string;
     price: number;
     discount_price: number | null;
     quota: number | null;
@@ -36,6 +37,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 const form = useForm({
     name: props.plan.name,
+    jenis: props.plan.jenis,
     price: Number(props.plan.price),
     discount_price: props.plan.discount_price !== null ? Number(props.plan.discount_price) : '',
     quota: props.plan.quota !== null ? props.plan.quota : '',
@@ -86,6 +88,17 @@ const formatPrice = (price: number) => {
                     <Label for="name">Nama Paket</Label>
                     <Input id="name" v-model="form.name" placeholder="Paket Premium" />
                     <InputError :message="form.errors.name" />
+                </div>
+
+                <div class="space-y-1.5">
+                    <Label for="jenis">Jenis Paket</Label>
+                    <select id="jenis" v-model="form.jenis" class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+                        <option value="">Pilih Jenis Paket</option>
+                        <option value="basic">Basic</option>
+                        <option value="premium">Premium</option>
+                        <option value="elite">Elite</option>
+                    </select>
+                    <InputError :message="form.errors.jenis" />
                 </div>
 
                 <div class="grid gap-4 md:grid-cols-2">

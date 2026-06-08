@@ -12,6 +12,7 @@ import { toast } from 'vue-sonner';
 interface SubscriptionPlan {
     id: number;
     name: string;
+    jenis: string;
     price: number;
     discount_price: number | null;
     effective_price: number;
@@ -41,6 +42,7 @@ interface Filters {
     search: string;
     featured: 'featured' | 'regular' | null;
     per_page: number;
+    jenis: string | null;
 }
 
 const props = defineProps<{
@@ -63,6 +65,7 @@ const filterForm = useForm({
     search: props.filters.search ?? '',
     featured: props.filters.featured,
     per_page: props.filters.per_page ?? 10,
+    jenis: props.filters.jenis,
 });
 
 const openDeleteDialog = (plan: SubscriptionPlan) => {
@@ -117,7 +120,7 @@ watch(
 );
 
 watch(
-    () => [filterForm.featured, filterForm.per_page],
+    () => [filterForm.featured, filterForm.per_page, filterForm.jenis],
     () => {
         applyFilters();
     },
@@ -133,6 +136,7 @@ const resetFilters = () => {
     filterForm.search = '';
     filterForm.featured = null;
     filterForm.per_page = 10;
+    filterForm.jenis = null;
     applyFilters();
 };
 
@@ -146,7 +150,7 @@ const formatPrice = (price: number) => {
 </script>
 
 <template>
-    <Head title="Subscription Plans" />
+    <Head title="Manajemen Paket Langganan" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="space-y-6 p-4">
@@ -162,10 +166,20 @@ const formatPrice = (price: number) => {
             </div>
 
             <div class="overflow-x-auto rounded-lg border">
-                <div class="grid gap-3 border-b bg-muted/30 p-4 md:grid-cols-4">
+                <div class="grid gap-3 bg-muted/30 p-4 md:grid-cols-4">
                     <div class="md:col-span-2">
                         <Label for="search">Search</Label>
                         <Input id="search" v-model="filterForm.search" placeholder="Cari nama atau deskripsi paket" />
+                    </div>
+
+                    <div>
+                        <Label for="jenis-filter">Jenis</Label>
+                        <select id="jenis-filter" v-model="filterForm.jenis" class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+                            <option :value="null">Semua</option>
+                            <option value="basic">Basic</option>
+                            <option value="premium">Premium</option>
+                            <option value="elite">Elite</option>
+                        </select>
                     </div>
 
                     <div>
@@ -176,19 +190,19 @@ const formatPrice = (price: number) => {
                             <option value="regular">Regular</option>
                         </select>
                     </div>
+                </div>
 
-                    <div>
-                        <Label for="per-page">Per Page</Label>
-                        <select id="per-page" v-model="filterForm.per_page" class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+                <div class="flex justify-between items-center px-4 gap-4 py-4">
+                    <Button size="sm" @click="resetFilters">Reset</Button>
+
+                    <div class="flex items-center gap-2">
+                        <Label for="per-page" class="whitespace-nowrap">Per Page</Label>
+                        <select id="per-page" v-model="filterForm.per_page" class="w-20 rounded-md border border-input bg-background px-3 py-2 text-sm">
                             <option :value="10">10</option>
                             <option :value="15">15</option>
                             <option :value="25">25</option>
                             <option :value="50">50</option>
                         </select>
-                    </div>
-
-                    <div class="md:col-span-4 flex gap-2">
-                        <Button variant="ghost" @click="resetFilters">Reset</Button>
                     </div>
                 </div>
 
@@ -196,6 +210,7 @@ const formatPrice = (price: number) => {
                     <thead class="bg-muted/60 text-left">
                         <tr>
                             <th class="px-4 py-3 font-medium">Nama Paket</th>
+                            <th class="px-4 py-3 font-medium">Jenis</th>
                             <th class="px-4 py-3 font-medium">Harga</th>
                             <th class="px-4 py-3 font-medium">Durasi</th>
                             <th class="px-4 py-3 font-medium">Kuota</th>
@@ -212,6 +227,9 @@ const formatPrice = (price: number) => {
                                     <p class="font-medium">{{ plan.name }}</p>
                                     <span v-if="plan.is_featured" class="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700">Featured</span>
                                 </div>
+                            </td>
+                            <td class="px-4 py-3">
+                                <span class="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700">{{ plan.jenis }}</span>
                             </td>
                             <td class="px-4 py-3">
                                 <div>

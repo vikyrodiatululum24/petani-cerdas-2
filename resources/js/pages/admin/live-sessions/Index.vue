@@ -5,6 +5,7 @@ import DropdownMenu from '@/components/ui/dropdown-menu/DropdownMenu.vue';
 import DropdownMenuContent from '@/components/ui/dropdown-menu/DropdownMenuContent.vue';
 import DropdownMenuItem from '@/components/ui/dropdown-menu/DropdownMenuItem.vue';
 import DropdownMenuTrigger from '@/components/ui/dropdown-menu/DropdownMenuTrigger.vue';
+import InputError from '@/components/InputError.vue';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/AppLayout.vue';
@@ -302,43 +303,49 @@ const submitStatusUpdate = (session: SessionItem, status: SessionItem['status'])
                 </DialogHeader>
 
                 <div class="grid gap-4">
-                    <div>
+                    <div class="space-y-1">
                         <Label for="create-generation">Generation Target</Label>
                         <select id="create-generation" v-model="createForm.generation" class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
                             <option value="">Pilih generation</option>
                             <option v-for="opt in generationOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
                         </select>
+                        <InputError :message="createForm.errors.generation" />
                     </div>
 
-                    <div>
+                    <div class="space-y-1">
                         <Label for="create-title">Judul Sesi</Label>
                         <Input id="create-title" v-model="createForm.title" placeholder="Contoh: Klinik Tanam Mingguan" />
+                        <InputError :message="createForm.errors.title" />
                     </div>
 
-                    <div>
+                    <div class="space-y-1">
                         <Label for="create-description">Deskripsi</Label>
                         <textarea id="create-description" v-model="createForm.description" rows="3" class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm" placeholder="Materi atau agenda sesi" />
+                        <InputError :message="createForm.errors.description" />
                     </div>
 
                     <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
-                        <div>
+                        <div class="space-y-1">
                             <Label for="create-scheduled">Waktu Sesi</Label>
                             <Input id="create-scheduled" v-model="createForm.scheduled_at" type="datetime-local" />
+                            <InputError :message="createForm.errors.scheduled_at" />
                         </div>
 
-                        <div>
+                        <div class="space-y-1">
                             <Label for="create-status">Status</Label>
                             <select id="create-status" v-model="createForm.status" class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
                                 <option value="scheduled">scheduled</option>
                                 <option value="live">live</option>
                                 <option value="ended">ended</option>
                             </select>
+                            <InputError :message="createForm.errors.status" />
                         </div>
                     </div>
 
-                    <div>
+                    <div class="space-y-1">
                         <Label for="create-stream">Link Stream</Label>
                         <Input id="create-stream" v-model="createForm.stream_url" placeholder="https://..." />
+                        <InputError :message="createForm.errors.stream_url" />
                     </div>
                 </div>
 
@@ -359,42 +366,48 @@ const submitStatusUpdate = (session: SessionItem, status: SessionItem['status'])
                 </DialogHeader>
 
                 <div class="grid gap-4">
-                    <div>
+                    <div class="space-y-1">
                         <Label for="edit-generation">Generation Target</Label>
                         <select id="edit-generation" v-model="editForm.generation" class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
                             <option value="">Pilih generation</option>
                             <option v-for="opt in generationOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
                         </select>
+                        <InputError :message="editForm.errors.generation" />
                     </div>
 
-                    <div>
+                    <div class="space-y-1">
                         <Label for="edit-title">Judul Sesi</Label>
                         <Input id="edit-title" v-model="editForm.title" />
+                        <InputError :message="editForm.errors.title" />
                     </div>
 
-                    <div>
+                    <div class="space-y-1">
                         <Label for="edit-description">Deskripsi</Label>
                         <textarea id="edit-description" v-model="editForm.description" rows="3" class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm" />
+                        <InputError :message="editForm.errors.description" />
                     </div>
 
                     <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
-                        <div>
+                        <div class="space-y-1">
                             <Label for="edit-scheduled">Waktu Sesi</Label>
                             <Input id="edit-scheduled" v-model="editForm.scheduled_at" type="datetime-local" />
+                            <InputError :message="editForm.errors.scheduled_at" />
                         </div>
-                        <div>
+                        <div class="space-y-1">
                             <Label for="edit-status">Status</Label>
                             <select id="edit-status" v-model="editForm.status" class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
                                 <option value="scheduled">scheduled</option>
                                 <option value="live">live</option>
                                 <option value="ended">ended</option>
                             </select>
+                            <InputError :message="editForm.errors.status" />
                         </div>
                     </div>
 
-                    <div>
+                    <div class="space-y-1">
                         <Label for="edit-stream">Link Stream</Label>
                         <Input id="edit-stream" v-model="editForm.stream_url" placeholder="https://..." />
+                        <InputError :message="editForm.errors.stream_url" />
                     </div>
                 </div>
 
