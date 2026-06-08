@@ -1,16 +1,7 @@
 <script setup lang="ts">
 import PublicLayout from '@/layouts/PublicLayout.vue';
 import { Head } from '@inertiajs/vue3';
-import {
-    CheckCircle2,
-    Handshake,
-    Leaf,
-    Sprout,
-    Store,
-    Target,
-    Tractor,
-    Users,
-} from 'lucide-vue-next';
+import { CheckCircle2, Handshake, Leaf, Sprout, Store, Target, Tractor, Users } from 'lucide-vue-next';
 
 interface AppSettingItem {
     app_name: string;
@@ -99,19 +90,22 @@ const initiators = [
     {
         name: 'eris riswandi',
         role: 'Chief Executive Officer',
-        profile: 'Berpengalaman dalam pengembangan agribisnis berbasis komunitas, dengan fokus pada penguatan model kolaborasi petani dan akses pasar berkelanjutan.',
+        profile:
+            'Berpengalaman dalam pengembangan agribisnis berbasis komunitas, dengan fokus pada penguatan model kolaborasi petani dan akses pasar berkelanjutan.',
         photo: '/assets/01.%20Eris.png',
     },
     {
         name: 'hirlan maulana',
         role: 'Chief Financial Officer',
-        profile: 'Memimpin program pendampingan budidaya dan implementasi smart farming agar praktik di lapangan lebih terukur, efisien, dan adaptif terhadap musim.',
+        profile:
+            'Memimpin program pendampingan budidaya dan implementasi smart farming agar praktik di lapangan lebih terukur, efisien, dan adaptif terhadap musim.',
         photo: '/assets/02.%20Hirlan.png',
     },
     {
         name: 'rian hidayat',
         role: 'Chief Operating Officer',
-        profile: 'Berfokus pada penguatan jejaring petani, fasilitasi kemitraan offtaker, serta peningkatan nilai tambah hasil panen melalui strategi distribusi profesional.',
+        profile:
+            'Berfokus pada penguatan jejaring petani, fasilitasi kemitraan offtaker, serta peningkatan nilai tambah hasil panen melalui strategi distribusi profesional.',
         photo: '/assets/03.%20Rian.png',
     },
 ];
@@ -137,7 +131,10 @@ const galleryImages = [
 
     <PublicLayout>
         <section class="relative overflow-hidden bg-gradient-to-br from-[#1f5a2f] via-[#2E7D32] to-[#66BB6A] py-16 lg:py-24">
-            <div class="absolute inset-0 opacity-20" style="background-image: radial-gradient(circle, #ffffff 1px, transparent 1px); background-size: 24px 24px" />
+            <div
+                class="absolute inset-0 opacity-20"
+                style="background-image: radial-gradient(circle, #ffffff 1px, transparent 1px); background-size: 24px 24px"
+            />
             <div class="relative mx-auto max-w-7xl px-6 lg:px-8">
                 <div class="mx-auto max-w-2xl text-center">
                     <div>
@@ -147,7 +144,9 @@ const galleryImages = [
                         </h1>
                         <p class="mt-2 text-base italic text-green-100 lg:text-lg">Efficiency Through Intelligence</p>
                         <p class="mt-5 text-lg leading-relaxed text-green-50">
-                            Petani Cerdas adalah inisiatif agribisnis modern berbasis komunitas yang mengintegrasikan produksi pertanian, kemitraan petani, teknologi smart farming, dan sistem distribusi profesional. Kami hadir untuk meningkatkan kesejahteraan petani sekaligus memperkuat ketahanan pangan secara berkelanjutan.
+                            Petani Cerdas adalah inisiatif agribisnis modern berbasis komunitas yang mengintegrasikan produksi pertanian, kemitraan
+                            petani, teknologi smart farming, dan sistem distribusi profesional. Kami hadir untuk meningkatkan kesejahteraan petani
+                            sekaligus memperkuat ketahanan pangan secara berkelanjutan.
                         </p>
                     </div>
                 </div>
@@ -168,13 +167,9 @@ const galleryImages = [
                         class="group rounded-3xl border border-gray-200 bg-white p-6 text-center shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
                     >
                         <div class="mx-auto h-28 w-28 rounded-full bg-gradient-to-br from-[#d9f0db] via-white to-[#dff6e1] p-1.5">
-                            <img
-                                :src="person.photo"
-                                :alt="`Foto ${person.name}`"
-                                class="h-full w-full rounded-full object-cover ring-2 ring-white"
-                            />
+                            <img :src="person.photo" :alt="`Foto ${person.name}`" class="h-full w-full rounded-full object-cover ring-2 ring-white" />
                         </div>
-                        <h3 class="mt-4 text-base font-bold text-gray-900 uppercase">{{ person.name }}</h3>
+                        <h3 class="mt-4 text-base font-bold uppercase text-gray-900">{{ person.name }}</h3>
                         <p class="mt-1 text-sm font-medium text-[#2E7D32]">{{ person.role }}</p>
                     </article>
                 </div>
@@ -267,12 +262,16 @@ const galleryImages = [
                     <div>
                         <h2 class="text-2xl font-extrabold text-gray-900 lg:text-3xl">Produk dan Layanan</h2>
                         <p class="mt-3 text-sm leading-relaxed text-gray-600">
-                            Solusi kami dirancang untuk menjawab kebutuhan dari tahap budidaya, pendampingan teknis,
-                            hingga penguatan distribusi dan akses pasar.
+                            Solusi kami dirancang untuk menjawab kebutuhan dari tahap budidaya, pendampingan teknis, hingga penguatan distribusi dan
+                            akses pasar.
                         </p>
 
                         <div class="mt-6 grid gap-4 sm:grid-cols-2">
-                            <article v-for="service in productsAndServices" :key="service.title" class="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+                            <article
+                                v-for="service in productsAndServices"
+                                :key="service.title"
+                                class="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm"
+                            >
                                 <div class="mb-3 inline-flex h-9 w-9 items-center justify-center rounded-lg bg-[#E8F5E9] text-[#2E7D32]">
                                     <component :is="service.icon" class="h-5 w-5" />
                                 </div>
@@ -324,7 +323,5 @@ const galleryImages = [
                 </div>
             </div>
         </section>
-
-
     </PublicLayout>
 </template>

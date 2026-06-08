@@ -75,7 +75,11 @@ const submit = () => {
 
                     <div class="space-y-1.5">
                         <Label for="avatar_color">Warna Avatar</Label>
-                        <select id="avatar_color" v-model="form.avatar_color" class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+                        <select
+                            id="avatar_color"
+                            v-model="form.avatar_color"
+                            class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                        >
                             <option value="bg-[#2E7D32]">Hijau Tua</option>
                             <option value="bg-blue-600">Biru</option>
                             <option value="bg-orange-600">Oranye</option>

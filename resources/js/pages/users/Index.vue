@@ -154,7 +154,7 @@ const resetFilters = () => {
                 </Button>
             </div>
 
-            <div class="overflow-x-auto rounded-lg border">
+            <div class="max-w-full overflow-hidden rounded-lg border">
                 <div class="grid gap-3 border-b bg-muted/30 p-4 md:grid-cols-4">
                     <div class="md:col-span-3">
                         <Label for="search">Search</Label>
@@ -163,7 +163,11 @@ const resetFilters = () => {
 
                     <div>
                         <Label for="role-filter">Role</Label>
-                        <select id="role-filter" v-model="filterForm.role" class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+                        <select
+                            id="role-filter"
+                            v-model="filterForm.role"
+                            class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                        >
                             <option :value="null">Semua role</option>
                             <option v-for="role in roles" :key="role" :value="role">
                                 {{ role }}
@@ -172,11 +176,15 @@ const resetFilters = () => {
                     </div>
                 </div>
 
-                <div class="flex gap-2 py-4 px-6 items-center justify-between">
+                <div class="flex items-center justify-between gap-2 px-6 py-4">
                     <Button size="sm" @click="resetFilters">Reset</Button>
                     <div class="flex items-center gap-2">
-                        <Label for="per-page" class="text-sm whitespace-nowrap">Per Page</Label>
-                        <select id="per-page" v-model="filterForm.per_page" class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+                        <Label for="per-page" class="whitespace-nowrap text-sm">Per Page</Label>
+                        <select
+                            id="per-page"
+                            v-model="filterForm.per_page"
+                            class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                        >
                             <option :value="10">10</option>
                             <option :value="15">15</option>
                             <option :value="25">25</option>
@@ -185,41 +193,43 @@ const resetFilters = () => {
                     </div>
                 </div>
 
-                <table class="w-full min-w-[760px] text-sm">
-                    <thead class="bg-muted/60 text-left">
-                        <tr>
-                            <th class="px-4 py-3 font-medium">Nama</th>
-                            <th class="px-4 py-3 font-medium">Email</th>
-                            <th class="px-4 py-3 font-medium">Role</th>
-                            <th class="px-4 py-3 font-medium">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-if="users.length === 0">
-                            <td colspan="4" class="px-4 py-6 text-center text-muted-foreground">Belum ada pengguna.</td>
-                        </tr>
-                        <tr v-for="user in users" :key="user.id" class="border-t">
-                            <td class="px-4 py-3 font-medium">{{ user.name }}</td>
-                            <td class="px-4 py-3">{{ user.email }}</td>
-                            <td class="px-4 py-3">
-                                <span class="inline-flex rounded-full bg-muted px-2.5 py-1 text-xs font-medium capitalize">
-                                    {{ user.role ?? '-' }}
-                                </span>
-                            </td>
-                            <td class="px-4 py-3">
-                                <div class="flex gap-2">
-                                    <Button size="sm" variant="outline" as-child>
-                                        <Link :href="route('users.show', { user: user.id })">Detail</Link>
-                                    </Button>
-                                    <Button size="sm" variant="outline" as-child>
-                                        <Link :href="route('users.edit', { user: user.id })">Edit</Link>
-                                    </Button>
-                                    <Button size="sm" variant="destructive" @click="openDeleteDialog(user)">Hapus</Button>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="w-full overflow-x-auto">
+                    <table class="w-full min-w-[760px] text-sm">
+                        <thead class="bg-muted/60 text-left">
+                            <tr>
+                                <th class="px-4 py-3 font-medium">Nama</th>
+                                <th class="px-4 py-3 font-medium">Email</th>
+                                <th class="px-4 py-3 font-medium">Role</th>
+                                <th class="px-4 py-3 font-medium">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-if="users.length === 0">
+                                <td colspan="4" class="px-4 py-6 text-center text-muted-foreground">Belum ada pengguna.</td>
+                            </tr>
+                            <tr v-for="user in users" :key="user.id" class="border-t">
+                                <td class="px-4 py-3 font-medium">{{ user.name }}</td>
+                                <td class="px-4 py-3">{{ user.email }}</td>
+                                <td class="px-4 py-3">
+                                    <span class="inline-flex rounded-full bg-muted px-2.5 py-1 text-xs font-medium capitalize">
+                                        {{ user.role ?? '-' }}
+                                    </span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <div class="flex gap-2">
+                                        <Button size="sm" variant="outline" as-child>
+                                            <Link :href="route('users.show', { user: user.id })">Detail</Link>
+                                        </Button>
+                                        <Button size="sm" variant="outline" as-child>
+                                            <Link :href="route('users.edit', { user: user.id })">Edit</Link>
+                                        </Button>
+                                        <Button size="sm" variant="destructive" @click="openDeleteDialog(user)">Hapus</Button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
 
                 <div class="flex flex-col gap-3 border-t p-4 text-sm md:flex-row md:items-center md:justify-between">
                     <p class="text-muted-foreground">

@@ -1,11 +1,11 @@
 <script setup lang="ts">
+import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import DropdownMenu from '@/components/ui/dropdown-menu/DropdownMenu.vue';
 import DropdownMenuContent from '@/components/ui/dropdown-menu/DropdownMenuContent.vue';
 import DropdownMenuItem from '@/components/ui/dropdown-menu/DropdownMenuItem.vue';
 import DropdownMenuTrigger from '@/components/ui/dropdown-menu/DropdownMenuTrigger.vue';
-import InputError from '@/components/InputError.vue';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/AppLayout.vue';
@@ -187,7 +187,9 @@ const submitStatusUpdate = (session: SessionItem, status: SessionItem['status'])
             <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                     <h1 class="text-2xl font-semibold">Jadwal Live Session</h1>
-                    <p class="text-sm text-muted-foreground">Kelola jadwal sesi live berbasis generation member. Halaman ini bisa diakses admin dan mentor.</p>
+                    <p class="text-sm text-muted-foreground">
+                        Kelola jadwal sesi live berbasis generation member. Halaman ini bisa diakses admin dan mentor.
+                    </p>
                 </div>
                 <Button class="inline-flex items-center gap-2" @click="openCreateDialog = true">
                     <Plus class="h-4 w-4" />
@@ -195,7 +197,7 @@ const submitStatusUpdate = (session: SessionItem, status: SessionItem['status'])
                 </Button>
             </div>
 
-            <div class="overflow-x-auto rounded-lg border">
+            <div class="max-w-full overflow-hidden rounded-lg border">
                 <div class="grid gap-3 border-b bg-muted/30 p-4 md:grid-cols-3">
                     <div class="md:col-span-2">
                         <Label for="search">Search</Label>
@@ -204,7 +206,11 @@ const submitStatusUpdate = (session: SessionItem, status: SessionItem['status'])
 
                     <div>
                         <Label for="status-filter">Status</Label>
-                        <select id="status-filter" v-model="filterStatus" class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+                        <select
+                            id="status-filter"
+                            v-model="filterStatus"
+                            class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                        >
                             <option value="">Semua status</option>
                             <option value="scheduled">scheduled</option>
                             <option value="live">live</option>
@@ -212,86 +218,96 @@ const submitStatusUpdate = (session: SessionItem, status: SessionItem['status'])
                         </select>
                     </div>
 
-                    <div class="md:col-span-3 flex gap-2">
+                    <div class="flex gap-2 md:col-span-3">
                         <Button variant="ghost" @click="resetFilters">Reset</Button>
                     </div>
                 </div>
 
-                <table class="w-full min-w-[980px] text-sm">
-                    <thead class="bg-muted/60 text-left">
-                        <tr>
-                            <th class="px-4 py-3 font-medium">Sesi</th>
-                            <th class="px-4 py-3 font-medium">Generation</th>
-                            <th class="px-4 py-3 font-medium">Paket</th>
-                            <th class="px-4 py-3 font-medium">Jadwal</th>
-                            <th class="px-4 py-3 font-medium">Status</th>
-                            <th class="px-4 py-3 font-medium">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-if="sessions.length === 0">
-                            <td colspan="6" class="px-4 py-10 text-center text-muted-foreground">
-                                <Video class="mx-auto mb-2 h-5 w-5" />
-                                Belum ada jadwal live session.
-                            </td>
-                        </tr>
-                        <tr v-for="session in sessions" :key="session.id" class="border-t">
-                            <td class="px-4 py-3">
-                                <div class="font-medium">{{ session.title }}</div>
-                                <div class="text-xs text-muted-foreground">{{ session.description || '-' }}</div>
-                            </td>
-                            <td class="px-4 py-3">
-                                <div class="font-medium">{{ session.generation || '-' }}</div>
-                                <div class="text-xs text-muted-foreground">Untuk seluruh member di generation ini</div>
-                            </td>
-                            <td class="px-4 py-3">
-                                <div class="font-medium">{{ session.plan_name || 'Semua paket di generation' }}</div>
-                                <div class="text-xs text-muted-foreground">Target generation: {{ session.generation || '-' }}</div>
-                            </td>
-                            <td class="px-4 py-3">
-                                <div class="inline-flex items-center gap-2 text-xs text-muted-foreground">
-                                    <CalendarDays class="h-4 w-4" />
-                                    {{ session.scheduled_label || '-' }}
-                                </div>
-                            </td>
-                            <td class="px-4 py-3">
-                                <span :class="['inline-flex rounded-full border px-2.5 py-1 text-xs font-medium', statusBadgeClass(session.status)]">
-                                    {{ session.status }}
-                                </span>
-                            </td>
-                            <td class="px-4 py-3">
-                                <div class="flex gap-2">
-                                    <Button size="sm" variant="outline" @click="openEdit(session)">Edit</Button>
-                                    <!-- update status -->
-                                    <DropdownMenu>
-                                        <DropdownMenuTrigger as-child>
-                                            <Button size="sm" variant="outline">
-                                                Ubah Status
-                                            </Button>
-                                        </DropdownMenuTrigger>
-                                        <DropdownMenuContent>
-                                            <DropdownMenuItem>
-                                                <button @click="submitStatusUpdate(session, 'scheduled')">Scheduled</button>
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem>
-                                                <button @click="submitStatusUpdate(session, 'live')">Live</button>
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem>
-                                                <button @click="submitStatusUpdate(session, 'ended')">Ended</button>
-                                            </DropdownMenuItem>
-                                        </DropdownMenuContent>
-                                    </DropdownMenu>
-                                    <Button v-if="session.stream_url" size="sm" variant="outline" as-child>
-                                        <a :href="session.stream_url" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5">
-                                            <SquareArrowOutUpRight class="h-3.5 w-3.5" />
-                                            Link
-                                        </a>
-                                    </Button>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="w-full overflow-x-auto">
+                    <table class="w-full min-w-[980px] text-sm">
+                        <thead class="bg-muted/60 text-left">
+                            <tr>
+                                <th class="px-4 py-3 font-medium">Sesi</th>
+                                <th class="px-4 py-3 font-medium">Generation</th>
+                                <th class="px-4 py-3 font-medium">Paket</th>
+                                <th class="px-4 py-3 font-medium">Jadwal</th>
+                                <th class="px-4 py-3 font-medium">Status</th>
+                                <th class="px-4 py-3 font-medium">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-if="sessions.length === 0">
+                                <td colspan="6" class="px-4 py-10 text-center text-muted-foreground">
+                                    <Video class="mx-auto mb-2 h-5 w-5" />
+                                    Belum ada jadwal live session.
+                                </td>
+                            </tr>
+                            <tr v-for="session in sessions" :key="session.id" class="border-t">
+                                <td class="px-4 py-3">
+                                    <div class="font-medium">{{ session.title }}</div>
+                                    <div class="text-xs text-muted-foreground">{{ session.description || '-' }}</div>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <div class="font-medium">{{ session.generation || '-' }}</div>
+                                    <div class="text-xs text-muted-foreground">Untuk seluruh member di generation ini</div>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <div class="font-medium">{{ session.plan_name || 'Semua paket di generation' }}</div>
+                                    <div class="text-xs text-muted-foreground">Target generation: {{ session.generation || '-' }}</div>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <div class="inline-flex items-center gap-2 text-xs text-muted-foreground">
+                                        <CalendarDays class="h-4 w-4" />
+                                        {{ session.scheduled_label || '-' }}
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span
+                                        :class="['inline-flex rounded-full border px-2.5 py-1 text-xs font-medium', statusBadgeClass(session.status)]"
+                                    >
+                                        {{ session.status }}
+                                    </span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <div class="flex items-center gap-2">
+                                        <Button size="sm" variant="outline" @click="openEdit(session)">Edit</Button>
+
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger as-child>
+                                                <Button size="sm" variant="outline" class="inline-flex items-center gap-1">
+                                                    Status
+                                                    <CirclePlay class="h-3.5 w-3.5" />
+                                                </Button>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent>
+                                                <DropdownMenuItem>
+                                                    <button @click="submitStatusUpdate(session, 'scheduled')">Scheduled</button>
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem>
+                                                    <button @click="submitStatusUpdate(session, 'live')">Live</button>
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem>
+                                                    <button @click="submitStatusUpdate(session, 'ended')">Ended</button>
+                                                </DropdownMenuItem>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
+                                        <Button v-if="session.stream_url" size="sm" variant="outline" as-child>
+                                            <a
+                                                :href="session.stream_url"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                class="inline-flex items-center gap-1.5"
+                                            >
+                                                <SquareArrowOutUpRight class="h-3.5 w-3.5" />
+                                                Link
+                                            </a>
+                                        </Button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
@@ -305,7 +321,11 @@ const submitStatusUpdate = (session: SessionItem, status: SessionItem['status'])
                 <div class="grid gap-4">
                     <div class="space-y-1">
                         <Label for="create-generation">Generation Target</Label>
-                        <select id="create-generation" v-model="createForm.generation" class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+                        <select
+                            id="create-generation"
+                            v-model="createForm.generation"
+                            class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                        >
                             <option value="">Pilih generation</option>
                             <option v-for="opt in generationOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
                         </select>
@@ -320,7 +340,13 @@ const submitStatusUpdate = (session: SessionItem, status: SessionItem['status'])
 
                     <div class="space-y-1">
                         <Label for="create-description">Deskripsi</Label>
-                        <textarea id="create-description" v-model="createForm.description" rows="3" class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm" placeholder="Materi atau agenda sesi" />
+                        <textarea
+                            id="create-description"
+                            v-model="createForm.description"
+                            rows="3"
+                            class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                            placeholder="Materi atau agenda sesi"
+                        />
                         <InputError :message="createForm.errors.description" />
                     </div>
 
@@ -333,7 +359,11 @@ const submitStatusUpdate = (session: SessionItem, status: SessionItem['status'])
 
                         <div class="space-y-1">
                             <Label for="create-status">Status</Label>
-                            <select id="create-status" v-model="createForm.status" class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+                            <select
+                                id="create-status"
+                                v-model="createForm.status"
+                                class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                            >
                                 <option value="scheduled">scheduled</option>
                                 <option value="live">live</option>
                                 <option value="ended">ended</option>
@@ -368,7 +398,11 @@ const submitStatusUpdate = (session: SessionItem, status: SessionItem['status'])
                 <div class="grid gap-4">
                     <div class="space-y-1">
                         <Label for="edit-generation">Generation Target</Label>
-                        <select id="edit-generation" v-model="editForm.generation" class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+                        <select
+                            id="edit-generation"
+                            v-model="editForm.generation"
+                            class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                        >
                             <option value="">Pilih generation</option>
                             <option v-for="opt in generationOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
                         </select>
@@ -383,7 +417,12 @@ const submitStatusUpdate = (session: SessionItem, status: SessionItem['status'])
 
                     <div class="space-y-1">
                         <Label for="edit-description">Deskripsi</Label>
-                        <textarea id="edit-description" v-model="editForm.description" rows="3" class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm" />
+                        <textarea
+                            id="edit-description"
+                            v-model="editForm.description"
+                            rows="3"
+                            class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                        />
                         <InputError :message="editForm.errors.description" />
                     </div>
 
@@ -395,7 +434,11 @@ const submitStatusUpdate = (session: SessionItem, status: SessionItem['status'])
                         </div>
                         <div class="space-y-1">
                             <Label for="edit-status">Status</Label>
-                            <select id="edit-status" v-model="editForm.status" class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+                            <select
+                                id="edit-status"
+                                v-model="editForm.status"
+                                class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                            >
                                 <option value="scheduled">scheduled</option>
                                 <option value="live">live</option>
                                 <option value="ended">ended</option>
@@ -419,6 +462,5 @@ const submitStatusUpdate = (session: SessionItem, status: SessionItem['status'])
                 </DialogFooter>
             </DialogContent>
         </Dialog>
-
     </AppLayout>
 </template>

@@ -239,7 +239,7 @@ const resetFilters = () => {
                 </div>
             </div>
 
-            <div class="overflow-x-auto rounded-lg border">
+            <div class="max-w-full overflow-hidden rounded-lg border">
                 <div class="grid gap-3 bg-muted/30 p-4 md:grid-cols-5">
                     <div class="md:col-span-3">
                         <Label for="search">Search</Label>
@@ -262,7 +262,11 @@ const resetFilters = () => {
 
                     <div>
                         <Label for="status-filter">Status</Label>
-                        <select id="status-filter" v-model="filterForm.status" class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+                        <select
+                            id="status-filter"
+                            v-model="filterForm.status"
+                            class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                        >
                             <option :value="null">Semua status</option>
                             <option value="published">Published</option>
                             <option value="draft">Draft</option>
@@ -270,12 +274,16 @@ const resetFilters = () => {
                     </div>
                 </div>
 
-                <div class="flex justify-between items-center px-4 gap-4 py-4">
+                <div class="flex items-center justify-between gap-4 px-4 py-4">
                     <Button size="sm" @click="resetFilters">Reset</Button>
 
                     <div class="flex items-center gap-2">
                         <Label for="per-page" class="whitespace-nowrap">Per Page</Label>
-                        <select id="per-page" v-model="filterForm.per_page" class="w-20 rounded-md border border-input bg-background px-3 py-2 text-sm">
+                        <select
+                            id="per-page"
+                            v-model="filterForm.per_page"
+                            class="w-20 rounded-md border border-input bg-background px-3 py-2 text-sm"
+                        >
                             <option :value="10">10</option>
                             <option :value="15">15</option>
                             <option :value="25">25</option>
@@ -284,57 +292,59 @@ const resetFilters = () => {
                     </div>
                 </div>
 
-                <table class="w-full min-w-[720px] text-sm">
-                    <thead class="bg-muted/60 text-left">
-                        <tr>
-                            <th class="px-4 py-3 font-medium">Judul</th>
-                            <th class="px-4 py-3 font-medium">Kategori</th>
-                            <th class="px-4 py-3 font-medium">Author</th>
-                            <th class="px-4 py-3 font-medium">Status</th>
-                            <th class="px-4 py-3 font-medium">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-if="articles.length === 0">
-                            <td colspan="5" class="px-4 py-6 text-center text-muted-foreground">Belum ada artikel.</td>
-                        </tr>
-                        <tr v-for="article in articles" :key="article.id" class="border-t">
-                            <td class="px-4 py-3">
-                                <div class="flex items-center gap-3">
-                                    <img
-                                        v-if="article.featured_image_url"
-                                        :src="article.featured_image_url"
-                                        alt="thumbnail"
-                                        class="h-10 w-14 rounded object-cover"
-                                    />
-                                    <p class="font-medium">{{ article.title }}</p>
-                                </div>
-                                <p class="text-xs text-muted-foreground">/{{ article.slug }}</p>
-                            </td>
-                            <td class="px-4 py-3">{{ article.category?.name ?? '-' }}</td>
-                            <td class="px-4 py-3">{{ article.author?.name ?? '-' }}</td>
-                            <td class="px-4 py-3">
-                                <span
-                                    class="inline-flex rounded-full px-2.5 py-1 text-xs font-medium"
-                                    :class="article.is_published ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'"
-                                >
-                                    {{ article.is_published ? 'Published' : 'Draft' }}
-                                </span>
-                            </td>
-                            <td class="px-4 py-3">
-                                <div class="flex gap-2">
-                                    <Button size="sm" variant="outline" as-child>
-                                        <Link :href="route('articles.show', { article: article.id })">Detail</Link>
-                                    </Button>
-                                    <Button size="sm" variant="outline" as-child>
-                                        <Link :href="route('articles.edit', { article: article.id })">Edit</Link>
-                                    </Button>
-                                    <Button size="sm" variant="destructive" @click="openDeleteArticleDialog(article)">Hapus</Button>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="w-full overflow-x-auto">
+                    <table class="w-full min-w-[720px] text-sm">
+                        <thead class="bg-muted/60 text-left">
+                            <tr>
+                                <th class="px-4 py-3 font-medium">Judul</th>
+                                <th class="px-4 py-3 font-medium">Kategori</th>
+                                <th class="px-4 py-3 font-medium">Author</th>
+                                <th class="px-4 py-3 font-medium">Status</th>
+                                <th class="px-4 py-3 font-medium">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-if="articles.length === 0">
+                                <td colspan="5" class="px-4 py-6 text-center text-muted-foreground">Belum ada artikel.</td>
+                            </tr>
+                            <tr v-for="article in articles" :key="article.id" class="border-t">
+                                <td class="px-4 py-3">
+                                    <div class="flex items-center gap-3">
+                                        <img
+                                            v-if="article.featured_image_url"
+                                            :src="article.featured_image_url"
+                                            alt="thumbnail"
+                                            class="h-10 w-14 rounded object-cover"
+                                        />
+                                        <p class="font-medium">{{ article.title }}</p>
+                                    </div>
+                                    <p class="text-xs text-muted-foreground">/{{ article.slug }}</p>
+                                </td>
+                                <td class="px-4 py-3">{{ article.category?.name ?? '-' }}</td>
+                                <td class="px-4 py-3">{{ article.author?.name ?? '-' }}</td>
+                                <td class="px-4 py-3">
+                                    <span
+                                        class="inline-flex rounded-full px-2.5 py-1 text-xs font-medium"
+                                        :class="article.is_published ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'"
+                                    >
+                                        {{ article.is_published ? 'Published' : 'Draft' }}
+                                    </span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <div class="flex gap-2">
+                                        <Button size="sm" variant="outline" as-child>
+                                            <Link :href="route('articles.show', { article: article.id })">Detail</Link>
+                                        </Button>
+                                        <Button size="sm" variant="outline" as-child>
+                                            <Link :href="route('articles.edit', { article: article.id })">Edit</Link>
+                                        </Button>
+                                        <Button size="sm" variant="destructive" @click="openDeleteArticleDialog(article)">Hapus</Button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
 
                 <div class="flex flex-col gap-3 border-t p-4 text-sm md:flex-row md:items-center md:justify-between">
                     <p class="text-muted-foreground">

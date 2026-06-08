@@ -57,7 +57,12 @@ const breadcrumbs: BreadcrumbItem[] = [
                     <span>Status: {{ article.is_published ? 'Published' : 'Draft' }}</span>
                 </div>
 
-                <img v-if="article.featured_image_url" :src="article.featured_image_url" alt="featured" class="mb-4 max-h-80 w-full rounded-md object-cover" />
+                <img
+                    v-if="article.featured_image_url"
+                    :src="article.featured_image_url"
+                    alt="featured"
+                    class="mb-4 max-h-80 w-full rounded-md object-cover"
+                />
 
                 <article class="whitespace-pre-line text-sm leading-relaxed">
                     {{ article.content }}

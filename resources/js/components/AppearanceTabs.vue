@@ -10,9 +10,7 @@ const { class: containerClass = '' } = defineProps<Props>();
 
 const { appearance, updateAppearance } = useAppearance();
 
-const tabs = [
-    { value: 'light', Icon: Sun, label: 'Light' },
-] as const;
+const tabs = [{ value: 'light', Icon: Sun, label: 'Light' }] as const;
 </script>
 
 <template>

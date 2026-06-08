@@ -39,12 +39,10 @@ const form = useForm({
 });
 
 const submit = () => {
-    form
-        .transform((data) => ({
-            ...data,
-            _method: 'put',
-        }))
-        .post(route('users.update', { user: props.user.id }));
+    form.transform((data) => ({
+        ...data,
+        _method: 'put',
+    })).post(route('users.update', { user: props.user.id }));
 };
 </script>
 

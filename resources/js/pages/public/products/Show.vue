@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import PublicLayout from '@/layouts/PublicLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
-import { ArrowLeft, ShoppingBag, ArrowRight, Tag } from 'lucide-vue-next';
+import { ArrowLeft, ArrowRight, ShoppingBag, Tag } from 'lucide-vue-next';
 
 interface Product {
     id: number;
@@ -53,19 +53,17 @@ const marketplaceLinks = Object.entries(props.product.olshop_links || {}).filter
 
                 <div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
                     <div class="overflow-hidden rounded-2xl border border-green-100 bg-gradient-to-br from-[#E8F5E9] to-[#C8E6C9]">
-                        <img
-                            v-if="product.image_url"
-                            :src="product.image_url"
-                            :alt="product.name"
-                            class="h-full w-full object-cover"
-                        >
+                        <img v-if="product.image_url" :src="product.image_url" :alt="product.name" class="h-full w-full object-cover" />
                         <div v-else class="flex h-80 items-center justify-center">
                             <ShoppingBag class="h-16 w-16 text-[#2E7D32]" />
                         </div>
                     </div>
 
                     <div>
-                        <p v-if="product.category" class="inline-flex items-center gap-1 rounded-full bg-[#E8F5E9] px-3 py-1 text-xs font-medium text-[#2E7D32]">
+                        <p
+                            v-if="product.category"
+                            class="inline-flex items-center gap-1 rounded-full bg-[#E8F5E9] px-3 py-1 text-xs font-medium text-[#2E7D32]"
+                        >
                             <Tag class="h-3.5 w-3.5" />
                             {{ product.category.name }}
                         </p>
@@ -83,12 +81,7 @@ const marketplaceLinks = Object.entries(props.product.olshop_links || {}).filter
                         <div v-if="marketplaceLinks.length" class="mt-6 space-y-2">
                             <p class="text-sm font-semibold text-gray-900">Beli di Marketplace:</p>
                             <div class="flex flex-wrap gap-2">
-                                <Button
-                                    v-for="[marketplace, link] in marketplaceLinks"
-                                    :key="marketplace"
-                                    variant="outline"
-                                    as-child
-                                >
+                                <Button v-for="[marketplace, link] in marketplaceLinks" :key="marketplace" variant="outline" as-child>
                                     <a :href="link" target="_blank" rel="noopener noreferrer">
                                         {{ marketplace }}
                                         <ArrowRight class="h-4 w-4" />

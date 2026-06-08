@@ -39,14 +39,12 @@ const form = useForm({
 });
 
 const submit = () => {
-    form
-        .transform((data) => ({
-            ...data,
-            _method: 'put',
-        }))
-        .post(route('sponsors.update', { sponsor: props.sponsor.id }), {
-            forceFormData: true,
-        });
+    form.transform((data) => ({
+        ...data,
+        _method: 'put',
+    })).post(route('sponsors.update', { sponsor: props.sponsor.id }), {
+        forceFormData: true,
+    });
 };
 
 const onLogoChange = (event: Event) => {

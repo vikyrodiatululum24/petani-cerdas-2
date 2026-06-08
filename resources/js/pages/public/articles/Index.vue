@@ -132,9 +132,7 @@ const getExcerpt = (content: string) => {
                 </div>
 
                 <div class="mt-4 flex flex-wrap gap-2">
-                    <Button size="sm" class="rounded-full bg-[#2E7D32] text-white hover:bg-[#256427]" @click="applyFilters(null)">
-                        Semua
-                    </Button>
+                    <Button size="sm" class="rounded-full bg-[#2E7D32] text-white hover:bg-[#256427]" @click="applyFilters(null)"> Semua </Button>
                     <Button
                         v-for="category in categories"
                         :key="category.id"

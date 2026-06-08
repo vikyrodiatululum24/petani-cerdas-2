@@ -96,26 +96,14 @@ const formatPrice = (price: number) => {
 
                 <div class="space-y-1.5">
                     <Label for="price">Harga</Label>
-                    <Input
-                        id="price"
-                        v-model.number="form.price"
-                        type="number"
-                        inputmode="numeric"
-                        placeholder="0"
-                    />
+                    <Input id="price" v-model.number="form.price" type="number" inputmode="numeric" placeholder="0" />
                     <p class="text-xs text-muted-foreground">{{ form.price ? formatPrice(form.price) : '-' }}</p>
                     <InputError :message="form.errors.price" />
                 </div>
 
                 <div class="space-y-1.5">
                     <Label for="discount-price">Harga Diskon (opsional)</Label>
-                    <Input
-                        id="discount-price"
-                        v-model.number="form.discount_price"
-                        type="number"
-                        inputmode="numeric"
-                        placeholder="0"
-                    />
+                    <Input id="discount-price" v-model.number="form.discount_price" type="number" inputmode="numeric" placeholder="0" />
                     <p class="text-xs text-muted-foreground">{{ form.discount_price ? formatPrice(form.discount_price) : '-' }}</p>
                     <InputError :message="form.errors.discount_price" />
                 </div>

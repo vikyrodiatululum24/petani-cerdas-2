@@ -95,7 +95,10 @@ const submitPayment = () => {
     <PublicLayout>
         <section class="bg-gradient-to-b from-[#f5fbf6] to-[#ffffff] py-10 md:py-14">
             <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-                <Link :href="route('petani.subscriptions.packages.index')" class="inline-flex items-center gap-2 text-sm font-semibold text-[#2E7D32]">
+                <Link
+                    :href="route('petani.subscriptions.packages.index')"
+                    class="inline-flex items-center gap-2 text-sm font-semibold text-[#2E7D32]"
+                >
                     <ArrowLeft class="h-4 w-4" /> Kembali ke Pilihan Paket
                 </Link>
 
@@ -112,7 +115,9 @@ const submitPayment = () => {
                                         v-for="account in destinationAccounts"
                                         :key="account.key"
                                         class="flex cursor-pointer items-start gap-3 rounded-xl border p-3"
-                                        :class="form.destination_account === account.key ? 'border-[#2E7D32] bg-emerald-50' : 'border-gray-200 bg-white'"
+                                        :class="
+                                            form.destination_account === account.key ? 'border-[#2E7D32] bg-emerald-50' : 'border-gray-200 bg-white'
+                                        "
                                     >
                                         <input v-model="form.destination_account" type="radio" :value="account.key" class="mt-1 h-4 w-4" />
                                         <div>
@@ -151,14 +156,17 @@ const submitPayment = () => {
                                     accept=".jpg,.jpeg,.png,.pdf"
                                     class="hidden"
                                     @change="onPaymentProofChange"
-                                >
+                                />
 
                                 <div
                                     class="rounded-2xl border border-dashed p-4 transition"
                                     :class="form.payment_proof ? 'border-emerald-400 bg-emerald-50/60' : 'border-gray-300 bg-gray-50'"
                                 >
                                     <div class="flex items-start gap-3">
-                                        <div class="mt-0.5 rounded-xl p-2" :class="form.payment_proof ? 'bg-emerald-100 text-emerald-700' : 'bg-white text-gray-500'">
+                                        <div
+                                            class="mt-0.5 rounded-xl p-2"
+                                            :class="form.payment_proof ? 'bg-emerald-100 text-emerald-700' : 'bg-white text-gray-500'"
+                                        >
                                             <FileCheck2 v-if="form.payment_proof" class="h-5 w-5" />
                                             <UploadCloud v-else class="h-5 w-5" />
                                         </div>
@@ -171,7 +179,12 @@ const submitPayment = () => {
                                             </p>
 
                                             <div class="mt-3 flex flex-wrap gap-2">
-                                                <Button type="button" variant="outline" class="h-9 border-[#2E7D32] text-[#2E7D32]" @click="triggerPaymentProofPicker">
+                                                <Button
+                                                    type="button"
+                                                    variant="outline"
+                                                    class="h-9 border-[#2E7D32] text-[#2E7D32]"
+                                                    @click="triggerPaymentProofPicker"
+                                                >
                                                     {{ form.payment_proof ? 'Ganti File' : 'Pilih File' }}
                                                 </Button>
                                                 <Button
@@ -225,9 +238,15 @@ const submitPayment = () => {
                         <div class="mt-5 rounded-xl border border-emerald-200 bg-white p-3 text-xs text-gray-600">
                             <p class="font-semibold text-gray-800">Instruksi:</p>
                             <ul class="mt-2 space-y-1">
-                                <li class="flex gap-2"><Landmark class="h-3.5 w-3.5 shrink-0 text-[#2E7D32]" />Transfer sesuai nominal total bayar.</li>
-                                <li class="flex gap-2"><Landmark class="h-3.5 w-3.5 shrink-0 text-[#2E7D32]" />Pastikan nama pengirim sesuai dengan rekening pengirim.</li>
-                                <li class="flex gap-2"><Landmark class="h-3.5 w-3.5 shrink-0 text-[#2E7D32]" />Verifikasi dilakukan maksimal 1x24 jam.</li>
+                                <li class="flex gap-2">
+                                    <Landmark class="h-3.5 w-3.5 shrink-0 text-[#2E7D32]" />Transfer sesuai nominal total bayar.
+                                </li>
+                                <li class="flex gap-2">
+                                    <Landmark class="h-3.5 w-3.5 shrink-0 text-[#2E7D32]" />Pastikan nama pengirim sesuai dengan rekening pengirim.
+                                </li>
+                                <li class="flex gap-2">
+                                    <Landmark class="h-3.5 w-3.5 shrink-0 text-[#2E7D32]" />Verifikasi dilakukan maksimal 1x24 jam.
+                                </li>
                             </ul>
                         </div>
                     </aside>

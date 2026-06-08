@@ -63,11 +63,10 @@ const submit = () => {
         _method: 'put',
     })).post(route('setting-app.update'), {
         forceFormData: true,
-        onSuccess () {
+        onSuccess() {
             toast.success('Setting aplikasi berhasil diperbarui');
         },
     });
-
 };
 </script>
 
@@ -75,7 +74,7 @@ const submit = () => {
     <Head title="Setting App" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
-        <div class="mx-auto max-w-4xl space-y-6 p-4 w-full">
+        <div class="mx-auto w-full max-w-4xl space-y-6 p-4">
             <div>
                 <h1 class="text-2xl font-semibold">Setting Aplikasi</h1>
                 <p class="text-sm text-muted-foreground">Kelola logo, brand, deskripsi, kontak, social media, dan rekening pembayaran aplikasi.</p>
@@ -103,7 +102,13 @@ const submit = () => {
 
                 <div>
                     <Label for="logo">Logo Aplikasi</Label>
-                    <input id="logo" type="file" accept="image/*" class="block w-full rounded-md border border-input bg-background px-3 py-2 text-sm" @change="onLogoChange" />
+                    <input
+                        id="logo"
+                        type="file"
+                        accept="image/*"
+                        class="block w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                        @change="onLogoChange"
+                    />
                     <InputError :message="form.errors.logo" class="mt-1" />
                     <div v-if="setting.logo_url" class="mt-3">
                         <p class="mb-1 text-xs text-muted-foreground">Logo saat ini:</p>

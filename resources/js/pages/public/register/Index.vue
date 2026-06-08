@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import PublicLayout from '@/layouts/PublicLayout.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
-import { CheckCircle2, LoaderCircle } from 'lucide-vue-next';
+import { LoaderCircle } from 'lucide-vue-next';
 
 const form = useForm({
     name: '',
@@ -163,7 +163,12 @@ const submit = () => {
                                 <InputError :message="form.errors.password_confirmation" />
                             </div>
 
-                            <Button type="submit" class="mt-2 w-full bg-[#2E7D32] text-white hover:bg-[#256427]" tabindex="5" :disabled="form.processing">
+                            <Button
+                                type="submit"
+                                class="mt-2 w-full bg-[#2E7D32] text-white hover:bg-[#256427]"
+                                tabindex="5"
+                                :disabled="form.processing"
+                            >
                                 <LoaderCircle v-if="form.processing" class="h-4 w-4 animate-spin" />
                                 Daftar
                             </Button>

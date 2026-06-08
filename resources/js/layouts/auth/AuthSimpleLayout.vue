@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import AppLogoIcon from '@/components/AppLogoIcon.vue';
 import AppLogo from '@/components/AppLogo.vue';
+import AppLogoIcon from '@/components/AppLogoIcon.vue';
 import { Link } from '@inertiajs/vue3';
 import { Leaf, MessageCircle, ShieldCheck, Sparkles, Video } from 'lucide-vue-next';
 
@@ -30,11 +30,16 @@ const authBenefits = [
 
 <template>
     <div class="relative flex min-h-svh items-center justify-center overflow-hidden bg-[#f2f7f2] p-4 md:p-8">
-        <div class="pointer-events-none absolute inset-0 opacity-60" style="background-image: radial-gradient(circle at 1px 1px, #2e7d3220 1px, transparent 0); background-size: 24px 24px;" />
+        <div
+            class="pointer-events-none absolute inset-0 opacity-60"
+            style="background-image: radial-gradient(circle at 1px 1px, #2e7d3220 1px, transparent 0); background-size: 24px 24px"
+        />
         <div class="pointer-events-none absolute -left-20 top-24 h-64 w-64 rounded-full bg-[#8bc34a33] blur-3xl" />
         <div class="pointer-events-none absolute -right-20 bottom-20 h-72 w-72 rounded-full bg-[#66bb6a30] blur-3xl" />
 
-        <div class="relative mx-auto grid w-full max-w-6xl overflow-hidden rounded-3xl border border-green-100 bg-white shadow-2xl shadow-green-900/10 lg:grid-cols-[1.05fr_0.95fr]">
+        <div
+            class="relative mx-auto grid w-full max-w-6xl overflow-hidden rounded-3xl border border-green-100 bg-white shadow-2xl shadow-green-900/10 lg:grid-cols-[1.05fr_0.95fr]"
+        >
             <aside class="relative hidden overflow-hidden bg-gradient-to-br from-[#1f5a2f] via-[#2E7D32] to-[#4CAF50] p-10 text-white lg:block">
                 <div class="absolute -right-8 -top-8 h-36 w-36 rounded-full border border-white/20" />
                 <div class="absolute -bottom-12 -left-8 h-40 w-40 rounded-full border border-white/15" />
@@ -55,7 +60,11 @@ const authBenefits = [
                 </div>
 
                 <div class="mt-8 space-y-4">
-                    <article v-for="benefit in authBenefits" :key="benefit.title" class="flex items-start gap-3 rounded-xl bg-white/10 p-3 backdrop-blur-sm">
+                    <article
+                        v-for="benefit in authBenefits"
+                        :key="benefit.title"
+                        class="flex items-start gap-3 rounded-xl bg-white/10 p-3 backdrop-blur-sm"
+                    >
                         <span class="mt-0.5 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/20">
                             <component :is="benefit.icon" class="h-4 w-4" />
                         </span>
@@ -75,7 +84,9 @@ const authBenefits = [
                         </span>
                     </Link>
 
-                    <p class="mx-auto inline-flex items-center gap-1.5 rounded-full border border-green-200 bg-green-50 px-3 py-1 text-xs font-semibold text-[#2E7D32]">
+                    <p
+                        class="mx-auto inline-flex items-center gap-1.5 rounded-full border border-green-200 bg-green-50 px-3 py-1 text-xs font-semibold text-[#2E7D32]"
+                    >
                         <Leaf class="h-3.5 w-3.5" />
                         Petani Cerdas Account
                     </p>

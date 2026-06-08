@@ -314,28 +314,28 @@ const scrollToSection = (id: string) => {
             <div class="mx-auto max-w-7xl px-6 lg:px-8">
                 <div class="grid gap-12 lg:grid-cols-2 lg:items-start">
                     <div class="overflow-hidden rounded-2xl border border-white/25 bg-white/10 backdrop-blur-sm">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 1200 700" fill="none">
-                                <defs>
-                                    <linearGradient id="bg2" x1="0" y1="0" x2="1" y2="1">
-                                        <stop offset="0" stop-color="#EEF5FF" />
-                                        <stop offset="1" stop-color="#DDEBFF" />
-                                    </linearGradient>
-                                </defs>
-                                <rect width="1200" height="700" rx="34" fill="url(#bg2)" />
-                                <rect x="120" y="110" width="740" height="470" rx="30" fill="#ffffff" stroke="#CADDFE" stroke-width="4" />
-                                <rect x="120" y="110" width="740" height="86" rx="30" fill="#1F3B7F" />
-                                <circle cx="200" cy="153" r="15" fill="#7FB1FF" />
-                                <circle cx="250" cy="153" r="15" fill="#6ED8A1" />
-                                <circle cx="300" cy="153" r="15" fill="#FFD467" />
-                                <circle cx="490" cy="348" r="115" fill="#2E7D32" />
-                                <polygon points="460,300 560,348 460,396" fill="#ffffff" />
-                                <rect x="905" y="165" width="170" height="135" rx="18" fill="#ffffff" stroke="#CADDFE" stroke-width="3" />
-                                <rect x="905" y="330" width="170" height="135" rx="18" fill="#ffffff" stroke="#CADDFE" stroke-width="3" />
-                                <rect x="905" y="495" width="170" height="85" rx="18" fill="#ffffff" stroke="#CADDFE" stroke-width="3" />
-                                <text x="170" y="250" font-family="Arial, sans-serif" font-size="28" font-weight="700" fill="#1E356E">
-                                    Live Session with Mentors
-                                </text>
-                            </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 1200 700" fill="none">
+                            <defs>
+                                <linearGradient id="bg2" x1="0" y1="0" x2="1" y2="1">
+                                    <stop offset="0" stop-color="#EEF5FF" />
+                                    <stop offset="1" stop-color="#DDEBFF" />
+                                </linearGradient>
+                            </defs>
+                            <rect width="1200" height="700" rx="34" fill="url(#bg2)" />
+                            <rect x="120" y="110" width="740" height="470" rx="30" fill="#ffffff" stroke="#CADDFE" stroke-width="4" />
+                            <rect x="120" y="110" width="740" height="86" rx="30" fill="#1F3B7F" />
+                            <circle cx="200" cy="153" r="15" fill="#7FB1FF" />
+                            <circle cx="250" cy="153" r="15" fill="#6ED8A1" />
+                            <circle cx="300" cy="153" r="15" fill="#FFD467" />
+                            <circle cx="490" cy="348" r="115" fill="#2E7D32" />
+                            <polygon points="460,300 560,348 460,396" fill="#ffffff" />
+                            <rect x="905" y="165" width="170" height="135" rx="18" fill="#ffffff" stroke="#CADDFE" stroke-width="3" />
+                            <rect x="905" y="330" width="170" height="135" rx="18" fill="#ffffff" stroke="#CADDFE" stroke-width="3" />
+                            <rect x="905" y="495" width="170" height="85" rx="18" fill="#ffffff" stroke="#CADDFE" stroke-width="3" />
+                            <text x="170" y="250" font-family="Arial, sans-serif" font-size="28" font-weight="700" fill="#1E356E">
+                                Live Session with Mentors
+                            </text>
+                        </svg>
                         <div class="px-4 py-3">
                             <p class="text-xs uppercase tracking-wider text-green-100">Live Session</p>
                             <p class="mt-1 text-sm font-semibold text-white">Diskusi langsung dengan mentor ahli</p>
@@ -389,7 +389,7 @@ const scrollToSection = (id: string) => {
                 <h2 class="text-3xl font-extrabold text-gray-900">Perbandingan Paket Membership Terbaru</h2>
                 <p class="mt-3 text-gray-500">Bandingkan paket Basic, Pro, dan Elite untuk memilih yang paling sesuai dengan skala usaha Anda.</p>
 
-                <div class="mt-10 overflow-hidden overflow-x-auto rounded-2xl border shadow-sm">
+                <div class="mt-10 overflow-x-auto rounded-2xl border shadow-sm">
                     <table class="w-full text-sm">
                         <thead>
                             <tr class="bg-gray-50">
@@ -429,9 +429,7 @@ const scrollToSection = (id: string) => {
 
                 <div class="mt-10">
                     <Button as-child size="lg" class="bg-[#2E7D32] text-white hover:bg-[#256427]">
-                        <Link :href="membershipCtaHref" class="flex items-center gap-2">
-                            Daftar & Pilih Paket <ArrowRight class="h-5 w-5" />
-                        </Link>
+                        <Link :href="membershipCtaHref" class="flex items-center gap-2"> Daftar & Pilih Paket <ArrowRight class="h-5 w-5" /> </Link>
                     </Button>
                     <p class="mt-3 text-sm text-gray-400">Skema angkatan kuota terbatas: Basic 30, Pro 20, Elite 5 peserta.</p>
                 </div>

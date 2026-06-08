@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import PublicLayout from '@/layouts/PublicLayout.vue';
 import { Head, Link, usePage } from '@inertiajs/vue3';
-import { ArrowLeft, CalendarDays, User, ArrowRight, Leaf, Share2, MessageCircle, Facebook, Twitter, Linkedin } from 'lucide-vue-next';
+import { ArrowLeft, ArrowRight, CalendarDays, Facebook, Leaf, Linkedin, MessageCircle, Twitter, User } from 'lucide-vue-next';
 import { computed } from 'vue';
 
 interface Article {
@@ -122,7 +122,7 @@ const getExcerpt = (content: string) => {
                         :src="article.featured_image_url"
                         :alt="article.title"
                         class="h-full w-full object-cover"
-                    >
+                    />
                     <div v-else class="flex h-72 items-center justify-center">
                         <Leaf class="h-16 w-16 text-[#2E7D32]" />
                     </div>

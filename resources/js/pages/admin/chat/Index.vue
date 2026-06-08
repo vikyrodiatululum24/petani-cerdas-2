@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { Button } from '@/components/ui/button';
-import { getEcho } from '@/echo';
 import { Input } from '@/components/ui/input';
+import { getEcho } from '@/echo';
 import AppLayout from '@/layouts/AppLayout.vue';
-import { Head, router, useForm } from '@inertiajs/vue3';
 import { type BreadcrumbItem } from '@/types';
+import { Head, router, useForm } from '@inertiajs/vue3';
 import { ArrowLeft, CheckCheck, Paperclip, Search, Send, X } from 'lucide-vue-next';
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 
@@ -92,10 +92,10 @@ const filteredThreads = computed(() => {
 
     return props.threads.filter((thread) => {
         return (
-            thread.topic_title.toLowerCase().includes(keyword)
-            || thread.category_name.toLowerCase().includes(keyword)
-            || thread.customer_name.toLowerCase().includes(keyword)
-            || thread.last_message.toLowerCase().includes(keyword)
+            thread.topic_title.toLowerCase().includes(keyword) ||
+            thread.category_name.toLowerCase().includes(keyword) ||
+            thread.customer_name.toLowerCase().includes(keyword) ||
+            thread.last_message.toLowerCase().includes(keyword)
         );
     });
 });
@@ -136,7 +136,7 @@ const applyServerFilters = () => {
             preserveState: true,
             preserveScroll: true,
             replace: true,
-        }
+        },
     );
 };
 
@@ -149,17 +149,13 @@ const reloadChatData = () => {
 const subscribeRealtimeChannels = () => {
     const echo = getEcho();
 
-    echo.private('chat.inbox')
-        .listen('.chat.message.sent', reloadChatData)
-        .listen('.chat.thread.updated', reloadChatData);
+    echo.private('chat.inbox').listen('.chat.message.sent', reloadChatData).listen('.chat.thread.updated', reloadChatData);
     subscribedChannels.push('chat.inbox');
 
     for (const thread of props.threads) {
         const channel = `chat.thread.${thread.id}`;
 
-        echo.private(channel)
-            .listen('.chat.message.sent', reloadChatData)
-            .listen('.chat.thread.updated', reloadChatData);
+        echo.private(channel).listen('.chat.message.sent', reloadChatData).listen('.chat.thread.updated', reloadChatData);
 
         subscribedChannels.push(channel);
     }
@@ -256,14 +252,12 @@ watch(
         selectedMentorId.value = thread.assigned_mentor_id ? String(thread.assigned_mentor_id) : '';
         selectedStatus.value = thread.status;
     },
-    { immediate: true }
+    { immediate: true },
 );
 
 watch([statusFilter, mentorFilter], () => {
     applyServerFilters();
 });
-
-
 
 onMounted(() => {
     subscribeRealtimeChannels();
@@ -283,11 +277,10 @@ onBeforeUnmount(() => {
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
-            <div class="grid h-[calc(100vh-11rem)] grid-cols-1 overflow-hidden rounded-xl border border-sidebar-border/70 bg-white md:grid-cols-[360px_1fr]">
-                <aside
-                    class="h-full flex-col border-r border-gray-200 bg-gray-50"
-                    :class="isMobileThreadOpen ? 'hidden md:flex' : 'flex'"
-                >
+            <div
+                class="grid h-[calc(100vh-11rem)] grid-cols-1 overflow-hidden rounded-xl border border-sidebar-border/70 bg-white md:grid-cols-[360px_1fr]"
+            >
+                <aside class="h-full flex-col border-r border-gray-200 bg-gray-50" :class="isMobileThreadOpen ? 'hidden md:flex' : 'flex'">
                     <div class="border-b border-gray-200 p-4">
                         <h1 class="text-lg font-bold text-gray-900">Inbox Chat Petani</h1>
                         <p class="text-xs text-gray-500">Tangani dan balas seluruh topik masuk dari petani/customer.</p>
@@ -347,26 +340,14 @@ onBeforeUnmount(() => {
                             </div>
                         </button>
 
-                        <div v-if="!filteredThreads.length" class="p-4 text-sm text-gray-500">
-                            Belum ada thread masuk dari petani.
-                        </div>
+                        <div v-if="!filteredThreads.length" class="p-4 text-sm text-gray-500">Belum ada thread masuk dari petani.</div>
                     </div>
                 </aside>
 
-                <main
-                    v-if="activeThread"
-                    class="h-full min-h-0 flex-col"
-                    :class="isMobileThreadOpen ? 'flex' : 'hidden md:flex'"
-                >
+                <main v-if="activeThread" class="h-full min-h-0 flex-col" :class="isMobileThreadOpen ? 'flex' : 'hidden md:flex'">
                     <header class="border-b border-gray-200 bg-white px-4 py-3">
                         <div class="flex items-center gap-3">
-                            <Button
-                                type="button"
-                                variant="ghost"
-                                size="icon"
-                                class="h-9 w-9 rounded-full md:hidden"
-                                @click="backToThreadList"
-                            >
+                            <Button type="button" variant="ghost" size="icon" class="h-9 w-9 rounded-full md:hidden" @click="backToThreadList">
                                 <ArrowLeft class="h-4 w-4" />
                             </Button>
                             <div>
@@ -380,7 +361,13 @@ onBeforeUnmount(() => {
                                     <option value="">Pilih mentor</option>
                                     <option v-for="mentor in mentors" :key="mentor.id" :value="String(mentor.id)">{{ mentor.name }}</option>
                                 </select>
-                                <Button type="button" size="sm" variant="outline" @click="assignMentor" :disabled="assignMentorForm.processing || !selectedMentorId">
+                                <Button
+                                    type="button"
+                                    size="sm"
+                                    variant="outline"
+                                    @click="assignMentor"
+                                    :disabled="assignMentorForm.processing || !selectedMentorId"
+                                >
                                     Assign
                                 </Button>
                             </div>
@@ -409,7 +396,11 @@ onBeforeUnmount(() => {
                             >
                                 <div
                                     class="max-w-[75%] rounded-2xl px-3.5 py-2 text-sm shadow-sm"
-                                    :class="message.is_me ? 'rounded-br-md bg-[#DCF8C6] text-gray-800' : 'rounded-bl-md bg-white text-gray-800 border border-gray-200'"
+                                    :class="
+                                        message.is_me
+                                            ? 'rounded-br-md bg-[#DCF8C6] text-gray-800'
+                                            : 'rounded-bl-md border border-gray-200 bg-white text-gray-800'
+                                    "
                                 >
                                     <p class="text-[11px] font-semibold text-[#2E7D32]">{{ message.sender_name }}</p>
                                     <button
@@ -422,12 +413,16 @@ onBeforeUnmount(() => {
                                             :src="message.attachment_url"
                                             alt="Lampiran gambar"
                                             class="max-h-56 w-full rounded-lg object-cover transition hover:opacity-90"
-                                        >
+                                        />
                                     </button>
                                     <p v-if="message.message" class="mt-1 leading-relaxed">{{ message.message }}</p>
                                     <div class="mt-1 flex items-center justify-end gap-1 text-[10px] text-gray-500">
                                         <span>{{ message.time }}</span>
-                                        <CheckCheck v-if="message.is_me" class="h-3.5 w-3.5" :class="message.is_read ? 'text-sky-500' : 'text-gray-400'" />
+                                        <CheckCheck
+                                            v-if="message.is_me"
+                                            class="h-3.5 w-3.5"
+                                            :class="message.is_read ? 'text-sky-500' : 'text-gray-400'"
+                                        />
                                     </div>
                                 </div>
                             </div>
@@ -442,14 +437,8 @@ onBeforeUnmount(() => {
                                 accept="image/jpeg,image/png,image/webp"
                                 class="hidden"
                                 @change="onImageSelected"
-                            >
-                            <Button
-                                type="button"
-                                size="icon"
-                                variant="outline"
-                                class="h-11 w-11 rounded-full"
-                                @click="openImagePicker"
-                            >
+                            />
+                            <Button type="button" size="icon" variant="outline" class="h-11 w-11 rounded-full" @click="openImagePicker">
                                 <Paperclip class="h-4 w-4" />
                             </Button>
                             <Input v-model="messageForm.message" placeholder="Balas chat petani..." class="h-11 flex-1" />
@@ -462,7 +451,10 @@ onBeforeUnmount(() => {
                                 <Send class="h-4 w-4" />
                             </Button>
                         </form>
-                        <div v-if="messageForm.image" class="mt-2 flex items-center justify-between rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-xs text-gray-700">
+                        <div
+                            v-if="messageForm.image"
+                            class="mt-2 flex items-center justify-between rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-xs text-gray-700"
+                        >
                             <span class="truncate">{{ messageForm.image.name }}</span>
                             <button type="button" class="ml-2 text-gray-500 hover:text-red-600" @click="removeSelectedImage">
                                 <X class="h-4 w-4" />

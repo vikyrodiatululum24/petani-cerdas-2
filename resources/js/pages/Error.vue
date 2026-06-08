@@ -36,7 +36,10 @@ const description = descriptionMap[props.status] ?? 'Permintaan Anda belum bisa 
     <Head :title="`${props.status} - ${title}`" />
 
     <div class="relative flex min-h-svh items-center justify-center overflow-hidden bg-[#f2f7f2] px-4 py-10">
-        <div class="pointer-events-none absolute inset-0 opacity-60" style="background-image: radial-gradient(circle at 1px 1px, #2e7d3220 1px, transparent 0); background-size: 24px 24px" />
+        <div
+            class="pointer-events-none absolute inset-0 opacity-60"
+            style="background-image: radial-gradient(circle at 1px 1px, #2e7d3220 1px, transparent 0); background-size: 24px 24px"
+        />
         <div class="pointer-events-none absolute -left-20 top-20 h-64 w-64 rounded-full bg-[#8bc34a33] blur-3xl" />
         <div class="pointer-events-none absolute -right-20 bottom-20 h-72 w-72 rounded-full bg-[#66bb6a30] blur-3xl" />
 
@@ -48,7 +51,7 @@ const description = descriptionMap[props.status] ?? 'Permintaan Anda belum bisa 
             <p class="text-sm font-semibold uppercase tracking-wide text-[#2E7D32]">Error {{ props.status }}</p>
             <h1 class="mt-2 text-3xl font-extrabold text-gray-900 md:text-4xl">{{ title }}</h1>
             <p class="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-gray-600 md:text-base">{{ description }}</p>
-            <img :src="imageMap[props.status]" :alt="title" class="mx-auto mt-6 w-64">
+            <img :src="imageMap[props.status]" :alt="title" class="mx-auto mt-6 w-64" />
 
             <div class="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
                 <Button as-child class="bg-[#2E7D32] text-white hover:bg-[#256427]">

@@ -243,7 +243,7 @@ const formatPrice = (price: number) => {
                 </div>
             </div>
 
-            <div class="overflow-x-auto rounded-lg border">
+            <div class="max-w-full overflow-hidden rounded-lg border">
                 <div class="grid gap-3 bg-muted/30 p-4 md:grid-cols-4">
                     <div class="md:col-span-3">
                         <Label for="search">Search</Label>
@@ -265,12 +265,16 @@ const formatPrice = (price: number) => {
                     </div>
                 </div>
 
-                <div class="flex justify-between items-center px-4 gap-4 py-4">
+                <div class="flex items-center justify-between gap-4 px-4 py-4">
                     <Button size="sm" @click="resetFilters">Reset</Button>
 
                     <div class="flex items-center gap-2">
                         <Label for="per-page" class="whitespace-nowrap">Per Page</Label>
-                        <select id="per-page" v-model="filterForm.per_page" class="w-20 rounded-md border border-input bg-background px-3 py-2 text-sm">
+                        <select
+                            id="per-page"
+                            v-model="filterForm.per_page"
+                            class="w-20 rounded-md border border-input bg-background px-3 py-2 text-sm"
+                        >
                             <option :value="10">10</option>
                             <option :value="15">15</option>
                             <option :value="25">25</option>
@@ -279,52 +283,59 @@ const formatPrice = (price: number) => {
                     </div>
                 </div>
 
-                <table class="w-full min-w-[720px] text-sm">
-                    <thead class="bg-muted/60 text-left">
-                        <tr>
-                            <th class="px-4 py-3 font-medium">Nama Produk</th>
-                            <th class="px-4 py-3 font-medium">Kategori</th>
-                            <th class="px-4 py-3 font-medium">Harga</th>
-                            <th class="px-4 py-3 font-medium">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-if="products.length === 0">
-                            <td colspan="4" class="px-4 py-6 text-center text-muted-foreground">Belum ada produk.</td>
-                        </tr>
-                        <tr v-for="product in products" :key="product.id" class="border-t">
-                            <td class="px-4 py-3">
-                                <div class="flex items-center gap-3">
-                                    <img v-if="product.image_url" :src="product.image_url" alt="thumbnail" class="h-10 w-14 rounded object-cover" />
-                                    <div>
-                                        <p class="font-medium">{{ product.name }}</p>
-                                        <p class="text-xs text-muted-foreground">/{{ product.slug }}</p>
+                <div class="w-full overflow-x-auto">
+                    <table class="w-full min-w-[720px] text-sm">
+                        <thead class="bg-muted/60 text-left">
+                            <tr>
+                                <th class="px-4 py-3 font-medium">Nama Produk</th>
+                                <th class="px-4 py-3 font-medium">Kategori</th>
+                                <th class="px-4 py-3 font-medium">Harga</th>
+                                <th class="px-4 py-3 font-medium">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-if="products.length === 0">
+                                <td colspan="4" class="px-4 py-6 text-center text-muted-foreground">Belum ada produk.</td>
+                            </tr>
+                            <tr v-for="product in products" :key="product.id" class="border-t">
+                                <td class="px-4 py-3">
+                                    <div class="flex items-center gap-3">
+                                        <img
+                                            v-if="product.image_url"
+                                            :src="product.image_url"
+                                            alt="thumbnail"
+                                            class="h-10 w-14 rounded object-cover"
+                                        />
+                                        <div>
+                                            <p class="font-medium">{{ product.name }}</p>
+                                            <p class="text-xs text-muted-foreground">/{{ product.slug }}</p>
+                                        </div>
                                     </div>
-                                </div>
-                            </td>
-                            <td class="px-4 py-3">{{ product.category?.name ?? '-' }}</td>
-                            <td class="px-4 py-3">
-                                <div>
-                                    <p class="font-medium">{{ formatPrice(product.effective_price) }}</p>
-                                    <p v-if="product.discount_price" class="text-xs text-muted-foreground line-through">
-                                        {{ formatPrice(product.price) }}
-                                    </p>
-                                </div>
-                            </td>
-                            <td class="px-4 py-3">
-                                <div class="flex gap-2">
-                                    <Button size="sm" variant="outline" as-child>
-                                        <Link :href="route('products.show', { product: product.id })">Detail</Link>
-                                    </Button>
-                                    <Button size="sm" variant="outline" as-child>
-                                        <Link :href="route('products.edit', { product: product.id })">Edit</Link>
-                                    </Button>
-                                    <Button size="sm" variant="destructive" @click="openDeleteProductDialog(product)">Hapus</Button>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                                </td>
+                                <td class="px-4 py-3">{{ product.category?.name ?? '-' }}</td>
+                                <td class="px-4 py-3">
+                                    <div>
+                                        <p class="font-medium">{{ formatPrice(product.effective_price) }}</p>
+                                        <p v-if="product.discount_price" class="text-xs text-muted-foreground line-through">
+                                            {{ formatPrice(product.price) }}
+                                        </p>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <div class="flex gap-2">
+                                        <Button size="sm" variant="outline" as-child>
+                                            <Link :href="route('products.show', { product: product.id })">Detail</Link>
+                                        </Button>
+                                        <Button size="sm" variant="outline" as-child>
+                                            <Link :href="route('products.edit', { product: product.id })">Edit</Link>
+                                        </Button>
+                                        <Button size="sm" variant="destructive" @click="openDeleteProductDialog(product)">Hapus</Button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
 
                 <div class="flex flex-col gap-3 border-t p-4 text-sm md:flex-row md:items-center md:justify-between">
                     <p class="text-muted-foreground">

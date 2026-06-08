@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { Button } from '@/components/ui/button';
-import { getEcho } from '@/echo';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { getEcho } from '@/echo';
 import PublicLayout from '@/layouts/PublicLayout.vue';
 import { Head, router, useForm } from '@inertiajs/vue3';
-import { ArrowLeft, Camera, CheckCheck, MessageSquarePlus, Paperclip, Search, Send, X } from 'lucide-vue-next';
+import { ArrowLeft, Camera, CheckCheck, MessageSquarePlus, Search, Send, X } from 'lucide-vue-next';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 
 interface ThreadMessage {
@@ -87,17 +87,13 @@ const reloadChatData = () => {
 const subscribeRealtimeChannels = () => {
     const echo = getEcho();
 
-    echo.private('chat.inbox')
-        .listen('.chat.message.sent', reloadChatData)
-        .listen('.chat.thread.updated', reloadChatData);
+    echo.private('chat.inbox').listen('.chat.message.sent', reloadChatData).listen('.chat.thread.updated', reloadChatData);
     subscribedChannels.push('chat.inbox');
 
     for (const thread of props.threads) {
         const channel = `chat.thread.${thread.id}`;
 
-        echo.private(channel)
-            .listen('.chat.message.sent', reloadChatData)
-            .listen('.chat.thread.updated', reloadChatData);
+        echo.private(channel).listen('.chat.message.sent', reloadChatData).listen('.chat.thread.updated', reloadChatData);
 
         subscribedChannels.push(channel);
     }
@@ -124,10 +120,10 @@ const filteredThreads = computed(() => {
 
     return props.threads.filter((thread) => {
         return (
-            thread.topic_title.toLowerCase().includes(keyword)
-            || thread.category_name.toLowerCase().includes(keyword)
-            || thread.customer_name.toLowerCase().includes(keyword)
-            || thread.last_message.toLowerCase().includes(keyword)
+            thread.topic_title.toLowerCase().includes(keyword) ||
+            thread.category_name.toLowerCase().includes(keyword) ||
+            thread.customer_name.toLowerCase().includes(keyword) ||
+            thread.last_message.toLowerCase().includes(keyword)
         );
     });
 });
@@ -255,12 +251,11 @@ const closeImagePreview = () => {
     <PublicLayout>
         <section class="bg-gradient-to-b from-[#eaf6eb] to-[#f7fbf7] py-4 md:py-6">
             <div class="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8">
-                <div class="h-[calc(100vh-8.8rem)] overflow-hidden rounded-2xl border border-green-100 bg-white shadow-xl shadow-green-900/10 md:h-[calc(100vh-9.5rem)]">
+                <div
+                    class="h-[calc(100vh-8.8rem)] overflow-hidden rounded-2xl border border-green-100 bg-white shadow-xl shadow-green-900/10 md:h-[calc(100vh-9.5rem)]"
+                >
                     <div class="grid h-full grid-cols-1 md:grid-cols-[350px_1fr]">
-                        <aside
-                            class="h-full flex-col border-r border-green-100 bg-[#f5fbf6]"
-                            :class="isMobileThreadOpen ? 'hidden md:flex' : 'flex'"
-                        >
+                        <aside class="h-full flex-col border-r border-green-100 bg-[#f5fbf6]" :class="isMobileThreadOpen ? 'hidden md:flex' : 'flex'">
                             <div class="border-b border-green-100 p-4">
                                 <div class="flex items-start justify-between gap-3">
                                     <div>
@@ -268,9 +263,12 @@ const closeImagePreview = () => {
                                         <p class="text-xs text-gray-500">
                                             {{ role === 'petani' ? 'Thread milik Anda' : 'Semua thread masuk dari petani' }}
                                         </p>
-                                        <p v-if="chatQuota" class="mt-1 text-[11px] font-medium" :class="chatQuota.remaining > 0 ? 'text-emerald-700' : 'text-red-600'">
-                                            Kuota chat hari ini: {{ chatQuota.used }}/{{ chatQuota.max }}
-                                            (sisa {{ chatQuota.remaining }})
+                                        <p
+                                            v-if="chatQuota"
+                                            class="mt-1 text-[11px] font-medium"
+                                            :class="chatQuota.remaining > 0 ? 'text-emerald-700' : 'text-red-600'"
+                                        >
+                                            Kuota chat hari ini: {{ chatQuota.used }}/{{ chatQuota.max }} (sisa {{ chatQuota.remaining }})
                                         </p>
                                     </div>
                                     <Button
@@ -287,7 +285,11 @@ const closeImagePreview = () => {
 
                                 <div class="relative mt-3">
                                     <Search class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-                                    <Input v-model="search" placeholder="Cari topik, kategori, atau pesan..." class="h-10 rounded-xl border-green-200 bg-white pl-9" />
+                                    <Input
+                                        v-model="search"
+                                        placeholder="Cari topik, kategori, atau pesan..."
+                                        class="h-10 rounded-xl border-green-200 bg-white pl-9"
+                                    />
                                 </div>
                             </div>
 
@@ -334,11 +336,7 @@ const closeImagePreview = () => {
                             </div>
                         </aside>
 
-                        <main
-                            v-if="activeThread"
-                            class="h-full min-h-0 flex-col"
-                            :class="isMobileThreadOpen ? 'flex' : 'hidden md:flex'"
-                        >
+                        <main v-if="activeThread" class="h-full min-h-0 flex-col" :class="isMobileThreadOpen ? 'flex' : 'hidden md:flex'">
                             <header class="flex items-center justify-between border-b border-green-100 bg-[#f1f8f2] px-4 py-3">
                                 <div class="flex items-center gap-3">
                                     <Button
@@ -352,7 +350,7 @@ const closeImagePreview = () => {
                                     </Button>
                                     <div>
                                         <p class="text-sm font-semibold text-gray-900">{{ activeThread.topic_title }}</p>
-                                        <p class="text-xs text-gray-500">{{ activeThread.category_name }}  Petani: {{ activeThread.customer_name }}</p>
+                                        <p class="text-xs text-gray-500">{{ activeThread.category_name }} Petani: {{ activeThread.customer_name }}</p>
                                     </div>
                                 </div>
                             </header>
@@ -367,7 +365,11 @@ const closeImagePreview = () => {
                                     >
                                         <div
                                             class="max-w-[85%] rounded-2xl px-3.5 py-2 text-sm shadow-sm sm:max-w-[70%]"
-                                            :class="message.is_me ? 'rounded-br-md bg-[#DCF8C6] text-gray-800' : 'rounded-bl-md border border-green-100 bg-white text-gray-800'"
+                                            :class="
+                                                message.is_me
+                                                    ? 'rounded-br-md bg-[#DCF8C6] text-gray-800'
+                                                    : 'rounded-bl-md border border-green-100 bg-white text-gray-800'
+                                            "
                                         >
                                             <p class="text-[11px] font-semibold text-[#2E7D32]">{{ message.sender_name }}</p>
                                             <button
@@ -380,12 +382,16 @@ const closeImagePreview = () => {
                                                     :src="message.attachment_url"
                                                     alt="Lampiran gambar"
                                                     class="max-h-56 w-full rounded-lg object-cover transition hover:opacity-90"
-                                                >
+                                                />
                                             </button>
                                             <p v-if="message.message" class="mt-1 leading-relaxed">{{ message.message }}</p>
                                             <div class="mt-1 flex items-center justify-end gap-1 text-[10px] text-gray-500">
                                                 <span>{{ message.time }}</span>
-                                                <CheckCheck v-if="message.is_me" class="h-3.5 w-3.5" :class="message.is_read ? 'text-sky-500' : 'text-gray-400'" />
+                                                <CheckCheck
+                                                    v-if="message.is_me"
+                                                    class="h-3.5 w-3.5"
+                                                    :class="message.is_read ? 'text-sky-500' : 'text-gray-400'"
+                                                />
                                             </div>
                                         </div>
                                     </div>
@@ -393,7 +399,10 @@ const closeImagePreview = () => {
                             </div>
 
                             <footer class="shrink-0 border-t border-green-100 bg-[#f1f8f2] p-3 sm:p-4">
-                                <div v-if="messageForm.image" class="mb-2 flex items-center justify-between rounded-lg border border-green-200 bg-white px-3 py-2 text-xs text-gray-700">
+                                <div
+                                    v-if="messageForm.image"
+                                    class="mb-2 flex items-center justify-between rounded-lg border border-green-200 bg-white px-3 py-2 text-xs text-gray-700"
+                                >
                                     <span class="truncate">{{ messageForm.image.name }}</span>
                                     <button type="button" class="ml-2 text-gray-500 hover:text-red-600" @click="removeSelectedImage">
                                         <X class="h-4 w-4" />
@@ -406,7 +415,7 @@ const closeImagePreview = () => {
                                         accept="image/jpeg,image/png,image/webp"
                                         class="hidden"
                                         @change="onImageSelected"
-                                    >
+                                    />
                                     <Button
                                         type="button"
                                         size="icon"
@@ -425,7 +434,11 @@ const closeImagePreview = () => {
                                         type="submit"
                                         size="icon"
                                         class="h-11 w-11 rounded-full bg-[#2E7D32] text-white hover:bg-[#256427]"
-                                        :disabled="messageForm.processing || (!messageForm.message.trim() && !messageForm.image) || Boolean(chatQuota && chatQuota.remaining <= 0)"
+                                        :disabled="
+                                            messageForm.processing ||
+                                            (!messageForm.message.trim() && !messageForm.image) ||
+                                            Boolean(chatQuota && chatQuota.remaining <= 0)
+                                        "
                                     >
                                         <Send class="h-4 w-4" />
                                     </Button>
@@ -468,7 +481,9 @@ const closeImagePreview = () => {
                                 {{ category.name }}
                             </option>
                         </select>
-                        <p v-if="startTopicForm.errors.category_id" class="text-xs font-medium text-red-600">{{ startTopicForm.errors.category_id }}</p>
+                        <p v-if="startTopicForm.errors.category_id" class="text-xs font-medium text-red-600">
+                            {{ startTopicForm.errors.category_id }}
+                        </p>
                     </div>
 
                     <div class="grid gap-2">
@@ -483,7 +498,9 @@ const closeImagePreview = () => {
                                 {{ topic.title }}
                             </option>
                         </select>
-                        <p v-if="startTopicForm.errors.consultation_topic_id" class="text-xs font-medium text-red-600">{{ startTopicForm.errors.consultation_topic_id }}</p>
+                        <p v-if="startTopicForm.errors.consultation_topic_id" class="text-xs font-medium text-red-600">
+                            {{ startTopicForm.errors.consultation_topic_id }}
+                        </p>
                     </div>
 
                     <div class="grid gap-2">
@@ -495,7 +512,9 @@ const closeImagePreview = () => {
                             class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm text-gray-700 outline-none transition focus:border-[#2E7D32]"
                             placeholder="Jelaskan masalah Anda secara ringkas dan jelas"
                         />
-                        <p v-if="startTopicForm.errors.initial_message" class="text-xs font-medium text-red-600">{{ startTopicForm.errors.initial_message }}</p>
+                        <p v-if="startTopicForm.errors.initial_message" class="text-xs font-medium text-red-600">
+                            {{ startTopicForm.errors.initial_message }}
+                        </p>
                     </div>
 
                     <div class="flex justify-end gap-2 pt-2">
@@ -530,6 +549,8 @@ const closeImagePreview = () => {
     background-image:
         radial-gradient(circle at 1px 1px, rgb(255 255 255 / 0.35) 1px, transparent 0),
         linear-gradient(120deg, rgb(255 255 255 / 0.12), transparent 50%);
-    background-size: 22px 22px, 100% 100%;
+    background-size:
+        22px 22px,
+        100% 100%;
 }
 </style>

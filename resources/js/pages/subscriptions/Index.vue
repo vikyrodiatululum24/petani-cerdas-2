@@ -209,7 +209,7 @@ const submitUpdate = () => {
                 </Button>
             </div>
 
-            <div class="overflow-x-auto rounded-lg border">
+            <div class="max-w-full overflow-hidden rounded-lg border">
                 <div class="grid gap-3 bg-muted/30 p-4 md:grid-cols-4">
                     <div class="md:col-span-2">
                         <Label for="search">Search</Label>
@@ -218,7 +218,11 @@ const submitUpdate = () => {
 
                     <div>
                         <Label for="plan-filter">Jenis Plan</Label>
-                        <select id="plan-filter" v-model="filterForm.plan_id" class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+                        <select
+                            id="plan-filter"
+                            v-model="filterForm.plan_id"
+                            class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                        >
                             <option value="">Semua plan</option>
                             <option v-for="plan in plans" :key="plan.id" :value="String(plan.id)">
                                 {{ plan.name }}
@@ -228,7 +232,11 @@ const submitUpdate = () => {
 
                     <div>
                         <Label for="status-filter">Status</Label>
-                        <select id="status-filter" v-model="filterForm.status" class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+                        <select
+                            id="status-filter"
+                            v-model="filterForm.status"
+                            class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                        >
                             <option value="">Semua status</option>
                             <option value="pending">pending</option>
                             <option value="active">active</option>
@@ -238,12 +246,16 @@ const submitUpdate = () => {
                     </div>
                 </div>
 
-                <div class="flex justify-between items-center px-4 gap-4 py-4">
+                <div class="flex items-center justify-between gap-4 px-4 py-4">
                     <Button size="sm" @click="resetFilters">Reset</Button>
 
                     <div class="flex items-center gap-2">
                         <Label for="per-page" class="whitespace-nowrap">Per Page</Label>
-                        <select id="per-page" v-model="filterForm.per_page" class="w-20 rounded-md border border-input bg-background px-3 py-2 text-sm">
+                        <select
+                            id="per-page"
+                            v-model="filterForm.per_page"
+                            class="w-20 rounded-md border border-input bg-background px-3 py-2 text-sm"
+                        >
                             <option :value="10">10</option>
                             <option :value="15">15</option>
                             <option :value="25">25</option>
@@ -252,54 +264,58 @@ const submitUpdate = () => {
                     </div>
                 </div>
 
-                <table class="w-full min-w-[980px] text-sm">
-                    <thead class="bg-muted/60 text-left">
-                        <tr>
-                            <th class="px-4 py-3 font-medium">Petani</th>
-                            <th class="px-4 py-3 font-medium">Paket</th>
-                            <th class="px-4 py-3 font-medium">Generation</th>
-                            <th class="px-4 py-3 font-medium">Periode</th>
-                            <th class="px-4 py-3 font-medium">Status</th>
-                            <th class="px-4 py-3 font-medium">Approver</th>
-                            <th class="px-4 py-3 font-medium">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-if="subscriptions.length === 0">
-                            <td colspan="7" class="px-4 py-6 text-center text-muted-foreground">Belum ada data subscription.</td>
-                        </tr>
-                        <tr v-for="item in subscriptions" :key="item.id" class="border-t">
-                            <td class="px-4 py-3">
-                                <div class="font-medium">{{ item.user.name ?? '-' }}</div>
-                                <div class="text-xs text-muted-foreground">{{ item.user.email ?? '-' }}</div>
-                            </td>
-                            <td class="px-4 py-3">
-                                <div class="font-medium">{{ item.plan.name ?? '-' }}</div>
-                                <div class="text-xs text-muted-foreground">{{ formatCurrency(item.plan.price) }}</div>
-                            </td>
-                            <td class="px-4 py-3">{{ item.generation || '-' }}</td>
-                            <td class="px-4 py-3 text-xs text-muted-foreground">
-                                <div>{{ item.start_date ?? '-' }}</div>
-                                <div>{{ item.end_date ?? '-' }}</div>
-                            </td>
-                            <td class="px-4 py-3">
-                                <span :class="['inline-flex rounded-full px-2.5 py-1 text-xs font-medium capitalize', statusClass(item.status)]">
-                                    {{ item.status }}
-                                </span>
-                            </td>
-                            <td class="px-4 py-3">{{ item.approver.name ?? '-' }}</td>
-                            <td class="px-4 py-3">
-                                <div class="flex gap-2">
-                                    <Button size="sm" variant="outline" @click="openEditDialog(item)">Edit</Button>
-                                    <Button v-if="item.pending_payment_id" size="sm" variant="outline" as-child>
-                                        <Link :href="route('admin.subscriptions.payments.show', { payment: item.pending_payment_id })">Lihat Payment</Link>
-                                    </Button>
-                                    <Button v-else size="sm" variant="outline" disabled>Tidak Ada Payment</Button>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="w-full overflow-x-auto">
+                    <table class="w-full min-w-[980px] text-sm">
+                        <thead class="bg-muted/60 text-left">
+                            <tr>
+                                <th class="px-4 py-3 font-medium">Petani</th>
+                                <th class="px-4 py-3 font-medium">Paket</th>
+                                <th class="px-4 py-3 font-medium">Generation</th>
+                                <th class="px-4 py-3 font-medium">Periode</th>
+                                <th class="px-4 py-3 font-medium">Status</th>
+                                <th class="px-4 py-3 font-medium">Approver</th>
+                                <th class="px-4 py-3 font-medium">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-if="subscriptions.length === 0">
+                                <td colspan="7" class="px-4 py-6 text-center text-muted-foreground">Belum ada data subscription.</td>
+                            </tr>
+                            <tr v-for="item in subscriptions" :key="item.id" class="border-t">
+                                <td class="px-4 py-3">
+                                    <div class="font-medium">{{ item.user.name ?? '-' }}</div>
+                                    <div class="text-xs text-muted-foreground">{{ item.user.email ?? '-' }}</div>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <div class="font-medium">{{ item.plan.name ?? '-' }}</div>
+                                    <div class="text-xs text-muted-foreground">{{ formatCurrency(item.plan.price) }}</div>
+                                </td>
+                                <td class="px-4 py-3">{{ item.generation || '-' }}</td>
+                                <td class="px-4 py-3 text-xs text-muted-foreground">
+                                    <div>{{ item.start_date ?? '-' }}</div>
+                                    <div>{{ item.end_date ?? '-' }}</div>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span :class="['inline-flex rounded-full px-2.5 py-1 text-xs font-medium capitalize', statusClass(item.status)]">
+                                        {{ item.status }}
+                                    </span>
+                                </td>
+                                <td class="px-4 py-3">{{ item.approver.name ?? '-' }}</td>
+                                <td class="px-4 py-3">
+                                    <div class="flex gap-2">
+                                        <Button size="sm" variant="outline" @click="openEditDialog(item)">Edit</Button>
+                                        <Button v-if="item.pending_payment_id" size="sm" variant="outline" as-child>
+                                            <Link :href="route('admin.subscriptions.payments.show', { payment: item.pending_payment_id })"
+                                                >Lihat Payment</Link
+                                            >
+                                        </Button>
+                                        <Button v-else size="sm" variant="outline" disabled>Tidak Ada Payment</Button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
 
                 <div class="flex flex-col gap-3 border-t p-4 text-sm md:flex-row md:items-center md:justify-between">
                     <p class="text-muted-foreground">
@@ -326,9 +342,7 @@ const submitUpdate = () => {
             <DialogContent class="max-w-lg">
                 <DialogHeader>
                     <DialogTitle>Update Subscription</DialogTitle>
-                    <DialogDescription>
-                        Ubah status subscription dan atur periode aktif bila diperlukan.
-                    </DialogDescription>
+                    <DialogDescription> Ubah status subscription dan atur periode aktif bila diperlukan. </DialogDescription>
                 </DialogHeader>
 
                 <div class="grid gap-4">

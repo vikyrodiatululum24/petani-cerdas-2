@@ -11,7 +11,7 @@ interface Product {
     description: string;
     price: number;
     discount_price: number | null;
-    effective_price : number;
+    effective_price: number;
     image_path: string | null;
     image_url: string | null;
     olshop_links: Record<string, string> | null;

@@ -19,9 +19,8 @@ const form = useForm({
 const submit = () => {
     form.post(route('register'), {
         onFinish: () => {
-            form.reset('password', 'password_confirmation'),
-            toast.success('Registrasi berhasil! Silakan cek email Anda untuk verifikasi.')
-        }
+            (form.reset('password', 'password_confirmation'), toast.success('Registrasi berhasil! Silakan cek email Anda untuk verifikasi.'));
+        },
     });
 };
 </script>

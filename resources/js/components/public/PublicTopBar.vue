@@ -162,7 +162,7 @@ const initials = computed(() => {
 
                     <!-- Profile icon dropdown (always visible) -->
                     <div class="flex items-center gap-2">
-                        <div class="md:hidden flex items-center gap-0.5" v-if="authUser">
+                        <div class="flex items-center gap-0.5 md:hidden" v-if="authUser">
                             <Link
                                 v-for="link in dropdownMenu"
                                 :key="link.href"
@@ -175,31 +175,31 @@ const initials = computed(() => {
                         </div>
                         <DropdownMenu>
                             <DropdownMenuTrigger as-child>
-                                <button class="flex items-center gap-2" :class="!authUser ? 'md:hidden' : ''"
-                                    aria-label="Menu profil"
-                                >
+                                <button class="flex items-center gap-2" :class="!authUser ? 'md:hidden' : ''" aria-label="Menu profil">
                                     <!-- Initials if logged in, icon if guest -->
-                                     <div class="flex h-9 w-9 items-center justify-center rounded-full transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2E7D32] focus-visible:ring-offset-2"
-                                    :class="
-                                        authUser
-                                            ? 'bg-[#2E7D32] text-white shadow-sm hover:bg-[#256427]'
-                                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                                    ">
-                                         <span v-if="authUser && initials" class="text-xs font-bold">{{ initials }}</span>
-                                         <User v-else class="h-4 w-4" />
-                                     </div>
+                                    <div
+                                        class="flex h-9 w-9 items-center justify-center rounded-full transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2E7D32] focus-visible:ring-offset-2"
+                                        :class="
+                                            authUser
+                                                ? 'bg-[#2E7D32] text-white shadow-sm hover:bg-[#256427]'
+                                                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                                        "
+                                    >
+                                        <span v-if="authUser && initials" class="text-xs font-bold">{{ initials }}</span>
+                                        <User v-else class="h-4 w-4" />
+                                    </div>
 
-                                     <div class="hidden md:flex md:flex-col md:items-start gap-0.5">
-                                         <p class="hidden lg:flex truncate text-sm font-semibold text-gray-900">
-                                             {{ authUser?.name || 'Akun' }}
-                                         </p>
-                                         <span
-                                             v-if="userSubscriptions?.active && userSubscriptions?.plan_name"
-                                             class="inline-flex items-center rounded-full bg-[#E8F5E9] px-2.5 py-0.5 text-xs font-medium text-[#2E7D32]"
-                                         >
-                                             {{ userSubscriptions.plan_name }}
-                                         </span>
-                                     </div>
+                                    <div class="hidden gap-0.5 md:flex md:flex-col md:items-start">
+                                        <p class="hidden truncate text-sm font-semibold text-gray-900 lg:flex">
+                                            {{ authUser?.name || 'Akun' }}
+                                        </p>
+                                        <span
+                                            v-if="userSubscriptions?.active && userSubscriptions?.plan_name"
+                                            class="inline-flex items-center rounded-full bg-[#E8F5E9] px-2.5 py-0.5 text-xs font-medium text-[#2E7D32]"
+                                        >
+                                            {{ userSubscriptions.plan_name }}
+                                        </span>
+                                    </div>
                                 </button>
                             </DropdownMenuTrigger>
 
@@ -220,8 +220,15 @@ const initials = computed(() => {
                                                 <p class="truncate text-xs text-gray-500">
                                                     {{ authUser.email }}
                                                 </p>
-                                                <span v-if="userSubscriptions?.active && userSubscriptions?.plan_name" class="inline-flex md:hidden items-center rounded-full bg-[#E8F5E9] px-2.5 py-0.5 text-xs font-medium text-[#2E7D32] mt-1">
-                                                    {{ userSubscriptions?.active && userSubscriptions?.plan_name ? userSubscriptions.plan_name : 'Akun Gratis' }}
+                                                <span
+                                                    v-if="userSubscriptions?.active && userSubscriptions?.plan_name"
+                                                    class="mt-1 inline-flex items-center rounded-full bg-[#E8F5E9] px-2.5 py-0.5 text-xs font-medium text-[#2E7D32] md:hidden"
+                                                >
+                                                    {{
+                                                        userSubscriptions?.active && userSubscriptions?.plan_name
+                                                            ? userSubscriptions.plan_name
+                                                            : 'Akun Gratis'
+                                                    }}
                                                 </span>
                                             </div>
                                         </div>

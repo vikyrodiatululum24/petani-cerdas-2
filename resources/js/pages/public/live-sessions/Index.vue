@@ -57,11 +57,11 @@ const statusLabel = (status: LiveSessionItem['status']) => {
         <section class="relative overflow-hidden bg-gradient-to-br from-[#0f5f2b] via-[#2E7D32] to-[#66BB6A] text-white">
             <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.22),transparent_45%)]" />
             <div class="relative mx-auto max-w-7xl px-6 py-14 lg:px-8 lg:py-16">
-                <p class="text-xs font-semibold tracking-[0.18em] text-green-100 uppercase">Petani Cerdas</p>
+                <p class="text-xs font-semibold uppercase tracking-[0.18em] text-green-100">Petani Cerdas</p>
                 <h1 class="mt-3 text-3xl font-black tracking-tight sm:text-4xl">Live Session Petani</h1>
                 <p class="mt-4 max-w-2xl text-sm text-green-50 sm:text-base">
-                    Ikuti sesi pembinaan langsung bersama mentor. Pantau sesi yang sedang berlangsung,
-                    jadwal berikutnya, dan riwayat sesi yang sudah selesai.
+                    Ikuti sesi pembinaan langsung bersama mentor. Pantau sesi yang sedang berlangsung, jadwal berikutnya, dan riwayat sesi yang sudah
+                    selesai.
                 </p>
             </div>
         </section>
@@ -69,15 +69,15 @@ const statusLabel = (status: LiveSessionItem['status']) => {
         <section class="bg-[#f5f8f3] py-10 lg:py-12">
             <div class="mx-auto grid max-w-7xl grid-cols-1 gap-4 px-6 lg:grid-cols-3 lg:px-8">
                 <div class="rounded-2xl border border-emerald-200 bg-white p-5">
-                    <p class="text-xs font-semibold tracking-wide text-emerald-700 uppercase">Sedang Live</p>
+                    <p class="text-xs font-semibold uppercase tracking-wide text-emerald-700">Sedang Live</p>
                     <p class="mt-2 text-3xl font-black text-gray-900">{{ liveNowSessions.length }}</p>
                 </div>
                 <div class="rounded-2xl border border-blue-200 bg-white p-5">
-                    <p class="text-xs font-semibold tracking-wide text-blue-700 uppercase">Akan Datang</p>
+                    <p class="text-xs font-semibold uppercase tracking-wide text-blue-700">Akan Datang</p>
                     <p class="mt-2 text-3xl font-black text-gray-900">{{ upcomingSessions.length }}</p>
                 </div>
                 <div class="rounded-2xl border border-gray-200 bg-white p-5">
-                    <p class="text-xs font-semibold tracking-wide text-gray-700 uppercase">Selesai</p>
+                    <p class="text-xs font-semibold uppercase tracking-wide text-gray-700">Selesai</p>
                     <p class="mt-2 text-3xl font-black text-gray-900">{{ endedSessions.length }}</p>
                 </div>
             </div>
@@ -92,21 +92,28 @@ const statusLabel = (status: LiveSessionItem['status']) => {
                 </div>
 
                 <div v-else class="space-y-5">
-                    <article
-                        v-for="session in sessions"
-                        :key="session.id"
-                        class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm"
-                    >
+                    <article v-for="session in sessions" :key="session.id" class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
                         <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                             <div>
                                 <div class="mb-3 flex flex-wrap items-center gap-2">
-                                    <span :class="['inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-semibold', statusBadgeClass(session.status)]">
+                                    <span
+                                        :class="[
+                                            'inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-semibold',
+                                            statusBadgeClass(session.status),
+                                        ]"
+                                    >
                                         {{ statusLabel(session.status) }}
                                     </span>
-                                    <span v-if="session.generation" class="inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-700">
+                                    <span
+                                        v-if="session.generation"
+                                        class="inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-700"
+                                    >
                                         Generation {{ session.generation }}
                                     </span>
-                                    <span v-if="session.plan_name" class="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">
+                                    <span
+                                        v-if="session.plan_name"
+                                        class="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700"
+                                    >
                                         {{ session.plan_name }}
                                     </span>
                                 </div>
@@ -134,17 +141,18 @@ const statusLabel = (status: LiveSessionItem['status']) => {
                                     as-child
                                     class="w-full bg-[#2E7D32] hover:bg-[#256427]"
                                 >
-                                    <a :href="session.stream_url" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center gap-2">
+                                    <a
+                                        :href="session.stream_url"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        class="inline-flex items-center justify-center gap-2"
+                                    >
                                         <CirclePlay class="h-4 w-4" />
                                         Gabung Sesi
                                     </a>
                                 </Button>
-                                <Button v-else-if="session.status === 'ended'" variant="outline" class="w-full" disabled>
-                                    Live Berakhir
-                                </Button>
-                                <Button v-else variant="outline" class="w-full" disabled>
-                                    Live Belum dimulai
-                                </Button>
+                                <Button v-else-if="session.status === 'ended'" variant="outline" class="w-full" disabled> Live Berakhir </Button>
+                                <Button v-else variant="outline" class="w-full" disabled> Live Belum dimulai </Button>
                             </div>
                         </div>
                     </article>

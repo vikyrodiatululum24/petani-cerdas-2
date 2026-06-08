@@ -162,12 +162,16 @@ const statusClass = (status: string): string => {
                         <h2 class="text-sm font-semibold text-gray-900">Live Session Mendatang</h2>
                     </div>
                     <div class="space-y-3">
-                        <div v-if="upcomingLiveSessions.length === 0" class="rounded-lg bg-gray-50 p-3 text-sm text-gray-500">Belum ada sesi live mendatang.</div>
+                        <div v-if="upcomingLiveSessions.length === 0" class="rounded-lg bg-gray-50 p-3 text-sm text-gray-500">
+                            Belum ada sesi live mendatang.
+                        </div>
                         <div v-for="session in upcomingLiveSessions" :key="session.id" class="rounded-lg border p-3">
                             <p class="text-sm font-semibold text-gray-900">{{ session.title }}</p>
                             <p class="mt-1 text-xs text-gray-500">Mentor: {{ session.mentor_name || '-' }}</p>
                             <div class="mt-2 flex items-center justify-between">
-                                <span :class="['rounded-full border px-2 py-0.5 text-[11px] font-semibold', statusClass(session.status)]">{{ session.status }}</span>
+                                <span :class="['rounded-full border px-2 py-0.5 text-[11px] font-semibold', statusClass(session.status)]">{{
+                                    session.status
+                                }}</span>
                                 <span class="text-xs text-gray-500">{{ formatDateTime(session.scheduled_at) }}</span>
                             </div>
                         </div>
@@ -180,13 +184,17 @@ const statusClass = (status: string): string => {
                         <h2 class="text-sm font-semibold text-gray-900">Subscription Terbaru</h2>
                     </div>
                     <div class="space-y-3">
-                        <div v-if="recentSubscriptions.length === 0" class="rounded-lg bg-gray-50 p-3 text-sm text-gray-500">Belum ada data subscription.</div>
+                        <div v-if="recentSubscriptions.length === 0" class="rounded-lg bg-gray-50 p-3 text-sm text-gray-500">
+                            Belum ada data subscription.
+                        </div>
                         <div v-for="item in recentSubscriptions" :key="item.id" class="rounded-lg border p-3">
                             <p class="text-sm font-semibold text-gray-900">{{ item.user_name || '-' }}</p>
                             <p class="text-xs text-gray-500">{{ item.user_email || '-' }}</p>
                             <div class="mt-2 flex items-center justify-between">
                                 <span class="text-xs text-gray-600">{{ item.plan_name || '-' }}</span>
-                                <span :class="['rounded-full border px-2 py-0.5 text-[11px] font-semibold', statusClass(item.status)]">{{ item.status }}</span>
+                                <span :class="['rounded-full border px-2 py-0.5 text-[11px] font-semibold', statusClass(item.status)]">{{
+                                    item.status
+                                }}</span>
                             </div>
                         </div>
                     </div>
@@ -198,13 +206,17 @@ const statusClass = (status: string): string => {
                         <h2 class="text-sm font-semibold text-gray-900">Pembayaran Terbaru</h2>
                     </div>
                     <div class="space-y-3">
-                        <div v-if="recentPayments.length === 0" class="rounded-lg bg-gray-50 p-3 text-sm text-gray-500">Belum ada data pembayaran.</div>
+                        <div v-if="recentPayments.length === 0" class="rounded-lg bg-gray-50 p-3 text-sm text-gray-500">
+                            Belum ada data pembayaran.
+                        </div>
                         <div v-for="payment in recentPayments" :key="payment.id" class="rounded-lg border p-3">
                             <p class="text-sm font-semibold text-gray-900">{{ payment.user_name || '-' }}</p>
                             <p class="text-xs text-gray-500">{{ payment.transaction_id || '-' }}</p>
                             <div class="mt-2 flex items-center justify-between">
                                 <span class="text-xs font-medium text-gray-700">{{ formatCurrency(payment.amount) }}</span>
-                                <span :class="['rounded-full border px-2 py-0.5 text-[11px] font-semibold', statusClass(payment.status)]">{{ payment.status }}</span>
+                                <span :class="['rounded-full border px-2 py-0.5 text-[11px] font-semibold', statusClass(payment.status)]">{{
+                                    payment.status
+                                }}</span>
                             </div>
                         </div>
                     </div>

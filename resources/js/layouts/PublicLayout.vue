@@ -304,13 +304,23 @@ const footerLinks = {
                                 }}
                             </li>
                             <li class="flex items-center gap-2.5 text-sm text-gray-400">
-                                <a :href="`mailto:${appSetting?.contact_email || 'hello@petanicerdas.id'}`" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2.5 text-sm text-gray-400 transition-colors hover:text-[#4CAF50]">
+                                <a
+                                    :href="`mailto:${appSetting?.contact_email || 'hello@petanicerdas.id'}`"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="flex items-center gap-2.5 text-sm text-gray-400 transition-colors hover:text-[#4CAF50]"
+                                >
                                     <Mail class="h-4 w-4 shrink-0 text-[#4CAF50]" />
                                     {{ appSetting?.contact_email || 'hello@petanicerdas.id' }}
                                 </a>
                             </li>
                             <li class="flex items-center gap-2.5 text-sm text-gray-400">
-                                <a :href="`https://wa.me/${appSetting?.contact_phone?.replace(/\D/g, '') || '6281234567890'}`" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2.5 text-sm text-gray-400 transition-colors hover:text-[#4CAF50]">
+                                <a
+                                    :href="`https://wa.me/${appSetting?.contact_phone?.replace(/\D/g, '') || '6281234567890'}`"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="flex items-center gap-2.5 text-sm text-gray-400 transition-colors hover:text-[#4CAF50]"
+                                >
                                     <Phone class="h-4 w-4 shrink-0 text-[#4CAF50]" />
                                     {{ appSetting?.contact_phone || '+62 812 3456 7890' }}
                                 </a>

@@ -1,110 +1,99 @@
 <script setup lang="ts">
-    import {
-        computed,
-        ref
-    } from 'vue';
-    import {
-        Head,
-        Link,
-        router
-    } from '@inertiajs/vue3';
-    import AppLayout from '@/layouts/AppLayout.vue';
-    import {
-        Button
-    } from '@/components/ui/button';
-    import {
-        ChevronRight,
-        CheckCircle2,
-        XCircle
-    } from 'lucide-vue-next';
+import { Button } from '@/components/ui/button';
+import AppLayout from '@/layouts/AppLayout.vue';
 import { BreadcrumbItem } from '@/types';
+import { Head, router } from '@inertiajs/vue3';
+import { CheckCircle2, ChevronRight } from 'lucide-vue-next';
+import { ref } from 'vue';
 
-    interface SubscriptionPlan {
-        id: number;
-        name: string;
-        key: 'basic' | 'premium' | 'elite' | null;
-    }
+interface SubscriptionPlan {
+    id: number;
+    name: string;
+    key: 'basic' | 'premium' | 'elite' | null;
+}
 
-    interface Subscription {
-        id: number;
-        status: string;
-        plan: SubscriptionPlan;
-    }
+interface Subscription {
+    id: number;
+    status: string;
+    plan: SubscriptionPlan;
+}
 
-    interface User {
-        id: number;
-        name: string;
-        email: string;
-    }
+interface User {
+    id: number;
+    name: string;
+    email: string;
+}
 
-    interface Payment {
-        id: number;
-        transaction_id: string;
-        amount: number;
-        status: string;
-        paid_at: string;
-        created_at: string;
-        subscription: Subscription;
-        user: User;
-    }
+interface Payment {
+    id: number;
+    transaction_id: string;
+    amount: number;
+    status: string;
+    paid_at: string;
+    created_at: string;
+    subscription: Subscription;
+    user: User;
+}
 
-    interface Props {
-        payments: Payment[];
-    }
+interface Props {
+    payments: Payment[];
+}
 
-    const props = defineProps < Props > ();
+const props = defineProps<Props>();
 
-    const selectedPayment = ref < Payment | null > (null);
+const selectedPayment = ref<Payment | null>(null);
 
-    // const planBadgeColor = computed(() => (code: string) => {
-    //   const colors: Record<string, string> = {
-    //     basic: 'bg-emerald-100 text-emerald-800',
-    //     premium: 'bg-sky-100 text-sky-800',
-    //     elite: 'bg-amber-100 text-amber-800',
-    //   };
-    //   return colors[code] || 'bg-gray-100 text-gray-800';
-    // });
+// const planBadgeColor = computed(() => (code: string) => {
+//   const colors: Record<string, string> = {
+//     basic: 'bg-emerald-100 text-emerald-800',
+//     premium: 'bg-sky-100 text-sky-800',
+//     elite: 'bg-amber-100 text-amber-800',
+//   };
+//   return colors[code] || 'bg-gray-100 text-gray-800';
+// });
 
-    const formatCurrency = (amount: number) => {
-        return new Intl.NumberFormat('id-ID', {
-            style: 'currency',
-            currency: 'IDR',
-            minimumFractionDigits: 0,
-        }).format(amount);
-    };
+const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('id-ID', {
+        style: 'currency',
+        currency: 'IDR',
+        minimumFractionDigits: 0,
+    }).format(amount);
+};
 
-    const formatDate = (date: string) => {
-        return new Intl.DateTimeFormat('id-ID', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-        }).format(new Date(date));
-    };
+const formatDate = (date: string) => {
+    return new Intl.DateTimeFormat('id-ID', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+    }).format(new Date(date));
+};
 
-    const handleViewDetail = (payment: Payment) => {
-        router.get(route('admin.subscriptions.payments.show', {
-            payment: payment.id
-        }));
-    };
+const handleViewDetail = (payment: Payment) => {
+    router.get(
+        route('admin.subscriptions.payments.show', {
+            payment: payment.id,
+        }),
+    );
+};
 
-    const breadcrumbs: BreadcrumbItem[] = [
-        {
-            title: 'Review Pembayaran Subscription',
-            href: '/admin/subscriptions/payments',
-        },
-    ];
+const breadcrumbs: BreadcrumbItem[] = [
+    {
+        title: 'Review Pembayaran Subscription',
+        href: '/admin/subscriptions/payments',
+    },
+];
 </script>
 
 <template>
     <Head title="Review Pembayaran Subscription" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
-        <div class="w-full px-4 sm:px-6 lg:px-8 py-8">
+        <div class="w-full px-4 py-8 sm:px-6 lg:px-8">
             <div class="mb-8">
                 <h1 class="text-3xl font-bold text-gray-900">Review Pembayaran Subscription</h1>
-                <p class="text-gray-600 mt-2">Tinjau dan proses pembayaran subscription yang masuk</p>
+                <p class="mt-2 text-gray-600">Tinjau dan proses pembayaran subscription yang masuk</p>
             </div>
 
             <!-- Empty State -->
@@ -128,26 +117,28 @@ import { BreadcrumbItem } from '@/types';
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200">
-                        <tr v-for="payment in payments" :key="payment.id"
-                            class="hover:bg-gray-50 transition-colors cursor-pointer"
-                            @click="handleViewDetail(payment)">
-                            <td class="px-6 py-4 text-sm font-mono text-gray-700">{{ payment . transaction_id }}</td>
+                        <tr
+                            v-for="payment in payments"
+                            :key="payment.id"
+                            class="cursor-pointer transition-colors hover:bg-gray-50"
+                            @click="handleViewDetail(payment)"
+                        >
+                            <td class="px-6 py-4 font-mono text-sm text-gray-700">{{ payment.transaction_id }}</td>
                             <td class="px-6 py-4">
-                                <div class="text-sm font-medium text-gray-900">{{ payment . user . name }}</div>
-                                <div class="text-xs text-gray-500">{{ payment . user . email }}</div>
+                                <div class="text-sm font-medium text-gray-900">{{ payment.user.name }}</div>
+                                <div class="text-xs text-gray-500">{{ payment.user.email }}</div>
                             </td>
                             <td class="px-6 py-4">
                                 <span>
-                                    {{ payment . subscription . plan . name }}
+                                    {{ payment.subscription.plan.name }}
                                 </span>
                             </td>
                             <td class="px-6 py-4 text-sm font-semibold text-gray-900">
-                                {{ formatCurrency(payment . amount) }}
+                                {{ formatCurrency(payment.amount) }}
                             </td>
-                            <td class="px-6 py-4 text-sm text-gray-600">{{ formatDate(payment . paid_at) }}</td>
+                            <td class="px-6 py-4 text-sm text-gray-600">{{ formatDate(payment.paid_at) }}</td>
                             <td class="px-6 py-4 text-right">
-                                <Button variant="outline" size="sm" class="flex items-center gap-2"
-                                    @click.stop="handleViewDetail(payment)">
+                                <Button variant="outline" size="sm" class="flex items-center gap-2" @click.stop="handleViewDetail(payment)">
                                     <span>Tinjau</span>
                                     <ChevronRight class="h-4 w-4" />
                                 </Button>

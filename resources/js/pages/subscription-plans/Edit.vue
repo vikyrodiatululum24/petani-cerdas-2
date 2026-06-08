@@ -48,18 +48,16 @@ const form = useForm({
 });
 
 const submit = () => {
-    form
-        .transform((data) => ({
-            ...data,
-            _method: 'put',
-            discount_price: data.discount_price === '' ? null : Number(data.discount_price),
-            quota: data.quota === '' ? null : Number(data.quota),
-            features: data.features_text
-                .split('\n')
-                .map((line) => line.trim())
-                .filter((line) => line.length > 0),
-        }))
-        .post(route('subscription-plans.update', { subscription_plan: props.plan.id }));
+    form.transform((data) => ({
+        ...data,
+        _method: 'put',
+        discount_price: data.discount_price === '' ? null : Number(data.discount_price),
+        quota: data.quota === '' ? null : Number(data.quota),
+        features: data.features_text
+            .split('\n')
+            .map((line) => line.trim())
+            .filter((line) => line.length > 0),
+    })).post(route('subscription-plans.update', { subscription_plan: props.plan.id }));
 };
 
 const formatPrice = (price: number) => {
@@ -125,7 +123,14 @@ const formatPrice = (price: number) => {
 
                     <div class="space-y-1.5">
                         <Label for="quota">Kuota (opsional)</Label>
-                        <Input id="quota" v-model.number="form.quota" type="number" min="0" inputmode="numeric" placeholder="Kosongkan untuk unlimited" />
+                        <Input
+                            id="quota"
+                            v-model.number="form.quota"
+                            type="number"
+                            min="0"
+                            inputmode="numeric"
+                            placeholder="Kosongkan untuk unlimited"
+                        />
                         <InputError :message="form.errors.quota" />
                     </div>
                 </div>

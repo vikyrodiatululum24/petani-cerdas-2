@@ -160,120 +160,129 @@ const formatPrice = (price: number) => {
                     <p class="text-sm text-muted-foreground">Kelola paket langganan untuk pengguna platform.</p>
                 </div>
 
-                <Button as-child>
-                    <Link :href="route('subscription-plans.create')">Tambah Paket</Link>
-                </Button>
+                <div class="flex gap-2">
+                    <Button>
+                        <Link :href="route('subscription-plans.create')">Tambah Paket</Link>
+                    </Button>
+                </div>
             </div>
 
-            <div class="overflow-x-auto rounded-lg border">
-                <div class="grid gap-3 bg-muted/30 p-4 md:grid-cols-4">
-                    <div class="md:col-span-2">
-                        <Label for="search">Search</Label>
-                        <Input id="search" v-model="filterForm.search" placeholder="Cari nama atau deskripsi paket" />
-                    </div>
-
-                    <div>
-                        <Label for="jenis-filter">Jenis</Label>
-                        <select id="jenis-filter" v-model="filterForm.jenis" class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+            <div class="grid min-w-0 grid-cols-1 gap-3 bg-muted/30 p-4 md:grid-cols-4">
+                <div class="md:col-span-2">
+                    <Label for="search">Search</Label>
+                    <Input id="search" v-model="filterForm.search" placeholder="Cari nama atau deskripsi paket" />
+                </div>
+                <div>
+                    <Label for="jenis-filter">Jenis</Label>
+                    <select
+                        id="jenis-filter"
+                        v-model="filterForm.jenis"
+                        class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                        >
                             <option :value="null">Semua</option>
                             <option value="basic">Basic</option>
                             <option value="premium">Premium</option>
                             <option value="elite">Elite</option>
                         </select>
                     </div>
-
+    
                     <div>
                         <Label for="featured-filter">Tipe</Label>
-                        <select id="featured-filter" v-model="filterForm.featured" class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
-                            <option :value="null">Semua</option>
-                            <option value="featured">Featured</option>
-                            <option value="regular">Regular</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="flex justify-between items-center px-4 gap-4 py-4">
-                    <Button size="sm" @click="resetFilters">Reset</Button>
-
-                    <div class="flex items-center gap-2">
-                        <Label for="per-page" class="whitespace-nowrap">Per Page</Label>
-                        <select id="per-page" v-model="filterForm.per_page" class="w-20 rounded-md border border-input bg-background px-3 py-2 text-sm">
-                            <option :value="10">10</option>
-                            <option :value="15">15</option>
-                            <option :value="25">25</option>
-                            <option :value="50">50</option>
-                        </select>
-                    </div>
-                </div>
-
-                <table class="w-full min-w-[760px] text-sm">
-                    <thead class="bg-muted/60 text-left">
-                        <tr>
-                            <th class="px-4 py-3 font-medium">Nama Paket</th>
-                            <th class="px-4 py-3 font-medium">Jenis</th>
-                            <th class="px-4 py-3 font-medium">Harga</th>
-                            <th class="px-4 py-3 font-medium">Durasi</th>
-                            <th class="px-4 py-3 font-medium">Kuota</th>
-                            <th class="px-4 py-3 font-medium">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-if="plans.length === 0">
-                            <td colspan="5" class="px-4 py-6 text-center text-muted-foreground">Belum ada paket langganan.</td>
-                        </tr>
-                        <tr v-for="plan in plans" :key="plan.id" class="border-t">
-                            <td class="px-4 py-3">
-                                <div class="flex items-center gap-2">
-                                    <p class="font-medium">{{ plan.name }}</p>
-                                    <span v-if="plan.is_featured" class="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700">Featured</span>
-                                </div>
-                            </td>
-                            <td class="px-4 py-3">
-                                <span class="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700">{{ plan.jenis }}</span>
-                            </td>
-                            <td class="px-4 py-3">
-                                <div>
-                                    <p class="font-medium">{{ formatPrice(plan.effective_price) }}</p>
-                                    <p v-if="plan.discount_price" class="text-xs text-muted-foreground line-through">{{ formatPrice(plan.price) }}</p>
-                                </div>
-                            </td>
-                            <td class="px-4 py-3">{{ plan.duration_months }} bulan</td>
-                            <td class="px-4 py-3">{{ plan.quota ?? 'Unlimited' }}</td>
-                            <td class="px-4 py-3">
-                                <div class="flex gap-2">
-                                    <Button size="sm" variant="outline" as-child>
-                                        <Link :href="route('subscription-plans.show', { subscription_plan: plan.id })">Detail</Link>
-                                    </Button>
-                                    <Button size="sm" variant="outline" as-child>
-                                        <Link :href="route('subscription-plans.edit', { subscription_plan: plan.id })">Edit</Link>
-                                    </Button>
-                                    <Button size="sm" variant="destructive" @click="openDeleteDialog(plan)">Hapus</Button>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-
-                <div class="flex flex-col gap-3 border-t p-4 text-sm md:flex-row md:items-center md:justify-between">
-                    <p class="text-muted-foreground">
-                        Menampilkan {{ pagination.from ?? 0 }} - {{ pagination.to ?? 0 }} dari {{ pagination.total }} paket
-                    </p>
-
-                    <div class="flex flex-wrap gap-2">
-                        <Button
-                            v-for="(link, index) in pagination.links"
-                            :key="index"
-                            :variant="link.active ? 'default' : 'outline'"
-                            size="sm"
-                            :disabled="!link.url"
-                            @click="link.url && router.visit(link.url, { preserveScroll: true, preserveState: true })"
+                        <select
+                            id="featured-filter"
+                            v-model="filterForm.featured"
+                            class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
                         >
-                            <span v-html="link.label" />
-                        </Button>
+                            <option :value="null">Semua</option>
+                            <option value="featured">Utama</option>
+                            <option value="regular">Biasa</option>
+                        </select>
                     </div>
                 </div>
             </div>
-        </div>
+
+            <div class="flex items-center justify-between gap-4 px-4 py-4">
+                <Button size="sm" @click="resetFilters">Reset</Button>
+
+                <div class="flex items-center gap-2">
+                    <Label for="per-page" class="whitespace-nowrap">Per Page</Label>
+                    <select id="per-page" v-model="filterForm.per_page" class="w-20 rounded-md border border-input bg-background px-3 py-2 text-sm">
+                        <option :value="10">10</option>
+                        <option :value="15">15</option>
+                        <option :value="25">25</option>
+                        <option :value="50">50</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="w-full">
+                <div class="overflow-x-auto">
+                    <table class="w-full min-w-[1200px] text-sm">
+                        <thead class="bg-muted/60 text-left">
+                            <tr>
+                                <th class="px-4 py-3 font-medium">Nama Paket</th>
+                                <th class="px-4 py-3 font-medium">Jenis</th>
+                                <th class="px-4 py-3 font-medium">Harga</th>
+                                <th class="px-4 py-3 font-medium">Durasi</th>
+                                <th class="px-4 py-3 font-medium">Kuota</th>
+                                <th class="px-4 py-3 font-medium">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-if="plans.length === 0">
+                                <td colspan="5" class="px-4 py-6 text-center text-muted-foreground">Belum ada paket langganan.</td>
+                            </tr>
+                            <tr v-for="plan in plans" :key="plan.id" class="border-t">
+                                <td class="px-4 py-3">
+                                    <div class="flex items-center gap-2">
+                                        <p class="font-medium">{{ plan.name }}</p>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700">{{ plan.jenis }}</span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <div>
+                                        <p class="font-medium">{{ formatPrice(plan.effective_price) }}</p>
+                                        <p v-if="plan.discount_price" class="text-xs text-muted-foreground line-through">{{ formatPrice(plan.price) }}</p>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3">{{ plan.duration_months }} bulan</td>
+                                <td class="px-4 py-3">{{ plan.quota ?? 'Unlimited' }}</td>
+                                <td class="px-4 py-3">
+                                    <div class="flex gap-2">
+                                        <Button size="sm" variant="outline" as-child>
+                                            <Link :href="route('subscription-plans.show', { subscription_plan: plan.id })">Detail</Link>
+                                        </Button>
+                                        <Button size="sm" variant="outline" as-child>
+                                            <Link :href="route('subscription-plans.edit', { subscription_plan: plan.id })">Edit</Link>
+                                        </Button>
+                                        <Button size="sm" variant="destructive" @click="openDeleteDialog(plan)">Hapus</Button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="flex justify-between gap-3 border-t p-4 text-sm">
+                        <p class="text-muted-foreground">
+                            Menampilkan {{ pagination.from ?? 0 }} - {{ pagination.to ?? 0 }} dari {{ pagination.total }} paket
+                        </p>
+    
+                        <div class="flex flex-wrap gap-2">
+                            <Button
+                                v-for="(link, index) in pagination.links"
+                                :key="index"
+                                :variant="link.active ? 'default' : 'outline'"
+                                size="sm"
+                                :disabled="!link.url"
+                                @click="link.url && router.visit(link.url, { preserveScroll: true, preserveState: true })"
+                            >
+                                <span v-html="link.label" />
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
         <Dialog v-model:open="confirmDeleteOpen">
             <DialogContent class="max-w-md">

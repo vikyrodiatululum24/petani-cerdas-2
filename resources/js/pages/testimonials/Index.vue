@@ -91,12 +91,16 @@ const confirmDelete = () => {
 const togglePublish = (testimonial: Testimonial) => {
     const routeName = testimonial.is_published ? 'testimonials.unpublish' : 'testimonials.publish';
 
-    router.post(route(routeName, { testimonial: testimonial.id }), {}, {
-        preserveScroll: true,
-        onSuccess: () => {
-            toast.success(testimonial.is_published ? 'Testimoni disembunyikan.' : 'Testimoni dipublikasikan.');
+    router.post(
+        route(routeName, { testimonial: testimonial.id }),
+        {},
+        {
+            preserveScroll: true,
+            onSuccess: () => {
+                toast.success(testimonial.is_published ? 'Testimoni disembunyikan.' : 'Testimoni dipublikasikan.');
+            },
         },
-    });
+    );
 };
 
 const applyFilters = () => {
@@ -169,7 +173,7 @@ const resetFilters = () => {
                 </Button>
             </div>
 
-            <div class="overflow-x-auto rounded-lg border">
+            <div class="max-w-full overflow-hidden rounded-lg border">
                 <div class="grid gap-3 border-b bg-muted/30 p-4 md:grid-cols-5">
                     <div class="md:col-span-3">
                         <Label for="search">Search</Label>
@@ -178,7 +182,11 @@ const resetFilters = () => {
 
                     <div>
                         <Label for="status-filter">Status</Label>
-                        <select id="status-filter" v-model="filterForm.status" class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+                        <select
+                            id="status-filter"
+                            v-model="filterForm.status"
+                            class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                        >
                             <option :value="null">Semua status</option>
                             <option value="published">Published</option>
                             <option value="draft">Draft</option>
@@ -187,7 +195,11 @@ const resetFilters = () => {
 
                     <div>
                         <Label for="rating-filter">Rating</Label>
-                        <select id="rating-filter" v-model="filterForm.rating" class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+                        <select
+                            id="rating-filter"
+                            v-model="filterForm.rating"
+                            class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                        >
                             <option :value="null">Semua rating</option>
                             <option :value="5">5 Bintang</option>
                             <option :value="4">4 Bintang</option>
@@ -198,12 +210,16 @@ const resetFilters = () => {
                     </div>
                 </div>
 
-                <div class="flex justify-between items-center px-4 gap-4 py-4">
+                <div class="flex items-center justify-between gap-4 px-4 py-4">
                     <Button size="sm" @click="resetFilters">Reset</Button>
 
                     <div class="flex items-center gap-2">
                         <Label for="per-page" class="whitespace-nowrap">Per Page</Label>
-                        <select id="per-page" v-model="filterForm.per_page" class="w-20 rounded-md border border-input bg-background px-3 py-2 text-sm">
+                        <select
+                            id="per-page"
+                            v-model="filterForm.per_page"
+                            class="w-20 rounded-md border border-input bg-background px-3 py-2 text-sm"
+                        >
                             <option :value="10">10</option>
                             <option :value="15">15</option>
                             <option :value="25">25</option>
@@ -212,53 +228,55 @@ const resetFilters = () => {
                     </div>
                 </div>
 
-                <table class="w-full min-w-[900px] text-sm">
-                    <thead class="bg-muted/60 text-left">
-                        <tr>
-                            <th class="px-4 py-3 font-medium">Pemberi Testimoni</th>
-                            <th class="px-4 py-3 font-medium">Isi</th>
-                            <th class="px-4 py-3 font-medium">Rating</th>
-                            <th class="px-4 py-3 font-medium">Status</th>
-                            <th class="px-4 py-3 font-medium">Urutan</th>
-                            <th class="px-4 py-3 font-medium">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-if="testimonials.length === 0">
-                            <td colspan="6" class="px-4 py-6 text-center text-muted-foreground">Belum ada testimoni.</td>
-                        </tr>
-                        <tr v-for="testimonial in testimonials" :key="testimonial.id" class="border-t">
-                            <td class="px-4 py-3">
-                                <p class="font-medium">{{ testimonial.name }}</p>
-                                <p class="text-xs text-muted-foreground">{{ testimonial.role || '-' }}</p>
-                            </td>
-                            <td class="px-4 py-3 text-muted-foreground">{{ testimonial.short_content }}</td>
-                            <td class="px-4 py-3">{{ testimonial.rating }} / 5</td>
-                            <td class="px-4 py-3">
-                                <span
-                                    :class="[
-                                        'rounded-full px-2 py-1 text-xs font-medium',
-                                        testimonial.is_published ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700',
-                                    ]"
-                                >
-                                    {{ testimonial.is_published ? 'Published' : 'Draft' }}
-                                </span>
-                            </td>
-                            <td class="px-4 py-3">{{ testimonial.sort_order }}</td>
-                            <td class="px-4 py-3">
-                                <div class="flex gap-2">
-                                    <Button size="sm" variant="outline" as-child>
-                                        <Link :href="route('testimonials.edit', { testimonial: testimonial.id })">Edit</Link>
-                                    </Button>
-                                    <Button size="sm" variant="outline" @click="togglePublish(testimonial)">
-                                        {{ testimonial.is_published ? 'Unpublish' : 'Publish' }}
-                                    </Button>
-                                    <Button size="sm" variant="destructive" @click="openDeleteDialog(testimonial)">Hapus</Button>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="w-full overflow-x-auto">
+                    <table class="w-full min-w-[900px] text-sm">
+                        <thead class="bg-muted/60 text-left">
+                            <tr>
+                                <th class="px-4 py-3 font-medium">Pemberi Testimoni</th>
+                                <th class="px-4 py-3 font-medium">Isi</th>
+                                <th class="px-4 py-3 font-medium">Rating</th>
+                                <th class="px-4 py-3 font-medium">Status</th>
+                                <th class="px-4 py-3 font-medium">Urutan</th>
+                                <th class="px-4 py-3 font-medium">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-if="testimonials.length === 0">
+                                <td colspan="6" class="px-4 py-6 text-center text-muted-foreground">Belum ada testimoni.</td>
+                            </tr>
+                            <tr v-for="testimonial in testimonials" :key="testimonial.id" class="border-t">
+                                <td class="px-4 py-3">
+                                    <p class="font-medium">{{ testimonial.name }}</p>
+                                    <p class="text-xs text-muted-foreground">{{ testimonial.role || '-' }}</p>
+                                </td>
+                                <td class="px-4 py-3 text-muted-foreground">{{ testimonial.short_content }}</td>
+                                <td class="px-4 py-3">{{ testimonial.rating }} / 5</td>
+                                <td class="px-4 py-3">
+                                    <span
+                                        :class="[
+                                            'rounded-full px-2 py-1 text-xs font-medium',
+                                            testimonial.is_published ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700',
+                                        ]"
+                                    >
+                                        {{ testimonial.is_published ? 'Published' : 'Draft' }}
+                                    </span>
+                                </td>
+                                <td class="px-4 py-3">{{ testimonial.sort_order }}</td>
+                                <td class="px-4 py-3">
+                                    <div class="flex gap-2">
+                                        <Button size="sm" variant="outline" as-child>
+                                            <Link :href="route('testimonials.edit', { testimonial: testimonial.id })">Edit</Link>
+                                        </Button>
+                                        <Button size="sm" variant="outline" @click="togglePublish(testimonial)">
+                                            {{ testimonial.is_published ? 'Unpublish' : 'Publish' }}
+                                        </Button>
+                                        <Button size="sm" variant="destructive" @click="openDeleteDialog(testimonial)">Hapus</Button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
 
                 <div class="flex flex-col gap-3 border-t p-4 text-sm md:flex-row md:items-center md:justify-between">
                     <p class="text-muted-foreground">
