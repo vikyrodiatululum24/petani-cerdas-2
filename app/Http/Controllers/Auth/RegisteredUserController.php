@@ -67,6 +67,6 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect()->route('verification.notice');
+        return redirect()->intended(route('home', absolute: false));
     }
 }

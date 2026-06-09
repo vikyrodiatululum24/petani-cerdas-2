@@ -25,19 +25,19 @@ use Inertia\Inertia;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
-Route::get('products', [PublicProductController::class, 'index'])->name('public.products.index');
-Route::get('products/{product:slug}', [PublicProductController::class, 'show'])->name('public.products.show');
+Route::get('/products', [PublicProductController::class, 'index'])->name('public.products.index');
+Route::get('/products/{product:slug}', [PublicProductController::class, 'show'])->name('public.products.show');
 
-Route::get('NotAuthorized', function () {
+Route::get('/NotAuthorized', function () {
     return Inertia::render('NotAuth');
 })->name('not-authorized');
 
-Route::get('articles', [PublicArticleController::class, 'index'])->name('public.articles.index');
-Route::get('articles/{article:slug}', [PublicArticleController::class, 'show'])->name('public.articles.show');
+Route::get('/articles', [PublicArticleController::class, 'index'])->name('public.articles.index');
+Route::get('/articles/{article:slug}', [PublicArticleController::class, 'show'])->name('public.articles.show');
 
-Route::get('about', [AboutController::class, 'index'])->name('about');
+Route::get('/about', [AboutController::class, 'index'])->name('about');
 
-Route::get('layanan', function () {
+Route::get('/layanan', function () {
     $sponsors = \App\Models\Sponsor::latest()->get();
 
     return Inertia::render('public/services/Index', [
@@ -45,21 +45,25 @@ Route::get('layanan', function () {
     ]);
 })->name('public.services.index');
 
-Route::get('pendaftaran', function () {
+Route::get('/pendaftaran', function () {
+    // dd('test');
+    if (auth()->check()) {
+        return redirect()->route('home');
+    }
     return Inertia::render('public/register/Index');
 })->name('public.register.index');
 
 Route::middleware(['auth', 'verified', 'role:admin|mentor'])->group(function () {
-    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::resource('admin/articles', ArticleController::class)->names('articles');
-    Route::resource('admin/products', ProductController::class)->names('products');
-    Route::post('article-categories', [ArticleCategoryController::class, 'store'])->name('article-categories.store');
-    Route::put('article-categories/{articleCategory}', [ArticleCategoryController::class, 'update'])->name('article-categories.update');
-    Route::delete('article-categories/{articleCategory}', [ArticleCategoryController::class, 'destroy'])->name('article-categories.destroy');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::resource('/admin/articles', ArticleController::class)->names('articles');
+    Route::resource('/admin/products', ProductController::class)->names('products');
+    Route::post('/article-categories', [ArticleCategoryController::class, 'store'])->name('article-categories.store');
+    Route::put('/article-categories/{articleCategory}', [ArticleCategoryController::class, 'update'])->name('article-categories.update');
+    Route::delete('/article-categories/{articleCategory}', [ArticleCategoryController::class, 'destroy'])->name('article-categories.destroy');
 
-    Route::get('admin/chat', [ChatController::class, 'index'])->name('admin.chat.index');
-    Route::post('admin/chat/{thread}/assign-mentor', [ChatController::class, 'assignMentor'])->name('admin.chat.assign-mentor');
-    Route::patch('admin/chat/{thread}/status', [ChatController::class, 'updateStatus'])->name('admin.chat.update-status');
+    Route::get('/admin/chat', [ChatController::class, 'index'])->name('admin.chat.index');
+    Route::post('/admin/chat/{thread}/assign-mentor', [ChatController::class, 'assignMentor'])->name('admin.chat.assign-mentor');
+    Route::patch('/admin/chat/{thread}/status', [ChatController::class, 'updateStatus'])->name('admin.chat.update-status');
 
     Route::prefix('admin/live-sessions')->name('admin.live-sessions.')->group(function () {
         Route::get('/', [LiveSessionController::class, 'adminIndex'])->name('index');
@@ -70,72 +74,72 @@ Route::middleware(['auth', 'verified', 'role:admin|mentor'])->group(function () 
 });
 
 Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
-    Route::resource('sponsors', SponsorController::class);
-    Route::resource('admin/testimonials', TestimonialController::class)
+    Route::resource('/sponsors', SponsorController::class);
+    Route::resource('/admin/testimonials', TestimonialController::class)
         ->except(['show'])
         ->names('testimonials');
-    Route::post('admin/testimonials/{testimonial}/publish', [TestimonialController::class, 'publish'])->name('testimonials.publish');
-    Route::post('admin/testimonials/{testimonial}/unpublish', [TestimonialController::class, 'unpublish'])->name('testimonials.unpublish');
-    Route::resource('subscription-plans', SubscriptionPlanController::class);
-    Route::resource('subscriptions', AdminSubscriptionController::class)->only(['index', 'show', 'update']);
-    Route::resource('users', UserController::class);
-    Route::get('setting-app', [AppSettingController::class, 'edit'])->name('setting-app.edit');
-    Route::put('setting-app', [AppSettingController::class, 'update'])->name('setting-app.update');
+    Route::post('/admin/testimonials/{testimonial}/publish', [TestimonialController::class, 'publish'])->name('testimonials.publish');
+    Route::post('/admin/testimonials/{testimonial}/unpublish', [TestimonialController::class, 'unpublish'])->name('testimonials.unpublish');
+    Route::resource('/subscription-plans', SubscriptionPlanController::class);
+    Route::resource('/subscriptions', AdminSubscriptionController::class)->only(['index', 'show', 'update']);
+    Route::resource('/users', UserController::class);
+    Route::get('/setting-app', [AppSettingController::class, 'edit'])->name('setting-app.edit');
+    Route::put('/setting-app', [AppSettingController::class, 'update'])->name('setting-app.update');
 
-    Route::post('product-categories', [ProductCategoryController::class, 'store'])->name('product-categories.store');
-    Route::put('product-categories/{productCategory}', [ProductCategoryController::class, 'update'])->name('product-categories.update');
-    Route::delete('product-categories/{productCategory}', [ProductCategoryController::class, 'destroy'])->name('product-categories.destroy');
+    Route::post('/product-categories', [ProductCategoryController::class, 'store'])->name('product-categories.store');
+    Route::put('/product-categories/{productCategory}', [ProductCategoryController::class, 'update'])->name('product-categories.update');
+    Route::delete('/product-categories/{productCategory}', [ProductCategoryController::class, 'destroy'])->name('product-categories.destroy');
 
     // Admin subscription payment review (approval workflow)
-    Route::prefix('admin/subscriptions')->name('admin.subscriptions.')->group(function () {
-        Route::get('payments', [PaymentController::class, 'adminIndex'])->name('payments.index');
-        Route::get('payments/{payment}', [PaymentController::class, 'adminShow'])->name('payments.show');
-        Route::post('payments/{payment}/approve', [PaymentController::class, 'approve'])->name('payments.approve');
-        Route::post('payments/{payment}/reject', [PaymentController::class, 'reject'])->name('payments.reject');
+    Route::prefix('/admin/subscriptions')->name('admin.subscriptions.')->group(function () {
+        Route::get('/payments', [PaymentController::class, 'adminIndex'])->name('payments.index');
+        Route::get('/payments/{payment}', [PaymentController::class, 'adminShow'])->name('payments.show');
+        Route::post('/payments/{payment}/approve', [PaymentController::class, 'approve'])->name('payments.approve');
+        Route::post('/payments/{payment}/reject', [PaymentController::class, 'reject'])->name('payments.reject');
     });
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::middleware('role:petani')->group(function () {
-        Route::get('petani/profile', [PetaniProfileController::class, 'index'])->name('petani.profile.index');
-        Route::get('petani/profile/edit', [PetaniProfileController::class, 'edit'])->name('petani.profile.edit');
-        Route::put('petani/profile', [PetaniProfileController::class, 'update'])->name('petani.profile.update');
+        Route::get('/petani/profile', [PetaniProfileController::class, 'index'])->name('petani.profile.index');
+        Route::get('/petani/profile/edit', [PetaniProfileController::class, 'edit'])->name('petani.profile.edit');
+        Route::put('/petani/profile', [PetaniProfileController::class, 'update'])->name('petani.profile.update');
     });
 
-    Route::prefix('petani/subscription')->name('petani.subscriptions.')->group(function () {
-        Route::get('packages', [SubscriptionController::class, 'packageIndex'])->name('packages.index');
-        Route::post('packages/{subscriptionPlan}/checkout', [SubscriptionController::class, 'checkout'])->name('checkout');
+    Route::prefix('/petani/subscription')->name('petani.subscriptions.')->group(function () {
+        Route::get('/packages', [SubscriptionController::class, 'packageIndex'])->name('packages.index');
+        Route::post('/packages/{subscriptionPlan}/checkout', [SubscriptionController::class, 'checkout'])->name('checkout');
 
-        Route::get('payments/{subscription}', [PaymentController::class, 'show'])->name('payments.show');
-        Route::post('payments/{subscription}', [PaymentController::class, 'store'])->name('payments.store');
+        Route::get('/payments/{subscription}', [PaymentController::class, 'show'])->name('payments.show');
+        Route::post('/payments/{subscription}', [PaymentController::class, 'store'])->name('payments.store');
     });
 
     Route::middleware('subscription.package:basic,premium,elite')->group(function () {
-        Route::get('chat', [ChatController::class, 'index'])->name('public.chat.index');
-        Route::post('chat/start-topic', [ChatController::class, 'startTopic'])->name('public.chat.start-topic');
+        Route::get('/chat', [ChatController::class, 'index'])->name('public.chat.index');
+        Route::post('/chat/start-topic', [ChatController::class, 'startTopic'])->name('public.chat.start-topic');
     });
 
     Route::middleware('subscription.package:premium,elite')->group(function () {
-        Route::get('live-sessions', [LiveSessionController::class, 'index'])->name('public.live-sessions.index');
+        Route::get('/live-sessions', [LiveSessionController::class, 'index'])->name('public.live-sessions.index');
     });
 
-    Route::post('chat/{thread}/message', [ChatController::class, 'sendMessage'])->name('public.chat.send-message');
+    Route::post('/chat/{thread}/message', [ChatController::class, 'sendMessage'])->name('public.chat.send-message');
 
-    Route::prefix('petani')->name('petani.')->group(function () {
+    Route::prefix('/petani')->name('petani.')->group(function () {
         Route::middleware('subscription.package:basic,premium,elite')->group(function () {
-            Route::get('paket/basic', function () {
+            Route::get('/paket/basic', function () {
                 return Inertia::render('Welcome');
             })->name('basic');
         });
 
         Route::middleware('subscription.package:premium,elite')->group(function () {
-            Route::get('paket/premium', function () {
+            Route::get('/paket/premium', function () {
                 return Inertia::render('Welcome');
             })->name('premium');
         });
 
         Route::middleware('subscription.package:elite')->group(function () {
-            Route::get('paket/elite', function () {
+            Route::get('/paket/elite', function () {
                 return Inertia::render('Welcome');
             })->name('elite');
         });
