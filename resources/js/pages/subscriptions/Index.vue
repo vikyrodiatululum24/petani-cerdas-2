@@ -54,6 +54,7 @@ interface Filters {
     search: string;
     status: string | null;
     plan_id: number | null;
+    per_page: number;
 }
 
 interface PlanOption {
@@ -76,7 +77,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 const filterForm = useForm({
-    per_page: props.pagination.per_page,
+    per_page: props.filters.per_page || 10,
     search: props.filters.search ?? '',
     status: props.filters.status ?? '',
     plan_id: props.filters.plan_id ? String(props.filters.plan_id) : '',
@@ -122,6 +123,7 @@ const applyFilters = () => {
             search: filterForm.search || undefined,
             status: filterForm.status || undefined,
             plan_id: filterForm.plan_id || undefined,
+            per_page: filterForm.per_page,
         },
         {
             preserveState: true,
@@ -148,6 +150,13 @@ watch(
 
 watch(
     () => [filterForm.status, filterForm.plan_id],
+    () => {
+        applyFilters();
+    },
+);
+
+watch(
+    () => filterForm.per_page,
     () => {
         applyFilters();
     },
