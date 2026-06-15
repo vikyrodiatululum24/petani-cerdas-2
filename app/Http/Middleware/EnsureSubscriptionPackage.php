@@ -31,6 +31,9 @@ class EnsureSubscriptionPackage
 
         $activeSubscription = $user->subscriptions()
             ->with('plan:id,jenis,name')
+            ->whereHas('plan', function ($query) use ($allowedPackages) {
+                $query->whereIn('jenis', $allowedPackages);
+            })
             ->currentlyActive()
             ->latest('end_date')
             ->latest('id')

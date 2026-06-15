@@ -278,9 +278,9 @@ onBeforeUnmount(() => {
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
             <div
-                class="grid h-[calc(100vh-11rem)] grid-cols-1 overflow-hidden rounded-xl border border-sidebar-border/70 bg-white md:grid-cols-[360px_1fr]"
+                class="grid h-[calc(100vh-6rem)] grid-cols-1 overflow-hidden rounded-xl border border-sidebar-border/70 bg-white md:grid-cols-[360px_1fr]"
             >
-                <aside class="h-full flex-col border-r border-gray-200 bg-gray-50" :class="isMobileThreadOpen ? 'hidden md:flex' : 'flex'">
+                <aside class="flex h-full min-h-0 flex-col border-r border-gray-200 bg-gray-50" :class="isMobileThreadOpen ? 'hidden md:flex' : 'flex'">
                     <div class="border-b border-gray-200 p-4">
                         <h1 class="text-lg font-bold text-gray-900">Inbox Chat Petani</h1>
                         <p class="text-xs text-gray-500">Tangani dan balas seluruh topik masuk dari petani/customer.</p>

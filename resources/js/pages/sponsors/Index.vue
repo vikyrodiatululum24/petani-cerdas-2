@@ -141,14 +141,16 @@ const resetFilters = () => {
                     <p class="text-sm text-muted-foreground">Kelola daftar sponsor platform dalam satu halaman.</p>
                 </div>
 
-                <Button as-child>
-                    <Link :href="route('sponsors.create')">Tambah Sponsor</Link>
-                </Button>
+                <div class="flex">
+                    <Button as-child>
+                        <Link :href="route('sponsors.create')">Tambah Sponsor</Link>
+                    </Button>
+                </div>
             </div>
 
             <div class="max-w-full overflow-hidden rounded-lg border">
-                <div class="flex w-full items-center gap-3 bg-muted/30 p-4">
-                    <div class="w-full">
+                <div class="flex w-full items-center gap-3 bg-muted/30 p-4 bg">
+                    <div class="flex flex-col gap-2 w-full sm:w-64">
                         <Label for="search">Search</Label>
                         <Input id="search" v-model="filterForm.search" placeholder="Cari nama, slug, atau deskripsi sponsor" />
                     </div>
@@ -212,7 +214,7 @@ const resetFilters = () => {
                     </table>
                 </div>
 
-                <div class="flex flex-col gap-3 border-t p-4 text-sm md:flex-row md:items-center md:justify-between">
+                <div class="flex flex-wrap items-center justify-between gap-3 border-t p-4 text-sm">
                     <p class="text-muted-foreground">
                         Menampilkan {{ pagination.from ?? 0 }} - {{ pagination.to ?? 0 }} dari {{ pagination.total }} sponsor
                     </p>

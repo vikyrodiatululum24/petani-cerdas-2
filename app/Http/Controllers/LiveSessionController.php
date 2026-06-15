@@ -21,7 +21,7 @@ class LiveSessionController extends Controller
             ->whereNotNull('generation')
             ->where('generation', '!=', '')
             ->whereHas('plan', function (Builder $planQuery): void {
-                $planQuery->whereIn('name', ['premium', 'elite']);
+                $planQuery->whereIn('jenis', ['premium', 'elite']);
             })
             ->pluck('generation')
             ->unique()
@@ -30,7 +30,7 @@ class LiveSessionController extends Controller
         $sessions = LiveSession::query()
             ->with([
                 'subscription:id,subscription_plan_id,generation,status',
-                'subscription.plan:id,name',
+                'subscription.plan:id,jenis,name',
             ])
             ->where(function (Builder $query) use ($ownedGenerations): void {
                 $query->whereIn('generation', $ownedGenerations)
@@ -64,12 +64,13 @@ class LiveSessionController extends Controller
     {
         $search = trim((string) $request->query('search', ''));
         $status = (string) $request->query('status', '');
+        $perPage = $request->integer('per_page', 15);
 
         $sessions = LiveSession::query()
             ->with([
                 'subscription:id,user_id,subscription_plan_id,generation,status',
                 'subscription.user:id,name,email',
-                'subscription.plan:id,name',
+                'subscription.plan:id,jenis,name',
             ])
             ->when($search !== '', function ($query) use ($search): void {
                 $query->where(function ($inner) use ($search): void {
@@ -80,15 +81,15 @@ class LiveSessionController extends Controller
                                 ->orWhere('email', 'like', "%{$search}%");
                         })
                         ->orWhereHas('subscription.plan', function ($planQuery) use ($search): void {
-                            $planQuery->where('name', 'like', "%{$search}%");
+                            $planQuery->where('jenis', 'like', "%{$search}%");
                         })
                         ->orWhere('generation', 'like', "%{$search}%");
                 });
             })
             ->when(in_array($status, ['scheduled', 'live', 'ended'], true), fn ($query) => $query->where('status', $status))
             ->orderByDesc('scheduled_at')
-            ->get()
-            ->map(function (LiveSession $session): array {
+            ->paginate($perPage)
+            ->through(function (LiveSession $session): array {
                 return [
                     'id' => $session->id,
                     'title' => $session->title,
@@ -103,8 +104,7 @@ class LiveSessionController extends Controller
                     'plan_name' => $session->subscription?->plan?->name,
                     'generation' => $session->generation ?? $session->subscription?->generation,
                 ];
-            })
-            ->values();
+            });
 
         $generationOptions = Subscription::query()
             ->currentlyActive()

@@ -239,7 +239,7 @@ const resetFilters = () => {
                 </div>
             </div>
 
-            <div class="max-w-full overflow-hidden rounded-lg border">
+            <div class="rounded-lg border">
                 <div class="grid gap-3 bg-muted/30 p-4 md:grid-cols-5">
                     <div class="md:col-span-3">
                         <Label for="search">Search</Label>
@@ -346,7 +346,7 @@ const resetFilters = () => {
                     </table>
                 </div>
 
-                <div class="flex flex-col gap-3 border-t p-4 text-sm md:flex-row md:items-center md:justify-between">
+                <div class="flex flex-wrap gap-3 border-t p-4 text-sm md:flex-row md:items-center justify-between">
                     <p class="text-muted-foreground">
                         Menampilkan {{ pagination.from ?? 0 }} - {{ pagination.to ?? 0 }} dari {{ pagination.total }} artikel
                     </p>

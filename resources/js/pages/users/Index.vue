@@ -231,7 +231,7 @@ const resetFilters = () => {
                     </table>
                 </div>
 
-                <div class="flex flex-col gap-3 border-t p-4 text-sm md:flex-row md:items-center md:justify-between">
+                <div class="flex flex-wrap items-center justify-between gap-3 border-t p-4 text-sm">
                     <p class="text-muted-foreground">
                         Menampilkan {{ pagination.from ?? 0 }} - {{ pagination.to ?? 0 }} dari {{ pagination.total }} pengguna
                     </p>

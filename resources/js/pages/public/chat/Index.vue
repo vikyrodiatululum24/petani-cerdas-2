@@ -255,7 +255,7 @@ const closeImagePreview = () => {
                     class="h-[calc(100vh-8.8rem)] overflow-hidden rounded-2xl border border-green-100 bg-white shadow-xl shadow-green-900/10 md:h-[calc(100vh-9.5rem)]"
                 >
                     <div class="grid h-full grid-cols-1 md:grid-cols-[350px_1fr]">
-                        <aside class="h-full flex-col border-r border-green-100 bg-[#f5fbf6]" :class="isMobileThreadOpen ? 'hidden md:flex' : 'flex'">
+                        <aside class="flex h-full min-h-0 flex-col border-r border-green-100 bg-[#f5fbf6]" :class="isMobileThreadOpen ? 'hidden md:flex' : 'flex'">
                             <div class="border-b border-green-100 p-4">
                                 <div class="flex items-start justify-between gap-3">
                                     <div>
